@@ -3,4 +3,4 @@ project(Compiler)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(Compiler SymbolTable.cpp SymbolInfo.h ScopeTable.h HashFunction.h)
+add_executable(Compiler SymbolTable.cpp SymbolInfo.h ScopeTable.h SymbolTable.h)

@@ -1,41 +1,46 @@
-//
-// Created by arafa on 3/12/2021.
-//
+
+// Created by rng70
 
 #ifndef COMPILER_SYMBOLINFO_H
 #define COMPILER_SYMBOLINFO_H
 
-class SymbolInfo{
+class SymbolInfo {
     std::string name;
     std::string type;
-    SymbolInfo * nextPointer;
-
+    SymbolInfo *nextPointer;
 public:
-    SymbolInfo(){
+    SymbolInfo() {
         this->name = "";
         this->type = "";
         this->nextPointer = nullptr;
     }
-    SymbolInfo(std::string symbolName, std::string symbolType){
+
+    SymbolInfo(std::string symbolName, std::string symbolType) {
         this->name = symbolName;
         this->type = symbolType;
     }
-    void setName(std::string symbolName){
+
+    void setName(std::string symbolName) {
         this->name = symbolName;
     }
-    void setType(std::string symbolType){
+
+    void setType(std::string symbolType) {
         this->type = symbolType;
     }
-    void setNextPointer(SymbolInfo* nextChainingPointer){
+
+    void setNextPointer(SymbolInfo *nextChainingPointer) {
         this->nextPointer = nextChainingPointer;
     }
-    std::string getName(){
+
+    std::string getName() {
         return this->name;
     }
-    std::string getType(){
+
+    std::string getType() {
         return this->type;
     }
-    SymbolInfo* getNextPointer(){
+
+    SymbolInfo *getNextPointer() {
         return this->nextPointer;
     }
 };
