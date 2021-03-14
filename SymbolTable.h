@@ -8,7 +8,7 @@ class SymbolTable {
     ScopeTable *currentScope;
     int sizeOfTable;
 public:
-    SymbolTable(int size) {
+    explicit SymbolTable(int size) {
         this->sizeOfTable = size;
         currentScope = new ScopeTable(sizeOfTable);
     }
