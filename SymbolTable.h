@@ -5,8 +5,8 @@
 #define COMPILER_SYMBOLTABLE_H
 
 class SymbolTable {
-    ScopeTable *currentScope;
     int sizeOfTable;
+    ScopeTable *currentScope;
 public:
     explicit SymbolTable(int size) {
         this->sizeOfTable = size;
@@ -25,6 +25,7 @@ public:
     void EnterScope() {
         ScopeTable *newScopeTable = new ScopeTable(this->sizeOfTable);
         ScopeTable *parentScope = currentScope;
+        cout<<"New ScopeTable with Id "<<newScopeTable->getID()<<" created."<<endl<<endl;
         currentScope = newScopeTable;
         currentScope->setParentScope(parentScope);
     }
@@ -33,6 +34,7 @@ public:
         currentScope->setTableIdTracker();
         ScopeTable *temp = currentScope;
         currentScope = temp->getParentScope();
+        cout<<"ScopeTable with ID "<<temp->getID()<<" removed"<<endl<<endl;
         delete temp;
     }
 
@@ -58,6 +60,7 @@ public:
                 return yolo;
             temp = temp->getParentScope();
         }
+        cout<<"Not Found"<<endl<<endl;
         return 0;
     }
 

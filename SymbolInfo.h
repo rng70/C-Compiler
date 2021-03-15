@@ -12,12 +12,13 @@ public:
     SymbolInfo() {
         this->name = "";
         this->type = "";
-        this->nextPointer = nullptr;
+        this->nextPointer = 0;
     }
 
-    SymbolInfo(std::string symbolName, std::string symbolType) {
+    SymbolInfo(std::string symbolName, std::string symbolType, SymbolInfo *pointer) {
         this->name = symbolName;
         this->type = symbolType;
+        this->nextPointer = pointer;
     }
 
     void setName(std::string symbolName) {

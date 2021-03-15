@@ -19,10 +19,19 @@ public:
         this->Id = this->tableIdTracker;
     }
 
-    ScopeTable(int tableSize) {
+    explicit ScopeTable(int tableSize) {
         this->size = tableSize;
         this->tableIdTracker = 0;
         this->Id = this->tableIdTracker + 1;
+
+        // Set initial parent scope to 0 not null or nullptr
+        this->parentScope = 0;
+
+        // Allocate memory for hashtable
+        HashTable = new SymbolInfo*[tableSize];
+        for(int i=0;i<tableSize;i++){
+            HashTable[i] = new SymbolInfo();
+        }
     }
 
     void setTableIdTracker() {
@@ -38,23 +47,22 @@ public:
             HashTable[idx]->setType(type);
 
             // Successfully inserted
+            cout<<"Inserted in ScopeTable# "<<Id<<" at position "<< idx <<", "<< "0"<<endl<<endl;
             return true;
         }
-            // Case-2: Table is not empty and collision may occurred
+            // Case-2: Table is not empty and collision occurred
         else {
-            bool duplicateFound = false;
             SymbolInfo *root = HashTable[idx];
             while (root->getNextPointer() != 0) {
                 // next pointer is not null, it is 0
                 if (root->getName() == s) {
                     // Duplicate found
-                    duplicateFound = true;
                     return false;
                 }
                 root = root->getNextPointer();
             }
             // if root is at level-0
-            if (!duplicateFound && (root->getNextPointer == 0 && root->getName() == s)) {
+            if (root->getNextPointer() == 0 && root->getName() == s) {
                 // duplicate found at level 0
                 return false;
             }
@@ -62,18 +70,21 @@ public:
             // at that point we did not  find any instance of s in symbol table
             // redundant declaration
             root = HashTable[idx];
+            int positionTracker = 0;
 
-            SymbolInfo *newSymbolInfo = new SymbolInfo;
+            SymbolInfo *newSymbolInfo = new SymbolInfo(s, type, 0);
 
             // set the appropriate data
-            newSymbolInfo->setName(s);
-            newSymbolInfo->setType(type);
-            newSymbolInfo->setNextPointer(0);
+//            newSymbolInfo->setName(s);
+//            newSymbolInfo->setType(type);
+//            newSymbolInfo->setNextPointer(0);
 
             while (root->getNextPointer() != 0) {
                 root = root->getNextPointer();
+                positionTracker++;
             }
             root->setNextPointer(newSymbolInfo);
+            cout<<"Inserted in ScopeTable# "<<Id<<" at position "<< ++positionTracker <<", "<< "0"<<endl<<endl;
             return true;
         }
         // At that point it is ensured that we must have inserted the item
@@ -92,7 +103,7 @@ public:
         this->parentScope = parent;
     }
 
-    int HashFunc(std::string s) {
+    [[nodiscard]] int HashFunc(std::string s) const {
         int sumOfAsciiValue = 0;
         for (auto si:s) {
             sumOfAsciiValue += si;
@@ -104,6 +115,7 @@ public:
     SymbolInfo *LookUP(std::string s) {
         int index = HashFunc(s);
         SymbolInfo *head = HashTable[index];
+        int positionTracker = 0;
 
         // Search for the string
         if (head == 0) {
@@ -112,10 +124,14 @@ public:
         while (head != 0) {
             if (head->getName() == s) {
                 // return the pointer where we found the string
+                cout<<"Found in ScopeTable# "<<Id<<" at position "<<index<<", "<<positionTracker<<endl;
+                cout<<endl;
                 return head;
             }
+            positionTracker++;
             head = head->getNextPointer();
         }
+        return head;
     }
 
     bool Delete(std::string s) {
@@ -138,18 +154,22 @@ public:
         SymbolInfo *temp, *p, *q;
 
         // Case-1: return false if the index of the hashtable is empty
-        if (root == 0)
+        // Things broke sometimes here but don't know why
+        if (root == 0){
+            cout<<"Not Found"<<endl<<endl;
             return false;
-
+        }
         // Case-2: if only one index found and that does not contain the string
         if (root->getName() != s && root->getNextPointer() == 0) {
+            cout<<"Not Found"<<endl<<endl;
             return false;
         }
             // Case-3: Table has one entity and that is the element want to remove
         else if (root->getName() == s && root->getNextPointer() == 0) {
             root->setName("");
             root->setType("");
-
+            cout<<"Found in ScopeTable# "<<Id<<" at position "<<index<<" , 0"<<endl<<endl;
+            cout<<"Deleted entry at "<<index<<" , 0"<<" from current ScopeTable"<<endl<<endl;
             // No need to set next pointer because it is already 0
             return true;
         }
@@ -158,6 +178,10 @@ public:
             temp = HashTable[index];
             HashTable[index] = HashTable[index]->getNextPointer();
 
+            // show delete message
+            cout<<"Found in ScopeTable# "<<Id<<" at position "<<index<<" , 0"<<endl<<endl;
+            cout<<"Deleted entry at "<<index<<" , 0"<<" from current scope table"<<endl<<endl;
+
             temp->setNextPointer(0);
             delete temp->getNextPointer();
             delete temp;
@@ -165,16 +189,18 @@ public:
             // at that point return true
             return true;
         }
-            // Case-5-7: element may be anywhere in the chain
+            // Case-5-7: element may be anywhere in the chain [middle or end]
         else {
             // keep track for a index and it's next index
             p = root;
             q = root->getNextPointer();
+            int positionTracker = 0;
 
             // Check until we reached at the end of the chain
             while (q != 0 && q->getName() != s) {
                 p = q;
                 q = q->getNextPointer();
+                positionTracker++;
             }
 
             // if the element is found in the middle
@@ -184,16 +210,21 @@ public:
                 delete q->getNextPointer();
                 delete q;
 
+                // Show message and return
+                cout<<"Found in ScopeTable# "<<Id<<" at position "<<index<<" , "<<++positionTracker<<endl<<endl;
+                cout<<"Deleted entry at "<<index<<" , "<<++positionTracker<<" from current scope table"<<endl<<endl;
                 return true;
             }
+            // Show message that value not found at that point
+            cout<<"Not Found"<<endl<<endl;
             return false;
         }
     }
 
     void print() {
-        std::cout << "ScopeTable # " << Id << std::endl;
+        cout << "ScopeTable # " << Id << endl;
         for (int i = 0; i < size; i++) {
-            std::cout << i << " -> ";
+            cout << i << " --> ";
             if (HashTable[i]->getNextPointer() == 0) {
                 if (HashTable[i]->getName() != "")
                     std::cout << "< " << HashTable[i]->getName() << " : " << HashTable[i]->getType() << " >";
@@ -204,9 +235,9 @@ public:
                     temp = temp->getNextPointer();
                 }
             }
-            std::cout << std::endl;
+            cout << endl;
         }
-        std::cout << std::endl;
+        cout << endl;
     }
 
     void OutOfScope() {
