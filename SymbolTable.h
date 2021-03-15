@@ -23,18 +23,21 @@ public:
 
     // required methods for offline
     void EnterScope() {
-        ScopeTable *newScopeTable = new ScopeTable(this->sizeOfTable);
+        ScopeTable *newScopeTable = new ScopeTable(this->sizeOfTable, currentScope->getTableIdTracker());
+        // Increment the table tracker value
+        currentScope->setTableIdTracker();
         ScopeTable *parentScope = currentScope;
-        cout<<"New ScopeTable with Id "<<newScopeTable->getID()<<" created."<<endl<<endl;
         currentScope = newScopeTable;
         currentScope->setParentScope(parentScope);
+        std::cout << "New ScopeTable with id " << newScopeTable->getStringifyID() << " created" << std::endl
+                  << std::endl;
     }
 
     void ExitScope() {
-        currentScope->setTableIdTracker();
+        //currentScope->setTableIdTracker();
         ScopeTable *temp = currentScope;
         currentScope = temp->getParentScope();
-        cout<<"ScopeTable with ID "<<temp->getID()<<" removed"<<endl<<endl;
+        std::cout << "ScopeTable with id " << temp->getStringifyID() << " removed" << std::endl << std::endl;
         delete temp;
     }
 
@@ -60,7 +63,7 @@ public:
                 return yolo;
             temp = temp->getParentScope();
         }
-        cout<<"Not Found"<<endl<<endl;
+        std::cout << "Not found" << std::endl << std::endl;
         return 0;
     }
 

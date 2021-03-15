@@ -1,9 +1,53 @@
 
 // Created by rng70
 
-#ifndef COMPILER_SCOPETABLE_H
-#define COMPILER_SCOPETABLE_H
+#include <bits/stdc++.h>
+//#include "SymbolInfo.h"
+//#include "ScopeTable.h"
+//#include "SymbolTable.h"
 
+using namespace std;
+class SymbolInfo {
+    std::string name;
+    std::string type;
+    SymbolInfo *nextPointer;
+public:
+    SymbolInfo() {
+        this->name = "";
+        this->type = "";
+        this->nextPointer = 0;
+    }
+
+    SymbolInfo(std::string symbolName, std::string symbolType, SymbolInfo *pointer) {
+        this->name = symbolName;
+        this->type = symbolType;
+        this->nextPointer = pointer;
+    }
+
+    void setName(std::string symbolName) {
+        this->name = symbolName;
+    }
+
+    void setType(std::string symbolType) {
+        this->type = symbolType;
+    }
+
+    void setNextPointer(SymbolInfo *nextChainingPointer) {
+        this->nextPointer = nextChainingPointer;
+    }
+
+    std::string getName() {
+        return this->name;
+    }
+
+    std::string getType() {
+        return this->type;
+    }
+
+    SymbolInfo *getNextPointer() {
+        return this->nextPointer;
+    }
+};
 class ScopeTable {
     int size, Id, tableIdTracker;
 
@@ -367,5 +411,172 @@ public:
         delete[] HashTable;
     }
 };
+class SymbolTable {
+    int sizeOfTable;
+    ScopeTable *currentScope;
+public:
+    explicit SymbolTable(int size) {
+        this->sizeOfTable = size;
+        currentScope = new ScopeTable(sizeOfTable);
+    }
 
-#endif //COMPILER_SCOPETABLE_H
+    void setCurrentScope(ScopeTable *p) {
+        this->currentScope = p;
+    }
+
+    ScopeTable *getCurrentScope() {
+        return this->currentScope;
+    }
+
+    // required methods for offline
+    void EnterScope() {
+        ScopeTable *newScopeTable = new ScopeTable(this->sizeOfTable, currentScope->getTableIdTracker());
+        // Increment the table tracker value
+        currentScope->setTableIdTracker();
+        ScopeTable *parentScope = currentScope;
+        currentScope = newScopeTable;
+        currentScope->setParentScope(parentScope);
+        std::cout << "New ScopeTable with id " << newScopeTable->getStringifyID() << " created" << std::endl
+                  << std::endl;
+    }
+
+    void ExitScope() {
+        //currentScope->setTableIdTracker();
+        ScopeTable *temp = currentScope;
+        currentScope = temp->getParentScope();
+        std::cout << "ScopeTable with id " << temp->getStringifyID() << " removed" << std::endl << std::endl;
+        delete temp;
+    }
+
+    bool Insert(std::string s, std::string type) {
+        if (currentScope->Insert(s, type))
+            return true;
+        return false;
+    }
+
+    bool Remove(std::string s) {
+        if (currentScope->Delete(s))
+            return true;
+        return false;
+    }
+
+    SymbolInfo *LookUp(std::string s) {
+        ScopeTable *temp = currentScope;
+        SymbolInfo *yolo;
+
+        while (temp != 0) {
+            yolo = temp->LookUP(s);
+            if (yolo != 0)
+                return yolo;
+            temp = temp->getParentScope();
+        }
+        std::cout << "Not found" << std::endl << std::endl;
+        return 0;
+    }
+
+    void printCurrentScopeTable() {
+        currentScope->print();
+    }
+
+    void printAllTable() {
+        ScopeTable *recursive = currentScope;
+        while (recursive != 0) {
+            recursive->print();
+            recursive = recursive->getParentScope();
+        }
+    }
+
+    ~SymbolTable() {
+        ScopeTable *child, *parent;
+        child = currentScope;
+
+        while (child != 0) {
+            parent = child->getParentScope();
+            delete child;
+            //child->~ScopeTable();
+            child = parent;
+        }
+        delete child;
+        delete parent;
+    }
+};
+
+void printSubMenu(std::string s, std::string s1) {
+    cout << "Press " << s << " to " << s1 << endl;
+}
+
+void menu() {
+    printSubMenu("I", " Insert in the current Scope Table");
+    printSubMenu("L", " LookUp the current Scope Table");
+    printSubMenu("D", " Delete from current Scope Table");
+    printSubMenu("P", " Print Scope Table");
+    printSubMenu("S", " Enter into a new Scope");
+    printSubMenu("E", " Exit the current Scope Table");
+    cout << endl;
+}
+
+void takeInput() {
+    // For any normal text editor
+    // freopen("input.txt", "r", stdin);
+    // freopen("output.txt", "w", stdout);
+
+    // Only for Clion absolute path is needed
+    freopen("G://GitHub Repositories//C-Compiler//input.txt", "r", stdin);
+    freopen("G://GitHub Repositories//C-Compiler//output.txt", "w", stdout);
+
+    int n;
+    cin >> n;
+
+    // Initialize Symbol Table
+    SymbolTable currentSymbolTable(n);
+
+    char ch;
+    string name, type;
+    // Show operation menu in console input mode
+    //menu();
+    while (cin >> ch) {
+        // Show operation menu each time
+        // menu();
+        // Take user choice for operation
+        // cin >> ch;
+
+        if (ch == 'I' || ch == 'i') {
+            cin >> name >> type;
+            cout << ch << " " << name << " " << type << endl << endl;
+            currentSymbolTable.Insert(name, type);
+        } else if (ch == 'L' || ch == 'l') {
+            cin >> name;
+            cout << ch << " " << name << endl << endl;
+            currentSymbolTable.LookUp(name);
+        } else if (ch == 'D' || ch == 'd') {
+            cin >> name;
+            cout << ch << " " << name << endl << endl;
+            bool t = currentSymbolTable.Remove(name);
+            if (!t) {
+                cout << name << " not found" << endl << endl;
+            }
+        } else if (ch == 'P' || ch == 'p') {
+            char cp;
+            cin >> cp;
+            cout << ch << " " << cp << endl << endl;
+            if (cp == 'A')
+                currentSymbolTable.printAllTable();
+            else
+                currentSymbolTable.printCurrentScopeTable();
+        } else if (ch == 'S' || ch == 's') {
+            cout << ch << endl << endl;
+            currentSymbolTable.EnterScope();
+        } else if (ch == 'E' || ch == 'e') {
+            cout << ch << endl << endl;
+            currentSymbolTable.ExitScope();
+        } else {
+            break;
+        }
+    }
+}
+
+int main() {
+    takeInput();
+    return 0;
+}
+
