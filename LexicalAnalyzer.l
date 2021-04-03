@@ -129,13 +129,7 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
                 s.InsertMod(yytext,"CONST_INT");
 }
 
-{DIGIT}+ {
-    char c[] = "CONST_INT";
-    filePrint(number_of_lines,c,yytext,tokens,logs,1);
-                s.InsertMod(yytext,"CONST_INT");
-}
-
-{FLOATINGPOINT}+ {
+{FLOATINGPOINT} {
     char c[] = "CONST_FLOAT";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
                 s.InsertMod(yytext,"CONST_FLOAT");
