@@ -1,5 +1,9 @@
 %option noyywrap
 
+%x STRINGSTATE
+%x COMMENTMULTI
+%X COMMENTSINGLE
+
 %{
 #include <bits/stdc++.h>
 #include "SymbolTable.cpp"
@@ -8,6 +12,9 @@ using namespace std;
 
 int number_of_lines = 1;
 int number_of_errors = 0;
+int linestart;
+string s1 = "";
+string s2 = "";
 
 SymbolTable symbolTable(10);
 
@@ -28,7 +35,7 @@ void print_to_files_32(int number_of_lines, char* a, char* b, FILE* tokens, FILE
 
 /* Declare Lex styled macros */
 WHITESPACE [ \t\r\f\v]
-LETTER [a-zA-Z]
+LETTERS [a-zA-Z]
 DIGIT [0-9]
 EXP [Ee][+-]?[0-9]+
 NEWLINE \n
@@ -38,10 +45,6 @@ RELOP "<"|"<="|">"|">="|"!="|"=="
 LOGICOP "||"|"&&"
 BITOP "|"|"&"|"<<"|">>"|"^"
 FLOATINGPOINT (({DIGIT}*([\.]?{DIGIT}+))|({DIGIT}+[\.]?{DIGIT}+)){EXP}?
-
-%%
-{WHITESPACE}+ {}
-{NEWLINE} {number_of_lines++;}
 CHARACTERLITERALS '[^\n\\]'
 TOOMANYDECIMAL     {DIGIT}*([\.]{DIGIT}*)+([\.]+{DIGIT}*)+{EXP}?
 ILLFORMEDERROR     {DIGIT}*([\.]+{DIGIT}*)*?([Ee][+-]?([0-9]+)?([\.]*{DIGIT}*)+)+
@@ -50,7 +53,10 @@ MULTICHARACTERERROR   '[^\n][^\n]+'
 UNFINISHEDCHARACTER   '[\\]'|'[^\n\']*|'\\[nt\\afr"bv0]|'\\
 EMPTYCHARERROR        ''
 UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
+
 %%
+{WHITESPACE}+ {}
+{NEWLINE} {number_of_lines++;}
 
 "if" {
     char c[] = "<IF>";
