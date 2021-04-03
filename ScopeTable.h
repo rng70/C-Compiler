@@ -3,6 +3,8 @@
 
 #ifndef COMPILER_SCOPETABLE_H
 #define COMPILER_SCOPETABLE_H
+std::FILE *logs;
+std::FILE *tokens;
 
 class ScopeTable {
     int size, Id, tableIdTracker;
@@ -63,8 +65,8 @@ public:
             HashTable[idx]->setType(type);
 
             // Successfully inserted
-            std::cout << "Inserted in ScopeTable# " << this->getStringifyID() << " at position " << idx << ", " << "0"
-                      << std::endl << std::endl;
+            // std::cout << "Inserted in ScopeTable# " << this->getStringifyID() << " at position " << idx << ", " << "0"
+            //           << std::endl << std::endl;
             return true;
         }
             // Case-2: Table is not empty and collision occurred
@@ -74,7 +76,7 @@ public:
                 // next pointer is not null, it is 0
                 if (root->getName() == s) {
                     // Duplicate found
-                    std::cout << "<" << s << "," << type << "> already exists in current ScopeTable" << std::endl << std::endl;
+                    // std::cout << "<" << s << "," << type << "> already exists in current ScopeTable" << std::endl << std::endl;
                     return false;
                 }
                 root = root->getNextPointer();
@@ -82,7 +84,7 @@ public:
             // if root is at level-0
             if (root->getNextPointer() == 0 && root->getName() == s) {
                 // duplicate found at level 0
-                std::cout << "<" << s << "," << type << "> already exists in current ScopeTable" << std::endl << std::endl;
+                // std::cout << "<" << s << "," << type << "> already exists in current ScopeTable" << std::endl << std::endl;
                 return false;
             }
 
@@ -103,13 +105,41 @@ public:
                 positionTracker++;
             }
             root->setNextPointer(newSymbolInfo);
-            std::cout << "Inserted in ScopeTable# " << this->getStringifyID() << " at position " << idx << ", "
-                      << ++positionTracker << std::endl
-                      << std::endl;
+            // std::cout << "Inserted in ScopeTable# " << this->getStringifyID() << " at position " << idx << ", "
+            //           << ++positionTracker << std::endl
+            //           << std::endl;
             return true;
         }
         // At that point it is ensured that we must have inserted the item
         return true;
+    }
+
+    void InsertAndPrintToFile(std::string s, std::string type) {
+        
+        if(Insert(s, type)){
+            SymbolInfo* p;
+
+            fprintf(logs,"ScopeTable # %d\n",this->getStringifyID());
+
+            for(int i = 0; i<size; i++)
+        {
+            if(HashTable[i]->getName()!="")
+            {
+                fprintf(logs,"%d--> ",i);
+
+                p = HashTable[i];
+
+                while(p != 0)
+                {
+                    fprintf(logs,"<%s : %s> ",p->getName().c_str(),p->getType().c_str());
+
+                    p = p->getNextPointer();
+                }
+                fprintf(logs,"\n");
+            }
+        }
+        fprintf(logs,"\n");
+        }
     }
 
     int getID() {
@@ -145,9 +175,9 @@ public:
         while (head != 0) {
             if (head->getName() == s) {
                 // return the pointer where we found the string
-                std::cout << "Found in ScopeTable# " << this->getStringifyID() << " at position " << index << ", "
-                          << positionTracker << std::endl;
-                std::cout << std::endl;
+                // std::cout << "Found in ScopeTable# " << this->getStringifyID() << " at position " << index << ", "
+                //           << positionTracker << std::endl;
+                // std::cout << std::endl;
                 return head;
             }
             positionTracker++;
@@ -178,22 +208,22 @@ public:
         // Case-1: return false if the index of the hashtable is empty
         // Things broke sometimes here but don't know why
         if (root == 0) {
-            std::cout << "Not found" << std::endl << std::endl;
+            // std::cout << "Not found" << std::endl << std::endl;
             return false;
         }
         // Case-2: if only one index found and that does not contain the string
         if (root->getName() != s && root->getNextPointer() == 0) {
-            std::cout << "Not found" << std::endl << std::endl;
+            // std::cout << "Not found" << std::endl << std::endl;
             return false;
         }
             // Case-3: Table has one entity and that is the element want to remove
         else if (root->getName() == s && root->getNextPointer() == 0) {
             root->setName("");
             root->setType("");
-            std::cout << "Found in ScopeTable# " << this->getStringifyID() << " at position " << index << ", 0"
-                      << std::endl
-                      << std::endl;
-            std::cout << "Deleted Entry " << index << ", 0" << " from current ScopeTable" << std::endl << std::endl;
+            // std::cout << "Found in ScopeTable# " << this->getStringifyID() << " at position " << index << ", 0"
+            //           << std::endl
+            //           << std::endl;
+            // std::cout << "Deleted Entry " << index << ", 0" << " from current ScopeTable" << std::endl << std::endl;
             // No need to set next pointer because it is already 0
             return true;
         }
@@ -203,10 +233,10 @@ public:
             HashTable[index] = HashTable[index]->getNextPointer();
 
             // show delete message
-            std::cout << "Found in ScopeTable# " << this->getStringifyID() << " at position " << index << ", 0"
-                      << std::endl
-                      << std::endl;
-            std::cout << "Deleted Entry " << index << ", 0" << " from current ScopeTable" << std::endl << std::endl;
+            // std::cout << "Found in ScopeTable# " << this->getStringifyID() << " at position " << index << ", 0"
+            //           << std::endl
+            //           << std::endl;
+            // std::cout << "Deleted Entry " << index << ", 0" << " from current ScopeTable" << std::endl << std::endl;
 
             temp->setNextPointer(0);
             delete temp->getNextPointer();
@@ -237,15 +267,15 @@ public:
                 delete q;
 
                 // Show message and return
-                std::cout << "Found in ScopeTable# " << this->getStringifyID() << " at position " << index << ", "
-                          << ++positionTracker << std::endl
-                          << std::endl;
-                std::cout << "Deleted Entry " << index << ", " << ++positionTracker << " from current ScopeTable"
-                          << std::endl << std::endl;
+                // std::cout << "Found in ScopeTable# " << this->getStringifyID() << " at position " << index << ", "
+                //           << ++positionTracker << std::endl
+                //           << std::endl;
+                // std::cout << "Deleted Entry " << index << ", " << ++positionTracker << " from current ScopeTable"
+                //           << std::endl << std::endl;
                 return true;
             }
             // Show message that value not found at that point
-            std::cout << "Not found" << std::endl << std::endl;
+            // std::cout << "Not found" << std::endl << std::endl;
             return false;
         }
     }

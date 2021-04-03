@@ -29,15 +29,15 @@ public:
         ScopeTable *parentScope = currentScope;
         currentScope = newScopeTable;
         currentScope->setParentScope(parentScope);
-        std::cout << "New ScopeTable with id " << newScopeTable->getStringifyID() << " created" << std::endl
-                  << std::endl;
+        // std::cout << "New ScopeTable with id " << newScopeTable->getStringifyID() << " created" << std::endl
+        //           << std::endl;
     }
 
     void ExitScope() {
         //currentScope->setTableIdTracker();
         ScopeTable *temp = currentScope;
         currentScope = temp->getParentScope();
-        std::cout << "ScopeTable with id " << temp->getStringifyID() << " removed" << std::endl << std::endl;
+        // std::cout << "ScopeTable with id " << temp->getStringifyID() << " removed" << std::endl << std::endl;
         delete temp;
     }
 
@@ -45,6 +45,10 @@ public:
         if (currentScope->Insert(s, type))
             return true;
         return false;
+    }
+
+    void InsertWithoutReturn(std::string s, std::string type) {
+        currentScope->InsertAndPrintToFile(s, type);
     }
 
     bool Remove(std::string s) {
@@ -63,7 +67,7 @@ public:
                 return yolo;
             temp = temp->getParentScope();
         }
-        std::cout << "Not found" << std::endl << std::endl;
+        // std::cout << "Not found" << std::endl << std::endl;
         return 0;
     }
 
