@@ -126,19 +126,19 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
 {DIGIT}+ {
     char c[] = "CONST_INT";
     filePrint(number_of_lines,c,yytext,tokens,logs, 1);
-                s.InsertMod(yytext,"CONST_INT");
+                symbolTable.InsertWithoutReturn(yytext,"CONST_INT");
 }
 
 {FLOATINGPOINT} {
     char c[] = "CONST_FLOAT";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-                s.InsertMod(yytext,"CONST_FLOAT");
+                symbolTable.InsertWithoutReturn(yytext,"CONST_FLOAT");
 }
 
 {CHARACTERLITERALS} {
     char c[] = "CONST_CHAR";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-                s.InsertMod(yytext,"CONST_CHAR");
+                symbolTable.InsertWithoutReturn(yytext,"CONST_CHAR");
 }
 
 '\\[nt\\afr"bv0]' {
@@ -167,107 +167,107 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
     }     
                 
     fprintf(logs,"Line no. %d: TOKEN <CONST_CHAR> Lexeme %s found\n\n",number_of_lines,yytext);
-    s.InsertMod(yytext,"CONST_CHAR");
+    symbolTable.InsertWithoutReturn(yytext,"CONST_CHAR");
 }
 
 "+"|"-" {
     char c[] = "ADDOP";
     filePrint(number_of_lines,c,yytext,tokens,logs, 1);
-    s.InsertMod(yytext,"ADDOP");
+    symbolTable.InsertWithoutReturn(yytext,"ADDOP");
 }
 
 "++"|"--" {       
     char c[] = "INCOP";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    s.InsertMod(yytext,"INCOP");
+    symbolTable.InsertWithoutReturn(yytext,"INCOP");
 }
 
 {MULOP} {    
     char c[] = "MULOP";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    s.InsertMod(yytext,"MULOP");
+    symbolTable.InsertWithoutReturn(yytext,"MULOP");
 }
 {RELOP} {    
     char c[] = "RELOP";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    s.InsertMod(yytext,"RELOP");
+    symbolTable.InsertWithoutReturn(yytext,"RELOP");
 }
 
 {LOGICOP} {        
     char c[] = "LOGICOP";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    s.InsertMod(yytext,"LOGICOP");
+    symbolTable.InsertWithoutReturn(yytext,"LOGICOP");
 }
 
 {BITOP} {
     char c[] = "BITOP";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    s.InsertMod(yytext,"BITOP");
+    symbolTable.InsertWithoutReturn(yytext,"BITOP");
 }
 "=" {        
     char c[] = "ASSIGNOP";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    s.InsertMod(yytext,"ASSIGNOP");
+    symbolTable.InsertWithoutReturn(yytext,"ASSIGNOP");
 }
 
 "!" {            
     char c[] = "NOT";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    s.InsertMod(yytext,"NOT");
+    symbolTable.InsertWithoutReturn(yytext,"NOT");
 }
 
 "(" {          
     char c[] = "LPAREN";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    s.InsertMod(yytext,"LPAREN");
+    symbolTable.InsertWithoutReturn(yytext,"LPAREN");
 }
 
 ")" {
     char c[] = "RPAREN";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    s.InsertMod(yytext,"RPAREN");
+    symbolTable.InsertWithoutReturn(yytext,"RPAREN");
 }
 
 "{" {            
     char c[] = "LCURl";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    s.InsertMod(yytext,"LCURL");
+    symbolTable.InsertWithoutReturn(yytext,"LCURL");
 }
 
 "}" {
     char c[] = "RCURL";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    s.InsertMod(yytext,"RCURL");
+    symbolTable.InsertWithoutReturn(yytext,"RCURL");
 }
 
 "[" {
     char c[] = "LTHIRD";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    s.InsertMod(yytext,"LTHIRD");
+    symbolTable.InsertWithoutReturn(yytext,"LTHIRD");
 }
 
 "]" {          
     char c[] = "RTHIRD";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    s.InsertMod(yytext,"RTHIRD");
+    symbolTable.InsertWithoutReturn(yytext,"RTHIRD");
 }
 
 "," {
     char c[] = "COMMA";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    s.InsertMod(yytext,"COMMA");
+    symbolTable.InsertWithoutReturn(yytext,"COMMA");
 }
 
 ";" {
     char c[] = "SEMICOLON";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    s.InsertMod(yytext,"SEMICOLON");
+    symbolTable.InsertWithoutReturn(yytext,"SEMICOLON");
 }
 
 {IDENTIFIER}  {           
     char c[] = "ID";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    s.InsertMod(yytext,"ID");
+    symbolTable.InsertWithoutReturn(yytext,"ID");
 }
 
 "//" {
@@ -444,7 +444,7 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
 
 int main(int argc, char* argv[]){
     if(argc != 2){
-        printf("Input filename\(s\) missing. Provide correct command line arguments\n");
+        printf("Input filenames missing, Provide correct command line arguments\n");
         return 0;
     }
     FILE *fin = fopen(argv[1], "r");
