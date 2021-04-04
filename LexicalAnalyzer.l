@@ -23,7 +23,12 @@ void filePrint(int number_of_lines, char* a, char* b, FILE* tokens, FILE* logs, 
     if(!fileNumber){
     fprintf(tokens,"%s ",a);}
     else{fprintf(tokens,"<%s, %s> ",a,b);}
-    fprintf(logs,"Line no %d: Token %s Lexeme %s found\n\n",number_of_lines,a,b);
+    fprintf(logs,"Line no %d: Token %s Lexeme %s found",number_of_lines,a,b);
+        if(!strcmp(a, "<CONST_CHAR>")){
+    fprintf(logs, " --> <CHAR_CONST, %s>\n\n", b);}
+    else{
+    fprintf(logs, "\n\n");
+         }
 }
 
 void print_to_files_32(int number_of_lines, char* a, char* b, FILE* tokens, FILE* logs)
@@ -247,9 +252,10 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
 }
 
 "}" {
+    symbolTable.ExitScope();
     char c[] = "<RCURL>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    symbolTable.ExitScope();
+    //symbolTable.ExitScope();
     //symbolTable.InsertWithoutReturn(yytext,"RCURL");
 }
 
@@ -347,7 +353,7 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
 
 <STRINGSTATE>\" {     
     s1 = s1+yytext;
-    fprintf(logs,"Line no %d: Token <STRING> Lexeme %s found --> <STRING, \"%s\"\n\n",linestart,s1.c_str(), s2.c_str());
+    fprintf(logs,"Line no %d: Token <STRING> Lexeme %s found --> <STRING, \"%s\"> \n\n",linestart,s1.c_str(), s2.c_str());
     fprintf(tokens,"<STRING, %s> ", s2.c_str());
     s1 = "";
     s2 = "";
@@ -449,8 +455,8 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
 }
 
 <<EOF>> {  
-    fprintf(logs,"Total Line No:%d\n",--number_of_lines);
-    fprintf(logs,"Total Errors:%d\n\n",number_of_errors); 
+    fprintf(logs,"Total lines:%d\n",--number_of_lines);
+    fprintf(logs,"Total errors:%d\n\n",number_of_errors); 
     return 0;
 }
 %%

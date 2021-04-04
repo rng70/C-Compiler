@@ -412,7 +412,7 @@ public:
             SymbolInfo *temp = HashTable[i];
 
             while (temp->getName() != "") {
-                copyOfDeleteFunction(temp->getName());
+              copyOfDeleteFunction(temp->getName());
                 temp = HashTable[i];
             }
         }
