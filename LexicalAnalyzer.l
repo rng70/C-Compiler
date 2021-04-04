@@ -16,7 +16,7 @@ int linestart;
 string s1 = "";
 string s2 = "";
 
-SymbolTable symbolTable(10);
+SymbolTable symbolTable(7);
 
 void filePrint(int number_of_lines, char* a, char* b, FILE* tokens, FILE* logs, int fileNumber=0)
 {
@@ -279,7 +279,7 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
 }
 
 <COMMENTSINGLE>\n {     
-    fprintf(logs,"Line no. %d: Token <COMMENT> Lexeme %s found\n\n",linestart,s1.c_str());
+    fprintf(logs,"Line no %d: Token <COMMENT> Lexeme %s found\n\n",linestart,s1.c_str());
     number_of_lines++;
     s1 = "";
     s2 = "";
@@ -303,7 +303,7 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
 
 <COMMENTMULTI>"*/" {
     s1 = s1+yytext;
-    fprintf(logs,"Line no. %d: Token <COMMENT> Lexeme %s found\n\n",linestart,s1.c_str());
+    fprintf(logs,"Line no %d: Token <COMMENT> Lexeme %s found\n\n",linestart,s1.c_str());
     s1 = "";
     linestart = 0;
     BEGIN INITIAL;
@@ -336,7 +336,7 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
 
 <STRINGSTATE>\" {     
     s1 = s1+yytext;
-    fprintf(logs,"Line no. %d: Token <STRING> Lexeme %s found\n\n",linestart,s1.c_str());
+    fprintf(logs,"Line no %d: Token <STRING> Lexeme %s found\n\n",linestart,s1.c_str());
     fprintf(tokens,"<STRING ,%s>",s2.c_str());
     s1 = "";
     s2 = "";

@@ -77,7 +77,7 @@ public:
                 if (root->getName() == s) {
                     // Duplicate found
                     // std::cout << "<" << s << "," << type << "> already exists in current ScopeTable" << std::endl << std::endl;
-                  std::string foundMsg = s + " already exists in current ScopeTable";
+                  std::string foundMsg = s + " already exists in current ScopeTable\n";
                   fprintf(logs, "%s\n", foundMsg.c_str());
                     return false;
                 }
@@ -87,7 +87,7 @@ public:
             if (root->getNextPointer() == 0 && root->getName() == s) {
                 // duplicate found at level 0
                 // std::cout << "<" << s << "," << type << "> already exists in current ScopeTable" << std::endl << std::endl;
-              std::string foundMsg = s + " already exists in current ScopeTable";
+              std::string foundMsg = s + " already exists in current ScopeTable\n";
                   fprintf(logs, "%s\n", foundMsg.c_str());
                 return false;
             }
@@ -121,8 +121,10 @@ public:
     void InsertAndPrintToFile(std::string s, std::string type) {
         
         if(Insert(s, type)){
-            this->printModified();
-        //     SymbolInfo* p;
+          ScopeTable* temp = this;
+          while(temp!=0){
+          temp->printModified();
+            // SymbolInfo* p;
 
         //     fprintf(logs,"ScopeTable # %s\n",this->getStringifyID().c_str());
 
@@ -143,7 +145,8 @@ public:
         //         fprintf(logs,"\n");
         //     }
         // }
-        // fprintf(logs,"\n");
+        //fprintf(logs,"\n");
+        temp = temp->getParentScope();}
         }
     }
 
@@ -310,16 +313,18 @@ public:
                 if (HashTable[i]->getName() != ""){
                     fprintf(logs," %d --> ",i);
                     fprintf(logs,"< %s : %s> ",HashTable[i]->getName().c_str(),HashTable[i]->getType().c_str());
-                    }
+                    fprintf(logs, "\n");
+                }
             } else {
                 SymbolInfo *temp = HashTable[i];
+                fprintf(logs, " %d --> ", i);
                 while (temp != 0) {
-                    fprintf(logs," %d --> ",i);
+                  //fprintf(logs," %d --> ",i);
                     fprintf(logs,"< %s : %s> ",temp->getName().c_str(),temp->getType().c_str());
                     temp = temp->getNextPointer();
                 }
+                fprintf(logs,"\n");
             }
-            fprintf(logs," \n");
         }
         fprintf(logs,"\n");
     }
