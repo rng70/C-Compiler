@@ -78,7 +78,7 @@ public:
     void printAllTable() {
         ScopeTable *recursive = currentScope;
         while (recursive != 0) {
-            recursive->print();
+            recursive->printModified();
             recursive = recursive->getParentScope();
         }
     }
@@ -89,11 +89,14 @@ public:
 
         while (child != 0) {
             parent = child->getParentScope();
+            //child->printModified();
             delete child;
             //child->~ScopeTable();
             child = parent;
         }
+        //child->printModified();
         delete child;
+        //parent->printModified();
         delete parent;
     }
 };

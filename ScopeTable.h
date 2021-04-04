@@ -115,7 +115,7 @@ public:
             return true;
         }
         // At that point it is ensured that we must have inserted the item
-        return true;
+        return false;
     }
 
     void InsertAndPrintToFile(std::string s, std::string type) {
