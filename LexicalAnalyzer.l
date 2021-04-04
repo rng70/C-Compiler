@@ -21,17 +21,19 @@ SymbolTable symbolTable(7);
 void filePrint(int number_of_lines, char* a, char* b, FILE* tokens, FILE* logs, int fileNumber=0)
 {
     if(!fileNumber){
-    fprintf(tokens,"%s ",a);}
-    else{fprintf(tokens,"<%s, %s> ",a,b);}
+        fprintf(tokens,"%s ",a);
+    }else{
+        fprintf(tokens,"<%s, %s> ",a,b);
+    }
     fprintf(logs,"Line no %d: Token %s Lexeme %s found",number_of_lines,a,b);
-if(!strcmp(a, "<CONST_CHAR>")){
-string str1(b);
-str1.erase(0, 1);
-str1.erase(str1.size()-1, 1);
-    fprintf(logs, " --> <CHAR_CONST, %s> \n\n", str1.c_str());}
-    else{
-    fprintf(logs, "\n\n");
-         }
+    if(!strcmp(a, "<CONST_CHAR>")){
+        string str1(b);
+        str1.erase(0, 1);
+        str1.erase(str1.size()-1, 1);
+        fprintf(logs, " --> <CHAR_CONST, %s> \n\n", str1.c_str());
+    }else{
+        fprintf(logs, "\n\n");
+    }
 }
 %}
 
@@ -168,13 +170,13 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
         case 'r' :  char1 = '\r';
                     fprintf(tokens,"<CONST_CHAR, %c> ",'\r');
                     break;
-        case 'b' :  char1 = '\t';
+        case 'b' :  char1 = '\b';
                     fprintf(tokens,"<CONST_CHAR, %c> ",'\b');
                     break;
-        case 'v' :  char1 = '\t';
+        case 'v' :  char1 = '\v';
                     fprintf(tokens,"<CONST_CHAR, %c> ",'\v');
                     break;
-        case '0' :  char1 = '\t';
+        case '0' :  char1 = '\0';
                     fprintf(tokens,"<CONST_CHAR, %c> ",'\0');
                     break;
     }     
@@ -186,98 +188,81 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
 "+"|"-" {
     char c[] = "<ADDOP>";
     filePrint(number_of_lines,c,yytext,tokens,logs, 1);
-    //symbolTable.InsertWithoutReturn(yytext,"ADDOP");
 }
 
 "++"|"--" {       
     char c[] = "<INCOP>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    //symbolTable.InsertWithoutReturn(yytext,"INCOP");
 }
 
 {MULOP} {    
     char c[] = "<MULOP>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    //symbolTable.InsertWithoutReturn(yytext,"MULOP");
 }
 {RELOP} {    
     char c[] = "<RELOP>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    //symbolTable.InsertWithoutReturn(yytext,"RELOP");
 }
 
 {LOGICOP} {        
     char c[] = "<LOGICOP>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    //symbolTable.InsertWithoutReturn(yytext,"LOGICOP");
 }
 
 {BITOP} {
     char c[] = "<BITOP>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    //symbolTable.InsertWithoutReturn(yytext,"BITOP");
 }
 "=" {        
     char c[] = "<ASSIGNOP>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    //symbolTable.InsertWithoutReturn(yytext,"ASSIGNOP");
 }
 
 "!" {            
     char c[] = "<NOT>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    //symbolTable.InsertWithoutReturn(yytext,"NOT");
 }
 
 "(" {          
     char c[] = "<LPAREN>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    //symbolTable.InsertWithoutReturn(yytext,"LPAREN");
 }
 
 ")" {
     char c[] = "<RPAREN>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    //symbolTable.InsertWithoutReturn(yytext,"RPAREN");
 }
 
 "{" {            
     char c[] = "<LCURL>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
     symbolTable.EnterScope();
-    //symbolTable.InsertWithoutReturn(yytext,"LCURL");
 }
 
 "}" {
-    symbolTable.ExitScope();
     char c[] = "<RCURL>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    //symbolTable.ExitScope();
-    //symbolTable.InsertWithoutReturn(yytext,"RCURL");
+    symbolTable.ExitScope();
 }
 
 "[" {
     char c[] = "<LTHIRD>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    //symbolTable.InsertWithoutReturn(yytext,"LTHIRD");
 }
 
 "]" {          
     char c[] = "<RTHIRD>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    //symbolTable.InsertWithoutReturn(yytext,"RTHIRD");
 }
 
 "," {
     char c[] = "<COMMA>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    //symbolTable.InsertWithoutReturn(yytext,"COMMA");
 }
 
 ";" {
     char c[] = "<SEMICOLON>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    //symbolTable.InsertWithoutReturn(yytext,"SEMICOLON");
 }
 
 {IDENTIFIER}  {           

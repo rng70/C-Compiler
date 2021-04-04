@@ -121,32 +121,32 @@ public:
     void InsertAndPrintToFile(std::string s, std::string type) {
         
         if(Insert(s, type)){
-          ScopeTable* temp = this;
-          while(temp!=0){
-          temp->printModified();
+            ScopeTable* temp = this;
+            while(temp!=0){
+            temp->printModified();
             // SymbolInfo* p;
 
-        //     fprintf(logs,"ScopeTable # %s\n",this->getStringifyID().c_str());
+            //     fprintf(logs,"ScopeTable # %s\n",this->getStringifyID().c_str());
 
-        //     for(int i = 0; i<size; i++)
-        // {
-        //     if(HashTable[i]->getName()!="")
-        //     {
-        //         fprintf(logs," %d --> ",i);
+            //     for(int i = 0; i<size; i++)
+            // {
+            //     if(HashTable[i]->getName()!="")
+            //     {
+            //         fprintf(logs," %d --> ",i);
 
-        //         p = HashTable[i];
+            //         p = HashTable[i];
 
-        //         while(p != 0)
-        //         {
-        //             fprintf(logs,"< %s : %s> ",p->getName().c_str(),p->getType().c_str());
+            //         while(p != 0)
+            //         {
+            //             fprintf(logs,"< %s : %s> ",p->getName().c_str(),p->getType().c_str());
 
-        //             p = p->getNextPointer();
-        //         }
-        //         fprintf(logs,"\n");
-        //     }
-        // }
-        //fprintf(logs,"\n");
-        temp = temp->getParentScope();}
+            //             p = p->getNextPointer();
+            //         }
+            //         fprintf(logs,"\n");
+            //     }
+            // }
+            //fprintf(logs,"\n");
+            temp = temp->getParentScope();}
         }
     }
 
