@@ -24,17 +24,14 @@ void filePrint(int number_of_lines, char* a, char* b, FILE* tokens, FILE* logs, 
     fprintf(tokens,"%s ",a);}
     else{fprintf(tokens,"<%s, %s> ",a,b);}
     fprintf(logs,"Line no %d: Token %s Lexeme %s found",number_of_lines,a,b);
-        if(!strcmp(a, "<CONST_CHAR>")){
-    fprintf(logs, " --> <CHAR_CONST, %s>\n\n", b);}
+if(!strcmp(a, "<CONST_CHAR>")){
+string str1(b);
+str1.erase(0, 1);
+str1.erase(str1.size()-1, 1);
+    fprintf(logs, " --> <CHAR_CONST, %s> \n\n", str1.c_str());}
     else{
     fprintf(logs, "\n\n");
          }
-}
-
-void print_to_files_32(int number_of_lines, char* a, char* b, FILE* tokens, FILE* logs)
-{
-    fprintf(tokens,"<%s, %s> ",a ,b);
-    fprintf(logs,"Line no %d: Token <%s> Lexeme %s found\n\n",number_of_lines,a,b);
 }
 %}
 
@@ -182,7 +179,7 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
                     break;
     }     
                 
-    fprintf(logs,"Line no. %d: Token <CONST_CHAR> Lexeme %s found --> <CHAR_CONST, %c> \n\n",number_of_lines,yytext, char1);
+    fprintf(logs,"Line no %d: Token <CONST_CHAR> Lexeme %sfound --> <CHAR_CONST, %c> \n\n",number_of_lines,yytext, char1);
     symbolTable.InsertWithoutReturn(yytext,"CONST_CHAR");
 }
 
@@ -336,7 +333,7 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
 }
 
 <COMMENTMULTI><<EOF>> { 
-    fprintf(logs,"Error observed at Line No:%d: Unterminated Comment: %s\n\n",linestart,s1.c_str());
+    fprintf(logs,"Error at line no %d: Unterminated Comment %s\n\n",linestart,s1.c_str());
     s1 = "";
     number_of_errors++;
     
@@ -363,7 +360,7 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
 
 <STRINGSTATE>\n {
     number_of_lines++;
-    fprintf(logs,"Error observed at Line No:%d: Unterminated string: %s\n\n",linestart,s1.c_str());
+    fprintf(logs,"Error at line no %d: Unterminated String %s\n\n",linestart,s1.c_str());
     s1 = "";
     number_of_errors++;
     
@@ -430,28 +427,28 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
 {UNRECOGNIZEDCHARACTER} {
     number_of_errors++;
     
-    fprintf(logs,"Error at line no %d: Unrecognized character constant error: %s\n\n",number_of_lines,yytext);
+    fprintf(logs,"Error at line no %d: Unrecognized character constant error %s\n\n",number_of_lines,yytext);
 
 }
 
 {MULTICHARACTERERROR} {
     number_of_errors++;
     
-    fprintf(logs,"Error at line no %d: Multi character constant error: %s\n\n",number_of_lines,yytext);
+    fprintf(logs,"Error at line no %d: Multi character constant error %s\n\n",number_of_lines,yytext);
 
 }
 
 {EMPTYCHARERROR} {
     number_of_errors++;
     
-    fprintf(logs,"Error at line no %d: Empty character constant error: %s\n\n",number_of_lines,yytext);
+    fprintf(logs,"Error at line no %d: Empty character constant error %s\n\n",number_of_lines,yytext);
 }
 
 
 {UNFINISHEDCHARACTER} {
     number_of_errors++;
     
-    fprintf(logs,"Error at line no %d: Unterminated character: %s\n\n",number_of_lines,yytext);
+    fprintf(logs,"Error at line no %d: Unterminated character %s\n\n",number_of_lines,yytext);
 }
 
 <<EOF>> {  
