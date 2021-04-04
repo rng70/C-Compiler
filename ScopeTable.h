@@ -121,28 +121,29 @@ public:
     void InsertAndPrintToFile(std::string s, std::string type) {
         
         if(Insert(s, type)){
-            SymbolInfo* p;
+            this->printModified();
+        //     SymbolInfo* p;
 
-            fprintf(logs,"ScopeTable # %s\n",this->getStringifyID().c_str());
+        //     fprintf(logs,"ScopeTable # %s\n",this->getStringifyID().c_str());
 
-            for(int i = 0; i<size; i++)
-        {
-            if(HashTable[i]->getName()!="")
-            {
-                fprintf(logs," %d --> ",i);
+        //     for(int i = 0; i<size; i++)
+        // {
+        //     if(HashTable[i]->getName()!="")
+        //     {
+        //         fprintf(logs," %d --> ",i);
 
-                p = HashTable[i];
+        //         p = HashTable[i];
 
-                while(p != 0)
-                {
-                    fprintf(logs,"< %s : %s> ",p->getName().c_str(),p->getType().c_str());
+        //         while(p != 0)
+        //         {
+        //             fprintf(logs,"< %s : %s> ",p->getName().c_str(),p->getType().c_str());
 
-                    p = p->getNextPointer();
-                }
-                fprintf(logs,"\n");
-            }
-        }
-        fprintf(logs,"\n");
+        //             p = p->getNextPointer();
+        //         }
+        //         fprintf(logs,"\n");
+        //     }
+        // }
+        // fprintf(logs,"\n");
         }
     }
 
@@ -301,6 +302,26 @@ public:
             std::cout << " " << std::endl;
         }
         std::cout << std::endl;
+    }
+    void printModified() {
+        fprintf(logs,"ScopeTable # %s\n",this->getStringifyID().c_str());
+        for (int i = 0; i < size; i++) {
+            if (HashTable[i]->getNextPointer() == 0) {
+                if (HashTable[i]->getName() != ""){
+                    fprintf(logs," %d --> ",i);
+                    fprintf(logs,"< %s : %s> ",HashTable[i]->getName().c_str(),HashTable[i]->getType().c_str());
+                    }
+            } else {
+                SymbolInfo *temp = HashTable[i];
+                while (temp != 0) {
+                    fprintf(logs," %d --> ",i);
+                    fprintf(logs,"< %s : %s> ",temp->getName().c_str(),temp->getType().c_str());
+                    temp = temp->getNextPointer();
+                }
+            }
+            fprintf(logs," \n");
+        }
+        fprintf(logs,"\n");
     }
 
     bool copyOfDeleteFunction(std::string s) {
