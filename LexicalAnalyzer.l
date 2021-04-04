@@ -39,7 +39,7 @@ LETTERS [a-zA-Z]
 DIGIT [0-9]
 EXP [Ee][+-]?[0-9]+
 NEWLINE \n
-IDENTIFIER [a-zA-Z_][a-zA-Z0-9_]*fin
+IDENTIFIER [a-zA-Z_][a-zA-Z0-9_]*
 MULOP "*"|"/"|"%"
 RELOP "<"|"<="|">"|">="|"!="|"=="
 LOGICOP "||"|"&&"
