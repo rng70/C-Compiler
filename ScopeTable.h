@@ -119,7 +119,7 @@ public:
         if(Insert(s, type)){
             SymbolInfo* p;
 
-            fprintf(logs,"ScopeTable # %d\n",this->getStringifyID());
+            fprintf(logs,"ScopeTable # %s\n",this->getStringifyID());
 
             for(int i = 0; i<size; i++)
         {
