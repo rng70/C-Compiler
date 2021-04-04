@@ -21,14 +21,14 @@ SymbolTable symbolTable(7);
 void filePrint(int number_of_lines, char* a, char* b, FILE* tokens, FILE* logs, int fileNumber=0)
 {
     if(!fileNumber){
-    fprintf(tokens,"%s",a);}
-    else{fprintf(tokens,"<%s,%s>",a,b);}
+    fprintf(tokens,"%s ",a);}
+    else{fprintf(tokens,"<%s, %s> ",a,b);}
     fprintf(logs,"Line no %d: Token %s Lexeme %s found\n\n",number_of_lines,a,b);
 }
 
 void print_to_files_32(int number_of_lines, char* a, char* b, FILE* tokens, FILE* logs)
 {
-    fprintf(tokens,"<%s,%s>",a,b);
+    fprintf(tokens,"<%s, %s> ",a ,b);
     fprintf(logs,"Line no %d: Token <%s> Lexeme %s found\n\n",number_of_lines,a,b);
 }
 %}
@@ -142,31 +142,42 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
 }
 
 '\\[nt\\afr"bv0]' {
+    char char1;
         switch(yytext[2])
     {
-        case 't':   fprintf(tokens,"<CONST_CHAR,%c>",'\t');
+        case 't':   char1 = '\t';
+                    fprintf(tokens,"<CONST_CHAR, %c> ",'\t');
                     break;
-        case 'n':   fprintf(tokens,"<CONST_CHAR,%c>",'\n');
+        case 'n':   char1 = '\n';
+                    fprintf(tokens,"<CONST_CHAR, %c> ",'\n');
                     break;
-        case '\\':  fprintf(tokens,"<CONST_CHAR,%c>",'\\');
+        case '\\':  char1 = '\\';
+                    fprintf(tokens,"<CONST_CHAR, %c> ",'\\');
                     break;
-        case '"' :  fprintf(tokens,"<CONST_CHAR,%c>",'"');
+        case '"' :  char1 = '"';
+                    fprintf(tokens,"<CONST_CHAR, %c> ",'"');
                     break;
-        case 'a' :  fprintf(tokens,"<CONST_CHAR,%c>",'\a');
+        case 'a' :  char1 = '\a';
+                    fprintf(tokens,"<CONST_CHAR, %c> ",'\a');
                     break;
-        case 'f' :  fprintf(tokens,"<CONST_CHAR,%c>",'\f');
+        case 'f' :  char1 = '\f';
+                    fprintf(tokens,"<CONST_CHAR, %c> ",'\f');
                     break;
-        case 'r' :  fprintf(tokens,"<CONST_CHAR,%c>",'\r');
+        case 'r' :  char1 = '\r';
+                    fprintf(tokens,"<CONST_CHAR, %c> ",'\r');
                     break;
-        case 'b' :  fprintf(tokens,"<CONST_CHAR,%c>",'\b');
+        case 'b' :  char1 = '\t';
+                    fprintf(tokens,"<CONST_CHAR, %c> ",'\b');
                     break;
-        case 'v' :  fprintf(tokens,"<CONST_CHAR,%c>",'\v');
+        case 'v' :  char1 = '\t';
+                    fprintf(tokens,"<CONST_CHAR, %c> ",'\v');
                     break;
-        case '0' :  fprintf(tokens,"<CONST_CHAR,%c>",'\0');
+        case '0' :  char1 = '\t';
+                    fprintf(tokens,"<CONST_CHAR, %c> ",'\0');
                     break;
     }     
                 
-    fprintf(logs,"Line no. %d: Token <CONST_CHAR> Lexeme %s found\n\n",number_of_lines,yytext);
+    fprintf(logs,"Line no. %d: Token <CONST_CHAR> Lexeme %s found --> <CHAR_CONST, %c> \n\n",number_of_lines,yytext, char1);
     symbolTable.InsertWithoutReturn(yytext,"CONST_CHAR");
 }
 
@@ -336,8 +347,8 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
 
 <STRINGSTATE>\" {     
     s1 = s1+yytext;
-    fprintf(logs,"Line no %d: Token <STRING> Lexeme %s found\n\n",linestart,s1.c_str());
-    fprintf(tokens,"<STRING ,%s>",s2.c_str());
+    fprintf(logs,"Line no %d: Token <STRING> Lexeme %s found --> <STRING, \"%s\"\n\n",linestart,s1.c_str(), s2.c_str());
+    fprintf(tokens,"<STRING, %s> ", s2.c_str());
     s1 = "";
     s2 = "";
     BEGIN INITIAL;
