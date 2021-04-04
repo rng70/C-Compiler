@@ -1,125 +1,196 @@
 Line no. 1: TOKEN <INT> Lexeme int found
 
+Line no. 1: TOKEN ID Lexeme main found
+
+ScopeTable # -1744842352
+1--> <main : ID> 
+
 Line no. 1: TOKEN LPAREN Lexeme ( found
 
-ScopeTable # 616931792
+ScopeTable # -1744842352
 0--> <( : LPAREN> 
+1--> <main : ID> 
 
 Line no. 1: TOKEN RPAREN Lexeme ) found
 
-ScopeTable # 616931792
+ScopeTable # -1744842352
 0--> <( : LPAREN> 
-1--> <) : RPAREN> 
+1--> <main : ID> <) : RPAREN> 
 
 Line no. 1: TOKEN LCURl Lexeme { found
 
-ScopeTable # 616931792
+ScopeTable # -1744842352
 0--> <( : LPAREN> 
-1--> <) : RPAREN> 
+1--> <main : ID> <) : RPAREN> 
 3--> <{ : LCURL> 
 
 Line no. 2: TOKEN <INT> Lexeme int found
 
+Line no. 2: TOKEN ID Lexeme a found
+
+ScopeTable # -1744842352
+0--> <( : LPAREN> 
+1--> <main : ID> <) : RPAREN> 
+3--> <{ : LCURL> 
+7--> <a : ID> 
+
 Line no. 2: TOKEN COMMA Lexeme , found
 
-ScopeTable # 616931792
+ScopeTable # -1744842352
 0--> <( : LPAREN> 
-1--> <) : RPAREN> 
+1--> <main : ID> <) : RPAREN> 
 3--> <{ : LCURL> 
 4--> <, : COMMA> 
+7--> <a : ID> 
+
+Line no. 2: TOKEN ID Lexeme b found
+
+ScopeTable # -1744842352
+0--> <( : LPAREN> 
+1--> <main : ID> <) : RPAREN> 
+3--> <{ : LCURL> 
+4--> <, : COMMA> 
+7--> <a : ID> 
+8--> <b : ID> 
 
 Line no. 2: TOKEN SEMICOLON Lexeme ; found
 
-ScopeTable # 616931792
+ScopeTable # -1744842352
 0--> <( : LPAREN> 
-1--> <) : RPAREN> 
+1--> <main : ID> <) : RPAREN> 
 3--> <{ : LCURL> 
 4--> <, : COMMA> 
+7--> <a : ID> 
+8--> <b : ID> 
 9--> <; : SEMICOLON> 
+
+Line no. 3: TOKEN ID Lexeme a found
 
 Line no. 3: TOKEN ASSIGNOP Lexeme = found
 
-ScopeTable # 616931792
+ScopeTable # -1744842352
 0--> <( : LPAREN> 
-1--> <) : RPAREN> <= : ASSIGNOP> 
+1--> <main : ID> <) : RPAREN> <= : ASSIGNOP> 
 3--> <{ : LCURL> 
 4--> <, : COMMA> 
+7--> <a : ID> 
+8--> <b : ID> 
 9--> <; : SEMICOLON> 
+
+Line no. 3: TOKEN ID Lexeme a found
 
 Line no. 3: TOKEN ADDOP Lexeme + found
 
-ScopeTable # 616931792
+ScopeTable # -1744842352
 0--> <( : LPAREN> 
-1--> <) : RPAREN> <= : ASSIGNOP> 
+1--> <main : ID> <) : RPAREN> <= : ASSIGNOP> 
 3--> <{ : LCURL> <+ : ADDOP> 
 4--> <, : COMMA> 
+7--> <a : ID> 
+8--> <b : ID> 
 9--> <; : SEMICOLON> 
 
 Line no. 3: TOKEN CONST_INT Lexeme 1 found
 
-ScopeTable # 616931792
+ScopeTable # -1744842352
 0--> <( : LPAREN> 
-1--> <) : RPAREN> <= : ASSIGNOP> 
+1--> <main : ID> <) : RPAREN> <= : ASSIGNOP> 
 3--> <{ : LCURL> <+ : ADDOP> 
 4--> <, : COMMA> 
+7--> <a : ID> 
+8--> <b : ID> 
 9--> <; : SEMICOLON> <1 : CONST_INT> 
 
 Line no. 3: TOKEN SEMICOLON Lexeme ; found
 
 Line no. 4: TOKEN <CHAR> Lexeme char found
 
+Line no. 4: TOKEN ID Lexeme ch found
+
+ScopeTable # -1744842352
+0--> <( : LPAREN> 
+1--> <main : ID> <) : RPAREN> <= : ASSIGNOP> 
+3--> <{ : LCURL> <+ : ADDOP> <ch : ID> 
+4--> <, : COMMA> 
+7--> <a : ID> 
+8--> <b : ID> 
+9--> <; : SEMICOLON> <1 : CONST_INT> 
+
 Line no. 4: TOKEN ASSIGNOP Lexeme = found
 
 Line no. 4: TOKEN CONST_CHAR Lexeme 'a' found
 
-ScopeTable # 616931792
+ScopeTable # -1744842352
 0--> <( : LPAREN> 
-1--> <) : RPAREN> <= : ASSIGNOP> 
-3--> <{ : LCURL> <+ : ADDOP> 
+1--> <main : ID> <) : RPAREN> <= : ASSIGNOP> 
+3--> <{ : LCURL> <+ : ADDOP> <ch : ID> 
 4--> <, : COMMA> 
 5--> <'a' : CONST_CHAR> 
+7--> <a : ID> 
+8--> <b : ID> 
 9--> <; : SEMICOLON> <1 : CONST_INT> 
 
 Line no. 4: TOKEN SEMICOLON Lexeme ; found
+
+Line no. 5: TOKEN ID Lexeme ch found
 
 Line no. 5: TOKEN ASSIGNOP Lexeme = found
 
 Line no. 5: TOKEN <CONST_CHAR> Lexeme '\t' found
 
-ScopeTable # 616931792
+ScopeTable # -1744842352
 0--> <( : LPAREN> 
-1--> <) : RPAREN> <= : ASSIGNOP> 
-3--> <{ : LCURL> <+ : ADDOP> 
+1--> <main : ID> <) : RPAREN> <= : ASSIGNOP> 
+3--> <{ : LCURL> <+ : ADDOP> <ch : ID> 
 4--> <, : COMMA> 
 5--> <'a' : CONST_CHAR> 
 6--> <'\t' : CONST_CHAR> 
+7--> <a : ID> 
+8--> <b : ID> 
 9--> <; : SEMICOLON> <1 : CONST_INT> 
 
 Line no. 5: TOKEN SEMICOLON Lexeme ; found
 
 Line no. 6: TOKEN <CHAR> Lexeme char found
 
-Line no. 6: TOKEN LTHIRD Lexeme [ found
+Line no. 6: TOKEN ID Lexeme c found
 
-ScopeTable # 616931792
+ScopeTable # -1744842352
 0--> <( : LPAREN> 
-1--> <) : RPAREN> <= : ASSIGNOP> <[ : LTHIRD> 
-3--> <{ : LCURL> <+ : ADDOP> 
+1--> <main : ID> <) : RPAREN> <= : ASSIGNOP> 
+3--> <{ : LCURL> <+ : ADDOP> <ch : ID> 
 4--> <, : COMMA> 
 5--> <'a' : CONST_CHAR> 
 6--> <'\t' : CONST_CHAR> 
-9--> <; : SEMICOLON> <1 : CONST_INT> 
+7--> <a : ID> 
+8--> <b : ID> 
+9--> <; : SEMICOLON> <1 : CONST_INT> <c : ID> 
+
+Line no. 6: TOKEN LTHIRD Lexeme [ found
+
+ScopeTable # -1744842352
+0--> <( : LPAREN> 
+1--> <main : ID> <) : RPAREN> <= : ASSIGNOP> <[ : LTHIRD> 
+3--> <{ : LCURL> <+ : ADDOP> <ch : ID> 
+4--> <, : COMMA> 
+5--> <'a' : CONST_CHAR> 
+6--> <'\t' : CONST_CHAR> 
+7--> <a : ID> 
+8--> <b : ID> 
+9--> <; : SEMICOLON> <1 : CONST_INT> <c : ID> 
 
 Line no. 6: TOKEN RTHIRD Lexeme ] found
 
-ScopeTable # 616931792
+ScopeTable # -1744842352
 0--> <( : LPAREN> 
-1--> <) : RPAREN> <= : ASSIGNOP> <[ : LTHIRD> 
-3--> <{ : LCURL> <+ : ADDOP> <] : RTHIRD> 
+1--> <main : ID> <) : RPAREN> <= : ASSIGNOP> <[ : LTHIRD> 
+3--> <{ : LCURL> <+ : ADDOP> <ch : ID> <] : RTHIRD> 
 4--> <, : COMMA> 
 5--> <'a' : CONST_CHAR> 
 6--> <'\t' : CONST_CHAR> 
-9--> <; : SEMICOLON> <1 : CONST_INT> 
+7--> <a : ID> 
+8--> <b : ID> 
+9--> <; : SEMICOLON> <1 : CONST_INT> <c : ID> 
 
 Line no. 6: TOKEN ASSIGNOP Lexeme = found
 
@@ -127,7 +198,18 @@ Line no. 6: TOKEN <STRING> Lexeme "ab\td" found
 
 Line no. 6: TOKEN SEMICOLON Lexeme ; found
 
-Line no. 7: TOKEN <INT> Lexeme int found
+Line no. 7: TOKEN ID Lexeme printf found
+
+ScopeTable # -1744842352
+0--> <( : LPAREN> 
+1--> <main : ID> <) : RPAREN> <= : ASSIGNOP> <[ : LTHIRD> 
+3--> <{ : LCURL> <+ : ADDOP> <ch : ID> <] : RTHIRD> 
+4--> <, : COMMA> 
+5--> <'a' : CONST_CHAR> 
+6--> <'\t' : CONST_CHAR> 
+7--> <a : ID> 
+8--> <b : ID> 
+9--> <; : SEMICOLON> <1 : CONST_INT> <c : ID> <printf : ID> 
 
 Line no. 7: TOKEN LPAREN Lexeme ( found
 
@@ -148,29 +230,31 @@ Line no. 13: TOKEN <RETURN> Lexeme return found
 
 Line no. 13: TOKEN CONST_INT Lexeme 0 found
 
-ScopeTable # 616931792
+ScopeTable # -1744842352
 0--> <( : LPAREN> 
-1--> <) : RPAREN> <= : ASSIGNOP> <[ : LTHIRD> 
-3--> <{ : LCURL> <+ : ADDOP> <] : RTHIRD> 
+1--> <main : ID> <) : RPAREN> <= : ASSIGNOP> <[ : LTHIRD> 
+3--> <{ : LCURL> <+ : ADDOP> <ch : ID> <] : RTHIRD> 
 4--> <, : COMMA> 
 5--> <'a' : CONST_CHAR> 
 6--> <'\t' : CONST_CHAR> 
-8--> <0 : CONST_INT> 
-9--> <; : SEMICOLON> <1 : CONST_INT> 
+7--> <a : ID> 
+8--> <b : ID> <0 : CONST_INT> 
+9--> <; : SEMICOLON> <1 : CONST_INT> <c : ID> <printf : ID> 
 
 Line no. 13: TOKEN SEMICOLON Lexeme ; found
 
 Line no. 14: TOKEN RCURL Lexeme } found
 
-ScopeTable # 616931792
+ScopeTable # -1744842352
 0--> <( : LPAREN> 
-1--> <) : RPAREN> <= : ASSIGNOP> <[ : LTHIRD> 
-3--> <{ : LCURL> <+ : ADDOP> <] : RTHIRD> 
+1--> <main : ID> <) : RPAREN> <= : ASSIGNOP> <[ : LTHIRD> 
+3--> <{ : LCURL> <+ : ADDOP> <ch : ID> <] : RTHIRD> 
 4--> <, : COMMA> 
 5--> <'a' : CONST_CHAR> <} : RCURL> 
 6--> <'\t' : CONST_CHAR> 
-8--> <0 : CONST_INT> 
-9--> <; : SEMICOLON> <1 : CONST_INT> 
+7--> <a : ID> 
+8--> <b : ID> <0 : CONST_INT> 
+9--> <; : SEMICOLON> <1 : CONST_INT> <c : ID> <printf : ID> 
 
 Total Line No:13
 Total Errors:0
