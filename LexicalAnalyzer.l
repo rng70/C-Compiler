@@ -23,13 +23,13 @@ void filePrint(int number_of_lines, char* a, char* b, FILE* tokens, FILE* logs, 
     if(!fileNumber){
     fprintf(tokens,"%s",a);}
     else{fprintf(tokens,"<%s,%s>",a,b);}
-    fprintf(logs,"Line no. %d: TOKEN %s Lexeme %s found\n\n",number_of_lines,a,b);
+    fprintf(logs,"Line no %d: Token %s Lexeme %s found\n\n",number_of_lines,a,b);
 }
 
 void print_to_files_32(int number_of_lines, char* a, char* b, FILE* tokens, FILE* logs)
 {
     fprintf(tokens,"<%s,%s>",a,b);
-    fprintf(logs,"Line no. %d: TOKEN <%s> Lexeme %s found\n\n",number_of_lines,a,b);
+    fprintf(logs,"Line no %d: Token <%s> Lexeme %s found\n\n",number_of_lines,a,b);
 }
 %}
 
@@ -124,19 +124,19 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
 }
 
 {DIGIT}+ {
-    char c[] = "CONST_INT";
+    char c[] = "<CONST_INT>";
     filePrint(number_of_lines,c,yytext,tokens,logs, 1);
                 symbolTable.InsertWithoutReturn(yytext,"CONST_INT");
 }
 
 {FLOATINGPOINT} {
-    char c[] = "CONST_FLOAT";
+    char c[] = "<CONST_FLOAT>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
                 symbolTable.InsertWithoutReturn(yytext,"CONST_FLOAT");
 }
 
 {CHARACTERLITERALS} {
-    char c[] = "CONST_CHAR";
+    char c[] = "<CONST_CHAR>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
                 symbolTable.InsertWithoutReturn(yytext,"CONST_CHAR");
 }
@@ -166,106 +166,108 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
                     break;
     }     
                 
-    fprintf(logs,"Line no. %d: TOKEN <CONST_CHAR> Lexeme %s found\n\n",number_of_lines,yytext);
+    fprintf(logs,"Line no. %d: Token <CONST_CHAR> Lexeme %s found\n\n",number_of_lines,yytext);
     symbolTable.InsertWithoutReturn(yytext,"CONST_CHAR");
 }
 
 "+"|"-" {
-    char c[] = "ADDOP";
+    char c[] = "<ADDOP>";
     filePrint(number_of_lines,c,yytext,tokens,logs, 1);
-    symbolTable.InsertWithoutReturn(yytext,"ADDOP");
+    //symbolTable.InsertWithoutReturn(yytext,"ADDOP");
 }
 
 "++"|"--" {       
-    char c[] = "INCOP";
+    char c[] = "<INCOP>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    symbolTable.InsertWithoutReturn(yytext,"INCOP");
+    //symbolTable.InsertWithoutReturn(yytext,"INCOP");
 }
 
 {MULOP} {    
-    char c[] = "MULOP";
+    char c[] = "<MULOP>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    symbolTable.InsertWithoutReturn(yytext,"MULOP");
+    //symbolTable.InsertWithoutReturn(yytext,"MULOP");
 }
 {RELOP} {    
-    char c[] = "RELOP";
+    char c[] = "<RELOP>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    symbolTable.InsertWithoutReturn(yytext,"RELOP");
+    //symbolTable.InsertWithoutReturn(yytext,"RELOP");
 }
 
 {LOGICOP} {        
-    char c[] = "LOGICOP";
+    char c[] = "<LOGICOP>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    symbolTable.InsertWithoutReturn(yytext,"LOGICOP");
+    //symbolTable.InsertWithoutReturn(yytext,"LOGICOP");
 }
 
 {BITOP} {
-    char c[] = "BITOP";
+    char c[] = "<BITOP>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    symbolTable.InsertWithoutReturn(yytext,"BITOP");
+    //symbolTable.InsertWithoutReturn(yytext,"BITOP");
 }
 "=" {        
-    char c[] = "ASSIGNOP";
+    char c[] = "<ASSIGNOP>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    symbolTable.InsertWithoutReturn(yytext,"ASSIGNOP");
+    //symbolTable.InsertWithoutReturn(yytext,"ASSIGNOP");
 }
 
 "!" {            
-    char c[] = "NOT";
+    char c[] = "<NOT>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    symbolTable.InsertWithoutReturn(yytext,"NOT");
+    //symbolTable.InsertWithoutReturn(yytext,"NOT");
 }
 
 "(" {          
-    char c[] = "LPAREN";
+    char c[] = "<LPAREN>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    symbolTable.InsertWithoutReturn(yytext,"LPAREN");
+    //symbolTable.InsertWithoutReturn(yytext,"LPAREN");
 }
 
 ")" {
-    char c[] = "RPAREN";
+    char c[] = "<RPAREN>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    symbolTable.InsertWithoutReturn(yytext,"RPAREN");
+    //symbolTable.InsertWithoutReturn(yytext,"RPAREN");
 }
 
 "{" {            
-    char c[] = "LCURl";
+    char c[] = "<LCURL>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    symbolTable.InsertWithoutReturn(yytext,"LCURL");
+    symbolTable.EnterScope();
+    //symbolTable.InsertWithoutReturn(yytext,"LCURL");
 }
 
 "}" {
-    char c[] = "RCURL";
+    char c[] = "<RCURL>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    symbolTable.InsertWithoutReturn(yytext,"RCURL");
+    symbolTable.ExitScope();
+    //symbolTable.InsertWithoutReturn(yytext,"RCURL");
 }
 
 "[" {
-    char c[] = "LTHIRD";
+    char c[] = "<LTHIRD>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    symbolTable.InsertWithoutReturn(yytext,"LTHIRD");
+    //symbolTable.InsertWithoutReturn(yytext,"LTHIRD");
 }
 
 "]" {          
-    char c[] = "RTHIRD";
+    char c[] = "<RTHIRD>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    symbolTable.InsertWithoutReturn(yytext,"RTHIRD");
+    //symbolTable.InsertWithoutReturn(yytext,"RTHIRD");
 }
 
 "," {
-    char c[] = "COMMA";
+    char c[] = "<COMMA>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    symbolTable.InsertWithoutReturn(yytext,"COMMA");
+    //symbolTable.InsertWithoutReturn(yytext,"COMMA");
 }
 
 ";" {
-    char c[] = "SEMICOLON";
+    char c[] = "<SEMICOLON>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-    symbolTable.InsertWithoutReturn(yytext,"SEMICOLON");
+    //symbolTable.InsertWithoutReturn(yytext,"SEMICOLON");
 }
 
 {IDENTIFIER}  {           
-    char c[] = "ID";
+    char c[] = "<ID>";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
     symbolTable.InsertWithoutReturn(yytext,"ID");
 }
@@ -277,7 +279,7 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
 }
 
 <COMMENTSINGLE>\n {     
-    fprintf(logs,"Line no. %d: TOKEN <COMMENT> Lexeme %s found\n\n",linestart,s1.c_str());
+    fprintf(logs,"Line no. %d: Token <COMMENT> Lexeme %s found\n\n",linestart,s1.c_str());
     number_of_lines++;
     s1 = "";
     s2 = "";
@@ -301,7 +303,7 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
 
 <COMMENTMULTI>"*/" {
     s1 = s1+yytext;
-    fprintf(logs,"Line no. %d: TOKEN <COMMENT> Lexeme %s found\n\n",linestart,s1.c_str());
+    fprintf(logs,"Line no. %d: Token <COMMENT> Lexeme %s found\n\n",linestart,s1.c_str());
     s1 = "";
     linestart = 0;
     BEGIN INITIAL;
@@ -334,7 +336,7 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
 
 <STRINGSTATE>\" {     
     s1 = s1+yytext;
-    fprintf(logs,"Line no. %d: TOKEN <STRING> Lexeme %s found\n\n",linestart,s1.c_str());
+    fprintf(logs,"Line no. %d: Token <STRING> Lexeme %s found\n\n",linestart,s1.c_str());
     fprintf(tokens,"<STRING ,%s>",s2.c_str());
     s1 = "";
     s2 = "";
@@ -392,47 +394,47 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
 
 {TOOMANYDECIMAL} {
     number_of_errors++;
-    fprintf(logs,"Error at line %d: Too many decimal point: %s\n\n",number_of_lines,yytext);
+    fprintf(logs,"Error at line no %d: Too many decimal points %s\n\n",number_of_lines,yytext);
 }
 
 {ILLFORMEDERROR} {
     number_of_errors++;
     
-    fprintf(logs,"Error at line %d: Ill formed Number: %s\n\n",number_of_lines,yytext);
+    fprintf(logs,"Error at line no %d: Ill formed number %s\n\n",number_of_lines,yytext);
 }
 
 {INVALIDIDENTIFIER} {
     number_of_errors++;
     
-    fprintf(logs,"Error at line %d: Invalid prefix on ID or invalid suffix on Number: %s\n\n",number_of_lines,yytext);
+    fprintf(logs,"Error at line no %d: Invalid prefix on ID or invalid suffix on Number %s\n\n",number_of_lines,yytext);
 
 }
 
 {UNRECOGNIZEDCHARACTER} {
     number_of_errors++;
     
-    fprintf(logs,"Error at line %d: Unrecognized character constant error: %s\n\n",number_of_lines,yytext);
+    fprintf(logs,"Error at line no %d: Unrecognized character constant error: %s\n\n",number_of_lines,yytext);
 
 }
 
 {MULTICHARACTERERROR} {
     number_of_errors++;
     
-    fprintf(logs,"Error at line %d: Multi character constant error: %s\n\n",number_of_lines,yytext);
+    fprintf(logs,"Error at line no %d: Multi character constant error: %s\n\n",number_of_lines,yytext);
 
 }
 
 {EMPTYCHARERROR} {
     number_of_errors++;
     
-    fprintf(logs,"Error at line %d: Empty character constant error: %s\n\n",number_of_lines,yytext);
+    fprintf(logs,"Error at line no %d: Empty character constant error: %s\n\n",number_of_lines,yytext);
 }
 
 
 {UNFINISHEDCHARACTER} {
     number_of_errors++;
     
-    fprintf(logs,"Error at line %d: Unterminated character: %s\n\n",number_of_lines,yytext);
+    fprintf(logs,"Error at line no %d: Unterminated character: %s\n\n",number_of_lines,yytext);
 }
 
 <<EOF>> {  
@@ -455,6 +457,7 @@ int main(int argc, char* argv[]){
 
     logs = fopen("1705070_log.txt","w");
     tokens = fopen("1705070_token.txt","w");
+    fprintf(logs, "\n");
 
     yyin= fin;
     yylex();

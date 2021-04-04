@@ -77,6 +77,8 @@ public:
                 if (root->getName() == s) {
                     // Duplicate found
                     // std::cout << "<" << s << "," << type << "> already exists in current ScopeTable" << std::endl << std::endl;
+                  std::string foundMsg = s + " already exists in current ScopeTable";
+                  fprintf(logs, "%s\n", foundMsg.c_str());
                     return false;
                 }
                 root = root->getNextPointer();
@@ -85,6 +87,8 @@ public:
             if (root->getNextPointer() == 0 && root->getName() == s) {
                 // duplicate found at level 0
                 // std::cout << "<" << s << "," << type << "> already exists in current ScopeTable" << std::endl << std::endl;
+              std::string foundMsg = s + " already exists in current ScopeTable";
+                  fprintf(logs, "%s\n", foundMsg.c_str());
                 return false;
             }
 
@@ -119,19 +123,19 @@ public:
         if(Insert(s, type)){
             SymbolInfo* p;
 
-            fprintf(logs,"ScopeTable # %s\n",this->getStringifyID());
+            fprintf(logs,"ScopeTable # %s\n",this->getStringifyID().c_str());
 
             for(int i = 0; i<size; i++)
         {
             if(HashTable[i]->getName()!="")
             {
-                fprintf(logs,"%d--> ",i);
+                fprintf(logs," %d --> ",i);
 
                 p = HashTable[i];
 
                 while(p != 0)
                 {
-                    fprintf(logs,"<%s : %s> ",p->getName().c_str(),p->getType().c_str());
+                    fprintf(logs,"< %s : %s> ",p->getName().c_str(),p->getType().c_str());
 
                     p = p->getNextPointer();
                 }
