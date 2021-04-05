@@ -77,10 +77,10 @@ public:
                 if (root->getName() == s) {
                     // Duplicate found
                     // std::cout << "<" << s << "," << type << "> already exists in current ScopeTable" << std::endl << std::endl;
-                  if(root->getType()=="ID"){
+                if(root->getType()=="ID"){
                     std::string foundMsg = s + " already exists in current ScopeTable\n";
                     fprintf(logs, "%s\n", foundMsg.c_str());
-                  }
+                }
                     return false;
                 }
                 root = root->getNextPointer();
@@ -89,10 +89,10 @@ public:
             if (root->getNextPointer() == 0 && root->getName() == s) {
                 // duplicate found at level 0
                 // std::cout << "<" << s << "," << type << "> already exists in current ScopeTable" << std::endl << std::endl;
-              if(root->getType()=="ID"){
+            if(root->getType()=="ID"){
                 std::string foundMsg = s + " already exists in current ScopeTable\n";
                 fprintf(logs, "%s\n", foundMsg.c_str());
-              }
+            }
                 return false;
             }
 
@@ -416,7 +416,7 @@ public:
             SymbolInfo *temp = HashTable[i];
 
             while (temp->getName() != "") {
-              copyOfDeleteFunction(temp->getName());
+                copyOfDeleteFunction(temp->getName());
                 temp = HashTable[i];
             }
         }

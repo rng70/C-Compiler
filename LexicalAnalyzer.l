@@ -22,14 +22,15 @@ void filePrint(int number_of_lines, char* a, char* b, FILE* tokens, FILE* logs, 
 {
     if(!fileNumber){
         fprintf(tokens,"<%s> ",a);
-}else{
-if(!strcmp(a, "CONST_CHAR")){
-string mn(b);
-mn.erase(0,1);
-mn.erase(mn.size()-1,1);
-fprintf(tokens, "<CHAR_CONST, %s> ", mn.c_str());
-}else{
-        fprintf(tokens,"<%s, %s> ",a,b);}
+    }else{
+        if(!strcmp(a, "CONST_CHAR")){
+            string mn(b);
+            mn.erase(0,1);
+            mn.erase(mn.size()-1,1);
+            fprintf(tokens, "<CHAR_CONST, %s> ", mn.c_str());
+        }else{
+            fprintf(tokens,"<%s, %s> ",a,b);
+        }
     }
     fprintf(logs,"Line no %d: Token <%s> Lexeme %s found",number_of_lines,a,b);
     if(!strcmp(a, "CONST_CHAR")){
@@ -136,59 +137,59 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
 {DIGIT}+ {
     char c[] = "CONST_INT";
     filePrint(number_of_lines,c,yytext,tokens,logs, 1);
-                symbolTable.InsertWithoutReturn(yytext,"CONST_INT");
+    symbolTable.InsertWithoutReturn(yytext,"CONST_INT");
 }
 
 {FLOATINGPOINT} {
     char c[] = "CONST_FLOAT";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-                symbolTable.InsertWithoutReturn(yytext,"CONST_FLOAT");
+    symbolTable.InsertWithoutReturn(yytext,"CONST_FLOAT");
 }
 
 {CHARACTERLITERALS} {
     char c[] = "CONST_CHAR";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
-                symbolTable.InsertWithoutReturn(yytext,"CONST_CHAR");
+    symbolTable.InsertWithoutReturn(yytext,"CONST_CHAR");
 }
 
 '\\[nt\\\'afr"bv0]' {
     char char1;
         switch(yytext[2])
-    {
-        case 't':   char1 = '\t';
-                    fprintf(tokens,"<CHAR_CONST, %c> ",'\t');
-                    break;
-        case 'n':   char1 = '\n';
-                    fprintf(tokens,"<CHAR_CONST, %c> ",'\n');
-                    break;
-        case '\\':  char1 = '\\';
-                    fprintf(tokens,"<CHAR_CONST, %c> ",'\\');
-                    break;
-        case '"' :  char1 = '"';
-                    fprintf(tokens,"<CHAR_CONST, %c> ",'"');
-                    break;
-        case 'a' :  char1 = '\a';
-                    fprintf(tokens,"<CHAR_CONST, %c> ",'\a');
-                    break;
-        case 'f' :  char1 = '\f';
-                    fprintf(tokens,"<CHAR_CONST, %c> ",'\f');
-                    break;
-        case 'r' :  char1 = '\r';
-                    fprintf(tokens,"<CHAR_CONST, %c> ",'\r');
-                    break;
-        case 'b' :  char1 = '\b';
-                    fprintf(tokens,"<CHAR_CONST, %c> ",'\b');
-                    break;
-        case 'v' :  char1 = '\v';
-                    fprintf(tokens,"<CHAR_CONST, %c> ",'\v');
-                    break;
-        case '0' :  char1 = '\0';
-                    fprintf(tokens,"<CHAR_CONST, %c> ",'\0');
-                    break;
-        case '\'':  char1 = '\'';
-                    fprintf(tokens,"<CHAR_CONST, %c> ",'\'');
-                    break;
-    }     
+        {
+            case 't':   char1 = '\t';
+                        fprintf(tokens,"<CHAR_CONST, %c> ",'\t');
+                        break;
+            case 'n':   char1 = '\n';
+                        fprintf(tokens,"<CHAR_CONST, %c> ",'\n');
+                        break;
+            case '\\':  char1 = '\\';
+                        fprintf(tokens,"<CHAR_CONST, %c> ",'\\');
+                        break;
+            case '"' :  char1 = '"';
+                        fprintf(tokens,"<CHAR_CONST, %c> ",'"');
+                        break;
+            case 'a' :  char1 = '\a';
+                        fprintf(tokens,"<CHAR_CONST, %c> ",'\a');
+                        break;
+            case 'f' :  char1 = '\f';
+                        fprintf(tokens,"<CHAR_CONST, %c> ",'\f');
+                        break;
+            case 'r' :  char1 = '\r';
+                        fprintf(tokens,"<CHAR_CONST, %c> ",'\r');
+                        break;
+            case 'b' :  char1 = '\b';
+                        fprintf(tokens,"<CHAR_CONST, %c> ",'\b');
+                        break;
+            case 'v' :  char1 = '\v';
+                        fprintf(tokens,"<CHAR_CONST, %c> ",'\v');
+                        break;
+            case '0' :  char1 = '\0';
+                        fprintf(tokens,"<CHAR_CONST, %c> ",'\0');
+                        break;
+            case '\'':  char1 = '\'';
+                        fprintf(tokens,"<CHAR_CONST, %c> ",'\'');
+                        break;
+        }     
                 
     fprintf(logs,"Line no %d: Token <CONST_CHAR> Lexeme %sfound --> <CHAR_CONST, %c> \n\n",number_of_lines,yytext, char1);
     symbolTable.InsertWithoutReturn(yytext,"CONST_CHAR");
@@ -208,6 +209,7 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
     char c[] = "MULOP";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
 }
+
 {RELOP} {    
     char c[] = "RELOP";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
@@ -222,6 +224,7 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
     char c[] = "BITOP";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
 }
+
 "=" {        
     char c[] = "ASSIGNOP";
     filePrint(number_of_lines,c,yytext,tokens,logs,1);
@@ -349,16 +352,14 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
     s1 = "";
     s2 = "";
     BEGIN INITIAL;
-    
 }
 
 <STRINGSTATE>\n {
     number_of_lines++;
     fprintf(logs,"Error at line no %d: Unterminated String %s\n\n",linestart,s1.c_str());
     s1 = "";
-s2 = "";
-    number_of_errors++;
-    
+    s2 = "";
+    number_of_errors++;    
     BEGIN INITIAL;
 }
 
@@ -408,47 +409,38 @@ s2 = "";
 
 {ILLFORMEDERROR} {
     number_of_errors++;
-    
     fprintf(logs,"Error at line no %d: Ill formed number %s\n\n",number_of_lines,yytext);
 }
 
 {INVALIDIDENTIFIER} {
     number_of_errors++;
-    
     fprintf(logs,"Error at line no %d: Invalid prefix on ID or invalid suffix on Number %s\n\n",number_of_lines,yytext);
-
 }
 
 {UNRECOGNIZEDCHARACTER} {
     number_of_errors++;
-    
     fprintf(logs,"Error at line no %d: Unrecognized character constant error %s\n\n",number_of_lines,yytext);
-
 }
 
 {MULTICHARACTERERROR} {
     number_of_errors++;
-    
     fprintf(logs,"Error at line no %d: Multi character constant error %s\n\n",number_of_lines,yytext);
-
 }
 
 {EMPTYCHARERROR} {
     number_of_errors++;
-    
     fprintf(logs,"Error at line no %d: Empty character constant error %s\n\n",number_of_lines,yytext);
 }
 
 
 {UNFINISHEDCHARACTER} {
     number_of_errors++;
-    
     fprintf(logs,"Error at line no %d: Unterminated character %s\n\n",number_of_lines,yytext);
 }
+
 . {
     number_of_errors++;
     fprintf(logs,"Error at line no %d: Unrecognized character %s\n\n",number_of_lines,yytext);
-
 }
 
 <<EOF>> {
