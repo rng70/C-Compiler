@@ -53,8 +53,8 @@ IDENTIFIER [a-zA-Z_][a-zA-Z0-9_]*
 MULOP "*"|"/"|"%"
 RELOP "<"|"<="|">"|">="|"!="|"=="
 LOGICOP "||"|"&&"
-BITOP "|"|"&"|"<<"|">>"|"^"
-FLOATINGPOINT (({DIGIT}*([\.]?{DIGIT}+))|({DIGIT}+[\.]?{DIGIT}+)){EXP}?
+BITOP "|"|"&"|"<<"|">>"|"^"|"~"
+FLOATINGPOINT (({DIGIT}*([\.]?{DIGIT}*))|({DIGIT}+[\.]?{DIGIT}*)){EXP}?
 CHARACTERLITERALS '[^\n\\]'
 TOOMANYDECIMAL     {DIGIT}*([\.]{DIGIT}*)+([\.]+{DIGIT}*)+{EXP}?
 ILLFORMEDERROR     {DIGIT}*([\.]+{DIGIT}*)*?([Ee][+-]?([0-9]+)?([\.]*{DIGIT}*)+)+
@@ -116,7 +116,7 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
     char c[] = "RETURN";
     filePrint(number_of_lines, c, yytext, tokens, logs);
 }
-"swithc" {
+"switch" {
     char c[] = "SWITCH";
     filePrint(number_of_lines, c, yytext, tokens, logs);
 }
@@ -151,7 +151,7 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
                 symbolTable.InsertWithoutReturn(yytext,"CONST_CHAR");
 }
 
-'\\[nt\\afr"bv0]' {
+'\\[nt\\\'afr"bv0]' {
     char char1;
         switch(yytext[2])
     {
@@ -184,6 +184,9 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
                     break;
         case '0' :  char1 = '\0';
                     fprintf(tokens,"<CHAR_CONST, %c> ",'\0');
+                    break;
+        case '\'':  char1 = '\'';
+                    fprintf(tokens,"<CHAR_CONST, %c> ",'\'');
                     break;
     }     
                 
@@ -441,6 +444,11 @@ s2 = "";
     number_of_errors++;
     
     fprintf(logs,"Error at line no %d: Unterminated character %s\n\n",number_of_lines,yytext);
+}
+. {
+    number_of_errors++;
+    fprintf(logs,"Error at line no %d: Unrecognized character %s\n\n",number_of_lines,yytext);
+
 }
 
 <<EOF>> {

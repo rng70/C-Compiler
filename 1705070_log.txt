@@ -1,163 +1,216 @@
 
-Line no 1: Token <INT> Lexeme int found
+Line no 1: Token <LCURL> Lexeme { found
 
-Line no 1: Token <ID> Lexeme main found
+Line no 1: Token <SWITCH> Lexeme switch found
 
-ScopeTable # 1
- 1 --> < main : ID> 
-
-Line no 1: Token <LPAREN> Lexeme ( found
-
-Line no 1: Token <RPAREN> Lexeme ) found
+Line no 1: Token <IF> Lexeme if found
 
 Line no 1: Token <LCURL> Lexeme { found
 
-Line no 2: Token <INT> Lexeme int found
+Line no 1: Token <COMMENT> Lexeme /* } */ found
 
-Line no 2: Token <ID> Lexeme a found
+Line no 1: Token <RCURL> Lexeme } found
 
-ScopeTable # 1.1
- 6 --> < a : ID> 
-
-ScopeTable # 1
- 1 --> < main : ID> 
-
-Line no 2: Token <COMMA> Lexeme , found
-
-Line no 2: Token <ID> Lexeme b found
+Line no 2: Token <CONST_INT> Lexeme 100 found
 
 ScopeTable # 1.1
- 0 --> < b : ID> 
- 6 --> < a : ID> 
+ 5 --> < 100 : CONST_INT> 
 
 ScopeTable # 1
- 1 --> < main : ID> 
 
-Line no 2: Token <SEMICOLON> Lexeme ; found
+Line no 2: Token <MULOP> Lexeme * found
 
-Line no 3: Token <ID> Lexeme a found
+Line no 2: Token <CONST_INT> Lexeme 200 found
 
-Line no 3: Token <ASSIGNOP> Lexeme = found
+ScopeTable # 1.1
+ 5 --> < 100 : CONST_INT> 
+ 6 --> < 200 : CONST_INT> 
 
-Line no 3: Token <ID> Lexeme a found
+ScopeTable # 1
+
+Line no 2: Token <ASSIGNOP> Lexeme = found
+
+Line no 2: Token <CONST_INT> Lexeme 300 found
+
+ScopeTable # 1.1
+ 0 --> < 300 : CONST_INT> 
+ 5 --> < 100 : CONST_INT> 
+ 6 --> < 200 : CONST_INT> 
+
+ScopeTable # 1
+
+Line no 3: Token <CONST_INT> Lexeme 100 found
 
 Line no 3: Token <ADDOP> Lexeme + found
 
-Line no 3: Token <CONST_INT> Lexeme 1 found
+Line no 3: Token <CONST_INT> Lexeme 200 found
+
+Line no 3: Token <ASSIGNOP> Lexeme = found
+
+Line no 3: Token <CONST_INT> Lexeme 300 found
+
+Line no 4: Token <INCOP> Lexeme ++ found
+
+Line no 4: Token <INCOP> Lexeme ++ found
+
+Line no 4: Token <ADDOP> Lexeme + found
+
+Line no 4: Token <ID> Lexeme a found
 
 ScopeTable # 1.1
- 0 --> < b : ID> < 1 : CONST_INT> 
- 6 --> < a : ID> 
+ 0 --> < 300 : CONST_INT> 
+ 5 --> < 100 : CONST_INT> 
+ 6 --> < 200 : CONST_INT> < a : ID> 
 
 ScopeTable # 1
- 1 --> < main : ID> 
 
-Line no 3: Token <SEMICOLON> Lexeme ; found
+Line no 4: Token <INCOP> Lexeme ++ found
 
-Line no 4: Token <CHAR> Lexeme char found
+Line no 4: Token <INCOP> Lexeme ++ found
 
-Line no 4: Token <ID> Lexeme ch found
+Line no 4: Token <ADDOP> Lexeme + found
+
+Line no 5: Token <DOUBLE> Lexeme double found
+
+Line no 5: Token <ID> Lexeme __variable found
 
 ScopeTable # 1.1
- 0 --> < b : ID> < 1 : CONST_INT> < ch : ID> 
- 6 --> < a : ID> 
+ 0 --> < 300 : CONST_INT> 
+ 5 --> < 100 : CONST_INT> 
+ 6 --> < 200 : CONST_INT> < a : ID> < __variable : ID> 
 
 ScopeTable # 1
- 1 --> < main : ID> 
-
-Line no 4: Token <ASSIGNOP> Lexeme = found
-
-Line no 4: Token <CONST_CHAR> Lexeme 'a' found --> <CHAR_CONST, a> 
-
-ScopeTable # 1.1
- 0 --> < b : ID> < 1 : CONST_INT> < ch : ID> < 'a' : CONST_CHAR> 
- 6 --> < a : ID> 
-
-ScopeTable # 1
- 1 --> < main : ID> 
-
-Line no 4: Token <SEMICOLON> Lexeme ; found
-
-Line no 5: Token <ID> Lexeme ch found
-
-Line no 5: Token <ASSIGNOP> Lexeme = found
-
-Line no 5: Token <CONST_CHAR> Lexeme '\t'found --> <CHAR_CONST, 	> 
-
-ScopeTable # 1.1
- 0 --> < b : ID> < 1 : CONST_INT> < ch : ID> < 'a' : CONST_CHAR> 
- 6 --> < a : ID> < '\t' : CONST_CHAR> 
-
-ScopeTable # 1
- 1 --> < main : ID> 
 
 Line no 5: Token <SEMICOLON> Lexeme ; found
 
-Line no 6: Token <CHAR> Lexeme char found
+Line no 6: Token <INT> Lexeme int found
 
-Line no 6: Token <ID> Lexeme c found
+Line no 6: Token <ID> Lexeme f found
 
 ScopeTable # 1.1
- 0 --> < b : ID> < 1 : CONST_INT> < ch : ID> < 'a' : CONST_CHAR> 
- 1 --> < c : ID> 
- 6 --> < a : ID> < '\t' : CONST_CHAR> 
+ 0 --> < 300 : CONST_INT> 
+ 4 --> < f : ID> 
+ 5 --> < 100 : CONST_INT> 
+ 6 --> < 200 : CONST_INT> < a : ID> < __variable : ID> 
 
 ScopeTable # 1
- 1 --> < main : ID> 
-
-Line no 6: Token <LTHIRD> Lexeme [ found
-
-Line no 6: Token <RTHIRD> Lexeme ] found
 
 Line no 6: Token <ASSIGNOP> Lexeme = found
 
-Line no 6: Token <STRING> Lexeme "ab\td" found --> <STRING, "ab	d"> 
+Line no 6: Token <CONST_INT> Lexeme 1 found
+
+ScopeTable # 1.1
+ 0 --> < 300 : CONST_INT> < 1 : CONST_INT> 
+ 4 --> < f : ID> 
+ 5 --> < 100 : CONST_INT> 
+ 6 --> < 200 : CONST_INT> < a : ID> < __variable : ID> 
+
+ScopeTable # 1
 
 Line no 6: Token <SEMICOLON> Lexeme ; found
 
-Line no 7: Token <ID> Lexeme printf found
+Line no 7: Token <NOT> Lexeme ! found
+
+Line no 7: Token <ID> Lexeme f found
+
+f already exists in current ScopeTable
+
+Line no 8: Token <CONST_CHAR> Lexeme 'x' found --> <CHAR_CONST, x> 
 
 ScopeTable # 1.1
- 0 --> < b : ID> < 1 : CONST_INT> < ch : ID> < 'a' : CONST_CHAR> 
- 1 --> < c : ID> < printf : ID> 
- 6 --> < a : ID> < '\t' : CONST_CHAR> 
+ 0 --> < 300 : CONST_INT> < 1 : CONST_INT> 
+ 2 --> < 'x' : CONST_CHAR> 
+ 4 --> < f : ID> 
+ 5 --> < 100 : CONST_INT> 
+ 6 --> < 200 : CONST_INT> < a : ID> < __variable : ID> 
 
 ScopeTable # 1
- 1 --> < main : ID> 
 
-Line no 7: Token <LPAREN> Lexeme ( found
-
-Line no 7: Token <STRING> Lexeme "abc\
-def\
-ghi" found --> <STRING, "abcdefghi"> 
-
-Line no 9: Token <RPAREN> Lexeme ) found
-
-Line no 9: Token <SEMICOLON> Lexeme ; found
-
-Line no 10: Token <COMMENT> Lexeme // a comment found
-
-Line no 11: Token <COMMENT> Lexeme /** another
-*** comment ***/ found
-
-Line no 13: Token <RETURN> Lexeme return found
-
-Line no 13: Token <CONST_INT> Lexeme 0 found
+Line no 9: Token <CONST_CHAR> Lexeme '\''found --> <CHAR_CONST, '> 
 
 ScopeTable # 1.1
- 0 --> < b : ID> < 1 : CONST_INT> < ch : ID> < 'a' : CONST_CHAR> 
- 1 --> < c : ID> < printf : ID> 
- 6 --> < a : ID> < '\t' : CONST_CHAR> < 0 : CONST_INT> 
+ 0 --> < 300 : CONST_INT> < 1 : CONST_INT> 
+ 2 --> < 'x' : CONST_CHAR> 
+ 4 --> < f : ID> 
+ 5 --> < 100 : CONST_INT> 
+ 6 --> < 200 : CONST_INT> < a : ID> < __variable : ID> < '\'' : CONST_CHAR> 
 
 ScopeTable # 1
- 1 --> < main : ID> 
 
-Line no 13: Token <SEMICOLON> Lexeme ; found
+Error at line no 10: Multi character constant error '\\''\''
 
-Line no 14: Token <RCURL> Lexeme } found
+Error at line no 10: Unrecognized character \
+
+Error at line no 10: Unrecognized character \
+
+Line no 10: Token <ID> Lexeme commented found
+
+ScopeTable # 1.1
+ 0 --> < 300 : CONST_INT> < 1 : CONST_INT> 
+ 2 --> < 'x' : CONST_CHAR> 
+ 4 --> < f : ID> < commented : ID> 
+ 5 --> < 100 : CONST_INT> 
+ 6 --> < 200 : CONST_INT> < a : ID> < __variable : ID> < '\'' : CONST_CHAR> 
 
 ScopeTable # 1
- 1 --> < main : ID> 
 
-Total lines: 14
-Total errors: 0
+Error at line no 11: Multi character constant error 'multi'
+
+Line no 12: Token <STRING> Lexeme "multi_string?MULTIstring" found --> <STRING, "multi_string?MULTIstring"> 
+
+Line no 13: Token <COMMENT> Lexeme // found
+
+Line no 14: Token <COMMENT> Lexeme /*correctcomment/* */ found
+
+Line no 16: Token <INT> Lexeme int found
+
+Line no 16: Token <ID> Lexeme array found
+
+ScopeTable # 1.1
+ 0 --> < 300 : CONST_INT> < 1 : CONST_INT> 
+ 2 --> < 'x' : CONST_CHAR> 
+ 4 --> < f : ID> < commented : ID> < array : ID> 
+ 5 --> < 100 : CONST_INT> 
+ 6 --> < 200 : CONST_INT> < a : ID> < __variable : ID> < '\'' : CONST_CHAR> 
+
+ScopeTable # 1
+
+Line no 16: Token <LTHIRD> Lexeme [ found
+
+Line no 16: Token <CONST_INT> Lexeme 100 found
+
+Line no 16: Token <RTHIRD> Lexeme ] found
+
+Line no 16: Token <SEMICOLON> Lexeme ; found
+
+Line no 17: Token <LCURL> Lexeme { found
+
+Line no 17: Token <LCURL> Lexeme { found
+
+Error at line no 17: Ill formed number 1.1E1.1
+
+Line no 17: Token <RCURL> Lexeme } found
+
+Line no 17: Token <RCURL> Lexeme } found
+
+Error at line no 18: Unterminated String "string;\
+continuing\\\
+still it does\"
+
+Line no 22: Token <COMMENT> Lexeme /* 
+s
+t
+opped  \t
+*/ found
+
+ScopeTable # 1.1
+ 0 --> < 300 : CONST_INT> < 1 : CONST_INT> 
+ 2 --> < 'x' : CONST_CHAR> 
+ 4 --> < f : ID> < commented : ID> < array : ID> 
+ 5 --> < 100 : CONST_INT> 
+ 6 --> < 200 : CONST_INT> < a : ID> < __variable : ID> < '\'' : CONST_CHAR> 
+
+ScopeTable # 1
+
+Total lines: 28
+Total errors: 6
