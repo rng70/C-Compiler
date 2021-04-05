@@ -353,6 +353,7 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
     number_of_lines++;
     fprintf(logs,"Error at line no %d: Unterminated String %s\n\n",linestart,s1.c_str());
     s1 = "";
+s2 = "";
     number_of_errors++;
     
     BEGIN INITIAL;
