@@ -54,7 +54,7 @@ MULOP "*"|"/"|"%"
 RELOP "<"|"<="|">"|">="|"!="|"=="
 LOGICOP "||"|"&&"
 BITOP "|"|"&"|"<<"|">>"|"^"|"~"
-FLOATINGPOINT (({DIGIT}*([\.]?{DIGIT}*))|({DIGIT}+[\.]?{DIGIT}*)){EXP}?
+FLOATINGPOINT (({DIGIT}+([\.]?{DIGIT}*))|({DIGIT}*([\.]?{DIGIT}+))){EXP}?
 CHARACTERLITERALS '[^\n\\]'
 TOOMANYDECIMAL     {DIGIT}*([\.]{DIGIT}*)+([\.]+{DIGIT}*)+{EXP}?
 ILLFORMEDERROR     {DIGIT}*([\.]+{DIGIT}*)*?([Ee][+-]?([0-9]+)?([\.]*{DIGIT}*)+)+
