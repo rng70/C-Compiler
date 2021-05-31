@@ -21,6 +21,10 @@ vector< pair<string,string> >temp_param_list;
 vector< pair<string,string> >arg_param_list;
 vector<SymbolInfo*>v;
 
+string type_of_var, statement_solver, return_type_solver;
+bool is_func = false;
+int control_arg;
+
 // error detection
 void yyerror(const char *s){
     fprint(errors, "Line no %d: %s\n", numberOfLines, s);
@@ -76,13 +80,13 @@ string getFromSymbolSet(string name)
 
 %%
 start : program {
-	fprintf(logs, "Symbol Table: \n\n");
+	fprintf(logs, "Symbol Table : \n\n");
 	symbolTable.printAll(logs);
 };
 
 program : program unit {
-	fprintf(logs, "At line no: %d program : program unit\n\n", numberOfLines);
-	$$ -> extraSymbolInfo.stringAdder(getFromSymbolSet(newline) + extraSymbolInfo.stringConcatenator);
+	fprintf(logs, "At line no : %d program : program unit\n\n", numberOfLines);
+	$$ -> extraSymbolInfo.stringAdder(getFromSymbolSet("newline") + extraSymbolInfo.stringConcatenator);
 	fprintf(logs,"%s\n\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 	} | unit {
 	fprintf(logs, "At line no: %d program : program unit\n\n", numberOfLines);

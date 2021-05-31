@@ -16,8 +16,8 @@ class ExtraSymbolInfo{
         bool isFunctionDeclared;
         vector < pair<string,string> >functionParamList;
 
-        string stringAdder(){
-            return 
+        string stringAdder(string addToStringConcatenator){
+            return stringConcatenator.append(addToStringConcatenator);
         }
 
 };
