@@ -9,15 +9,33 @@ class SymbolInfo {
     std::string type;
     SymbolInfo *nextPointer;
 public:
+    ExtraSymbolInfo extraSymbolInfo;
     SymbolInfo() {
         this->name = "";
         this->type = "";
         this->nextPointer = 0;
+        extraSymbolInfo.indexOfArray = "";
+        extraSymbolInfo.sizeOfArray = "";
+        extraSymbolInfo.typeOfID = "";
+        extraSymbolInfo.typeOfVar = "";
+        extraSymbolInfo.isFunction = false;
+        extraSymbolInfo.isFunctionDefined = false;
+        extraSymbolInfo.isFunctionDeclared = false;
+        extraSymbolInfo.returnTypeOfFunction = "";
     }
 
     SymbolInfo(std::string symbolName, std::string symbolType, SymbolInfo *pointer) {
         this->name = symbolName;
         this->type = symbolType;
+        this->nextPointer = 0;
+        extraSymbolInfo.indexOfArray = "";
+        extraSymbolInfo.sizeOfArray = "";
+        extraSymbolInfo.typeOfID = "";
+        extraSymbolInfo.typeOfVar = "";
+        extraSymbolInfo.isFunction = false;
+        extraSymbolInfo.isFunctionDefined = false;
+        extraSymbolInfo.isFunctionDeclared = false;
+        extraSymbolInfo.returnTypeOfFunction = "";
         this->nextPointer = pointer;
     }
 

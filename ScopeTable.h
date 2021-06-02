@@ -3,7 +3,7 @@
 
 #ifndef COMPILER_SCOPETABLE_H
 #define COMPILER_SCOPETABLE_H
-std::FILE *logs;
+//std::FILE *logs;
 std::FILE *tokens;
 
 class ScopeTable {
@@ -120,6 +120,49 @@ public:
         }
         // At that point it is ensured that we must have inserted the item
         return false;
+    }
+
+    bool InsertModified(SymbolInfo* s)
+    {
+        string key = s->getName();
+        string value  = s->getType();
+        int index = HashFunc(key);
+
+        ///if the indexed node is empty
+        if(HashTable[index]->getName() == "" ){
+
+            Table[index] = s;
+            return true;
+        }else ///collision  occurred
+        {
+            ///checking here for duplicates
+            SymbolInfo* head = HashTable[index];
+            ///if initial node is the duplicate one
+            if(head->getNextPointer() == 0 && head->getName() == key){
+                return false;
+            }else{
+                ///The duplicate one may be further down the chain
+                while(head!=0){
+                    if(head->getName() == key){
+                        return false;
+                    }
+                    head = head->getNextPointer();
+                }
+            }
+
+            ///if duplicate is not found, we insert in the chain to resolve collision
+            int j = 0;
+            head = HashTable[index];
+
+            while(head->getNextPointer() != 0){
+                head = head->getNextPointer();
+                j++;
+            }
+
+            s->setNextPointer(0);
+            head->setNextPointer(s);
+            return true;
+        }
     }
 
     void InsertAndPrintToFile(std::string s, std::string type) {
@@ -310,7 +353,7 @@ public:
         }
         std::cout << std::endl;
     }
-    void printModified() {
+    void printModified(FILE *logs) {
         fprintf(logs,"ScopeTable # %s\n",this->getStringifyID().c_str());
         for (int i = 0; i < size; i++) {
             if (HashTable[i]->getNextPointer() == 0) {

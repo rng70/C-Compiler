@@ -22,7 +22,7 @@ public:
     }
 
     // required methods for offline
-    void EnterScope() {
+    void EnterScope(FILE *f) {
         ScopeTable *newScopeTable = new ScopeTable(this->sizeOfTable, currentScope->getTableIdTracker());
         // Increment the table tracker value
         currentScope->setTableIdTracker();
@@ -31,13 +31,15 @@ public:
         currentScope->setParentScope(parentScope);
         // std::cout << "New ScopeTable with id " << newScopeTable->getStringifyID() << " created" << std::endl
         //           << std::endl;
+        fprintf(f,"New ScopeTable with Id %d created\n",newScopeTable->getStringifyID().c_str());
     }
 
-    void ExitScope() {
+    void ExitScope(FILE *f) {
         //currentScope->setTableIdTracker();
         ScopeTable *temp = currentScope;
         currentScope = temp->getParentScope();
         // std::cout << "ScopeTable with id " << temp->getStringifyID() << " removed" << std::endl << std::endl;
+        fprintf(f,"ScopeTable with ID %d removed\n",temp->getStringifyID().c_str());
         delete temp;
     }
 
@@ -45,6 +47,10 @@ public:
         if (currentScope->Insert(s, type))
             return true;
         return false;
+    }
+    bool InsertModified(SymbolInfo* s)
+    {
+        return currentScope->InsertModified(s);
     }
 
     void InsertWithoutReturn(std::string s, std::string type) {
@@ -71,14 +77,23 @@ public:
         return 0;
     }
 
-    void printCurrentScopeTable() {
-        currentScope->print();
+    SymbolInfo* currentScopeLookUp(string Name){
+        SymbolInfo* result;
+        result = currentScope->LookUp(Name);
+
+        if(result!=0) 
+            return result;
+        return 0;
     }
 
-    void printAllTable() {
+    void printCurrentScopeTable(FILE *f) {
+        currentScope->print(f);
+    }
+
+    void printAllTable(FILE* f) {
         ScopeTable *recursive = currentScope;
         while (recursive != 0) {
-            recursive->printModified();
+            recursive->printModified(f);
             recursive = recursive->getParentScope();
         }
     }
