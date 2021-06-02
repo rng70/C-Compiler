@@ -177,8 +177,8 @@ func_declaration : type_specifier ID LPAREN parameter_list RPAREN SEMICOLON{
 	}
 	$$ -> extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator + $2->getName()+getFromSymbolSet("left_first")+$4->extraSymbolInfo.stringConcatenator+getFromSymbolSet("right_first")+getFromSymbolSet("semicolon");
 	fprintf(logs, "%s\n\n\n", $$->extraSymbolInfo.stringConcatenator.c_str());
-} | type_specified ID LPAREN RPAREN SEMICOLON {
-	fprintf(logs, "At line no: %d func_declaration : type_specified ID LPAREN RPAREN SEMICOLON\n\n", numberOfLines);
+} | type_specifier ID LPAREN RPAREN SEMICOLON {
+	fprintf(logs, "At line no: %d func_declaration : type_specifier ID LPAREN RPAREN SEMICOLON\n\n", numberOfLines);
 	SymbolInfo* temp = symbolTable.LookUp($2->getName());
 	if(temp != 0){
 		if(temp->extraSymbolInfo.returnTypeOfFunction != $1->getType()){
@@ -208,9 +208,9 @@ func_declaration : type_specifier ID LPAREN parameter_list RPAREN SEMICOLON{
 	fprintf(logs, "%s\n\n\n", $$->extraSymbolInfo.stringConcatenator.c_str());
 };
 
-func_definition : type_specified ID LPAREN parameter_list RPAREN compound_statement {
+func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement {
 		// scope_counter = scope_counter + 1
-		printf(logs, "At line no: %d func_definition : type_specified ID LPAREN parameter_list RPAREN compound_statement\n\n", numberOfLines);
+		printf(logs, "At line no: %d func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement\n\n", numberOfLines);
 		SymbolInfo *s = symbolTable.LookUP($2->getName());
 		SymbolInfo *temp = new SymbolInfo();
 		bool flag = true;
@@ -312,7 +312,7 @@ func_definition : type_specified ID LPAREN parameter_list RPAREN compound_statem
 		}
 		$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator+$2->getName()+getFromSymbolset("left_first")+$4->extraSymbolInfo.stringConcatenator+getFromSymbolset("right_first")+$6->extraSymbolInfo.stringConcatenator;
 		fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
-} | type_specified ID LPAREN compound_statement{
+} | type_specifier ID LPAREN compound_statement{
 	fprintf(logs, "At line no: %d func_definition ID LPAREN RPAREN compound_statement\n\n", numberOfLines);
 
 	// scope_counter++;
@@ -446,7 +446,7 @@ var_declaration : type_specifier declaration_list SEMICOLON {
 	fprintf(logs,"%s\n\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 };
 
-type_specified : INT {
+type_specifier : INT {
 	fprintf(logs, "At line no: %d type_specifier : INT\n\n", numberOfLines);
 
 	SymbolInfo* s = new SymbolInfo("", "INT");
