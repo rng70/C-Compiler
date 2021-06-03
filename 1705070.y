@@ -30,6 +30,21 @@ void yyerror(const char *s){
     fprint(errors, "Line no %d: %s\n", numberOfLines, s);
 }
 
+string stringAdder(int count, ...){
+	va_list varStringList;
+	int counter;
+	const char* t;
+	string s;
+	va_start(varStringList, count);
+	for(int counter=0;counter<count;counter++){
+		t = va_arg(ap, const char*);
+		string temp(t);
+		result += temp;
+	}
+	va_end(ap);
+	return result;
+}
+
 void symbolSet()
 {
     SymbolSet["comma"] = ",";
@@ -450,7 +465,7 @@ compound_statement : LCURL {
 var_declaration : type_specifier declaration_list SEMICOLON {
 	fprintf(logs,"At line no: %d var_declaration : type_specifier declaration_list SEMICOLON\n\n",numberOfLines);
 
-	$$->extraSymbolInfo.stringConcatenator = string_adder(3,$1->extraSymbolInfo.stringConcatenator.c_str(),$2->extraSymbolInfo.stringConcatenator.c_str(),getFromSymbolSet("semicolon").c_str());
+	$$->extraSymbolInfo.stringConcatenator = stringAdder(3,$1->extraSymbolInfo.stringConcatenator.c_str(),$2->extraSymbolInfo.stringConcatenator.c_str(),getFromSymbolSet("semicolon").c_str());
 
 	fprintf(logs,"%s\n\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 };
