@@ -77,8 +77,17 @@ string getFromSymbolSet(string name)
 %type <symbolInfoPointer> expression logic_expression simple_expression rel_expression  type_specifier term unary_expression variable factor statement expression_statement  compound_statement  declaration_list var_declaration statements func_declaration  func_definition parameter_list unit program argument_list arguments
 
 // This is the starting point of implementation of bison grammar 
+%nonassoc LOWER_PREC_THAN_ELSE
+%nonassoc ELSE
 
+%left RELOP LOGICOP
+%left ADDOP
+%left MULOP
+%error-verbose
+
+%type <symbolInfoPointer>start
 %%
+
 start : program {
 	fprintf(logs, "Symbol Table : \n\n");
 	symbolTable.printAll(logs);
