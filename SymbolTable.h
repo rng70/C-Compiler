@@ -53,9 +53,9 @@ public:
         return currentScope->InsertModified(s);
     }
 
-    void InsertWithoutReturn(std::string s, std::string type) {
-        currentScope->InsertAndPrintToFile(s, type);
-    }
+    // void InsertWithoutReturn(std::string s, std::string type) {
+    //     currentScope->InsertAndPrintToFile(s, type);
+    // }
 
     bool Remove(std::string s) {
         if (currentScope->Delete(s))
@@ -79,7 +79,7 @@ public:
 
     SymbolInfo* currentScopeLookUp(std::string Name){
         SymbolInfo* result;
-        result = currentScope->LookUp(Name);
+        result = currentScope->LookUP(Name);
 
         if(result!=0) 
             return result;

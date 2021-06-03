@@ -24,6 +24,15 @@ vector<SymbolInfo*>v;
 string type_of_var, statement_solver, return_type_solver;
 bool is_func = false;
 int control_arg;
+int scope_counter = 1;
+int scope_counter_2 = 0;
+string type_of_var;
+string statement_solver;
+bool is_func=false;
+string return_type_solver;
+int control_arg;
+string running_f_name = "";
+string scope_holder = "";
 
 // error detection
 void yyerror(const char *s){
@@ -185,8 +194,8 @@ func_declaration : type_specifier ID LPAREN parameter_list RPAREN SEMICOLON{
 		temp->extraSymbolInfo.returnTypeOfFunction = $1->getType();
 		temp->extraSymbolInfo.isFunction = true;
 		temp->extraSymbolInfo.isFunctionDeclared = true;
-		temp.setName($2->getName());
-		temp.setType($2->getType());
+		temp->setName($2->getName());
+		temp->setType($2->getType());
 
 		if(isVoid){
 			numberOfErrors++;
@@ -234,8 +243,8 @@ func_declaration : type_specifier ID LPAREN parameter_list RPAREN SEMICOLON{
 
 func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement {
 		// scope_counter = scope_counter + 1
-		printf(logs, "At line no: %d func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement\n\n", numberOfLines);
-		SymbolInfo *s = symbolTable.LookUP($2->getName());
+		fprintf(logs, "At line no: %d func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement\n\n", numberOfLines);
+		SymbolInfo *s = symbolTable.LookUp($2->getName());
 		SymbolInfo *temp = new SymbolInfo();
 		bool flag = true;
 		// if it doest not exixts in any scope then insert the ID into
@@ -282,7 +291,7 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statem
 			// function already exists
 			if(s->extraSymbolInfo.isFunctionDefined){
 				numberOfErrors++;
-				fprint(errors, "Error at line %d: Multiple definition of function\n\n", numberOfLines);
+				fprintf(errors, "Error at line %d: Multiple definition of function\n\n", numberOfLines);
 				temp_param_list.clear();
 			}else if(s->extraSymbolInfo.isFunctionDeclared){
 				/* Three case to handle here 
@@ -334,7 +343,7 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statem
 				}
 			}
 		}
-		$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator+$2->getName()+getFromSymbolset("left_first")+$4->extraSymbolInfo.stringConcatenator+getFromSymbolset("right_first")+$6->extraSymbolInfo.stringConcatenator;
+		$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator+$2->getName()+getFromSymbolSet("left_first")+$4->extraSymbolInfo.stringConcatenator+getFromSymbolSet("right_first")+$6->extraSymbolInfo.stringConcatenator;
 		fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 } | type_specifier ID LPAREN RPAREN compound_statement{
 	fprintf(logs, "At line no: %d func_definition ID LPAREN RPAREN compound_statement\n\n", numberOfLines);
@@ -359,7 +368,7 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statem
 
 			if(actReturnType != funcReturnType){
 				numberOfErrors++;
-				fprinf(errors, "Error at line %d: Return type mismatch\n\n", numberOfLines);
+				fprintf(errors, "Error at line %d: Return type mismatch\n\n", numberOfLines);
 				s->extraSymbolInfo.isFunction = false;
 			}
 		}else if(s->extraSymbolInfo.isFunctionDefined){
@@ -403,7 +412,7 @@ parameter_list  : parameter_list COMMA type_specifier ID
 };
 
 compound_statement : LCURL {
-	symbolTable.EnterScope();
+	symbolTable.EnterScope(logs);
 
 	scope_counter_2 = symbolTable.getTableIdTracker();
 	scope_holder = symbolTable.getStringityID();
@@ -428,12 +437,12 @@ compound_statement : LCURL {
 	temp_param_list.clear();
 } statements RCURL {
 	fprintf(logs,"At line no: %d compound_statement : LCURL statements RCURL\n\n",numberOfLines);
-	$$->extraSymbolInfo.stringConcatenator = getFromSymbolTable("left_curl")+"\n"+$3->extraSymbolInfo.stringConcatenator+getFromSymbolTable("right_curl");
+	$$->extraSymbolInfo.stringConcatenator = getFromSymbolSet("left_curl")+"\n"+$3->extraSymbolInfo.stringConcatenator+getFromSymbolSet("right_curl");
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 	symbolTable.printAllTable(logs);
-	symbolTable.ExitScope();
+	symbolTable.ExitScope(logs);
 } | LCURL {
-	symbolTable.EnterScope();
+	symbolTable.EnterScope(logs);
 	// scope_counter_2 = symbolTable.getTableIDTracker();
 
 	for(int i=0;i<temp_param_list.size();i++){
@@ -459,7 +468,7 @@ compound_statement : LCURL {
 	$$->extraSymbolInfo.stringConcatenator = getFromSymbolSet("left_curl")+"\n"+getFromSymbolSet("right_curl");
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 	symbolTable.printAllTable(logs);
-	symbolTable.ExitScope();
+	symbolTable.ExitScope(logs);
 };
 
 var_declaration : type_specifier declaration_list SEMICOLON {
