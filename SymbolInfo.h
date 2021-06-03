@@ -24,7 +24,7 @@ public:
         extraSymbolInfo.returnTypeOfFunction = "";
     }
 
-    SymbolInfo(std::string symbolName, std::string symbolType, SymbolInfo *pointer) {
+    SymbolInfo(std::string symbolName, std::string symbolType, SymbolInfo *pointer = 0) {
         this->name = symbolName;
         this->type = symbolType;
         this->nextPointer = 0;
