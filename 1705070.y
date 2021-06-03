@@ -312,7 +312,7 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statem
 		}
 		$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator+$2->getName()+getFromSymbolset("left_first")+$4->extraSymbolInfo.stringConcatenator+getFromSymbolset("right_first")+$6->extraSymbolInfo.stringConcatenator;
 		fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
-} | type_specifier ID LPAREN compound_statement{
+} | type_specifier ID LPAREN RPAREN compound_statement{
 	fprintf(logs, "At line no: %d func_definition ID LPAREN RPAREN compound_statement\n\n", numberOfLines);
 
 	// scope_counter++;
