@@ -26,11 +26,6 @@ bool is_func = false;
 int control_arg;
 int scope_counter = 1;
 int scope_counter_2 = 0;
-string type_of_var;
-string statement_solver;
-bool is_func=false;
-string return_type_solver;
-int control_arg;
 string running_f_name = "";
 string scope_holder = "";
 
@@ -319,7 +314,7 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statem
 				// Case 3: Check for sequence of parameter list 
 				else{
 					for(int i = 0;i<temp_param_list.size();i++){
-						if(temp_param_list[i].second != functionParamList[i].second){
+						if(temp_param_list[i].second != s->extraSymbolInfo.functionParamList[i].second){
 							numberOfErrors++;
 							fprintf(errors, "Error at line %d: Argument Type Mismathch with function declaration\n\n", numberOfLines);
 							flag=false;
@@ -414,8 +409,8 @@ parameter_list  : parameter_list COMMA type_specifier ID
 compound_statement : LCURL {
 	symbolTable.EnterScope(logs);
 
-	scope_counter_2 = symbolTable.getTableIdTracker();
-	scope_holder = symbolTable.getStringityID();
+	// scope_counter_2 = symbolTable.getTableIdTracker();
+	scope_holder = symbolTable.getStringifyID();
 
 	if(temp_param_list.size()!=0){
 		for(int i=0;i<temp_param_list.size();i++){
@@ -507,7 +502,7 @@ declaration_list : declaration_list COMMA ID {
 	if(type_of_var!="VOID"){
 		fprintf(logs,"At line no : %d declaration_list : declaration_list COMMA ID\n\n",numberOfLines);
 
-		SymbolInfo* test = symbolTalbe.currentScopeLookUp($3->getName());
+		SymbolInfo* test = symbolTable.currentScopeLookUp($3->getName());
 		if(test!=0){
 			fprintf(errors,"Error at Line %d  : Multiple Declaration of %s\n\n",numberOfLines,$3->getName().c_str());
 			numberOfErrors++;
@@ -746,7 +741,7 @@ variable : ID {
 		$$->setName(temp->getName());
 		$$->setType(temp->getType());
 		$$->extraSymbolInfo.indexOfArray  = temp->extraSymbolInfo.indexOfArray;
-		$$->extraSymbolInfo.array_size = temp->extraSymbolInfo.array_size;
+		$$->extraSymbolInfo.sizeOfArray = temp->extraSymbolInfo.sizeOfArray;
 	} else {
 		numberOfErrors++;
 		fprintf(errors,"Error at Line %d : Undeclared variable : %s\n\n",numberOfLines,$1->getName().c_str());
