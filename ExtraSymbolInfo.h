@@ -5,18 +5,18 @@
 
 class ExtraSymbolInfo{
     public:
-        string typeOfID;
-        string typeOfVar;
-        string returnTypeOfFunction;
-        string sizeOfArray;
-        string indexOfArray;
-        string stringConcatenator;
+        std::string typeOfID;
+        std::string typeOfVar;
+        std::string returnTypeOfFunction;
+        std::string sizeOfArray;
+        std::string indexOfArray;
+        std::string stringConcatenator;
         bool isFunction;
         bool isFunctionDefined;
         bool isFunctionDeclared;
-        vector < pair<string,string> >functionParamList;
+        std::vector < pair<std::string,std::string> >functionParamList;
 
-        string stringAdder(string addToStringConcatenator){
+        std::string stringAdder(std::string addToStringConcatenator){
             return stringConcatenator.append(addToStringConcatenator);
         }
 
