@@ -102,7 +102,10 @@ string getFromSymbolSet(string name)
 %left RELOP LOGICOP
 %left ADDOP
 %left MULOP
-%error-verbose
+// this version of error-verbose is deprecated
+// %error-verbose
+// instead of using 'error-verbose' use the following one
+%define parse.error verbose
 
 %type <symbolInfoPointer>start
 %%
@@ -145,7 +148,7 @@ func_declaration : type_specifier ID LPAREN parameter_list RPAREN SEMICOLON{
 			4. No void Parameters are declared
 			*/
 	fprintf(logs, "At line no: %d func_declaration : type_specifier ID LPAREN parameter_list RPAREN SEMICOLON\n\n", numberOfLines);
-	SymbolInfo* temp = symbolTable.LookUP($2->getName());
+	SymbolInfo* temp = symbolTable.LookUp($2->getName());
 
 	// if it found in symbol table
 	if(temp != 0){
@@ -165,7 +168,7 @@ func_declaration : type_specifier ID LPAREN parameter_list RPAREN SEMICOLON{
 		// Checking parameter sequence
 		else{
 			for(int i=0;i<temp_param_list.size();i++){
-				if(temp_param_list[i].second != s->extraSymbolInfo.functionParamList[i].second){
+				if(temp_param_list[i].second != temp->extraSymbolInfo.functionParamList[i].second){
 					numberOfErrors++;
 					fprintf(errors, "Argument Type Mismatch with previous function declaration \n\n", numberOfLines);
 				}
