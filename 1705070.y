@@ -114,7 +114,7 @@ start : program {
 
 program : program unit {
 	fprintf(logs, "At line no : %d program : program unit\n\n", numberOfLines);
-	$$ -> extraSymbolInfo.stringAdder(getFromSymbolSet("newline") + extraSymbolInfo.stringConcatenator);
+	$$ -> extraSymbolInfo.stringAdder(getFromSymbolSet("newline") + $2 -> extraSymbolInfo.stringConcatenator);
 	fprintf(logs,"%s\n\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 	} 
 	| unit {
@@ -145,7 +145,7 @@ func_declaration : type_specifier ID LPAREN parameter_list RPAREN SEMICOLON{
 			4. No void Parameters are declared
 			*/
 	fprintf(logs, "At line no: %d func_declaration : type_specifier ID LPAREN parameter_list RPAREN SEMICOLON\n\n", numberOfLines);
-	SymbolInfo* temp = symbolInfoPointer.LookUP($2->getName());
+	SymbolInfo* temp = symbolTable.LookUP($2->getName());
 
 	// if it found in symbol table
 	if(temp != 0){
@@ -165,7 +165,7 @@ func_declaration : type_specifier ID LPAREN parameter_list RPAREN SEMICOLON{
 		// Checking parameter sequence
 		else{
 			for(int i=0;i<temp_param_list.size();i++){
-				if(temp_param_list[i].second != functionParamList[i].second){
+				if(temp_param_list[i].second != s->extraSymbolInfo.functionParamList[i].second){
 					numberOfErrors++;
 					fprintf(errors, "Argument Type Mismatch with previous function declaration \n\n", numberOfLines);
 				}
@@ -222,7 +222,7 @@ func_declaration : type_specifier ID LPAREN parameter_list RPAREN SEMICOLON{
 			temp->extraSymbolInfo.typeOfID = "FUNCTION";
 			temp->extraSymbolInfo.returnTypeOfFunction = $1->getType();
 			temp->extraSymbolInfo.isFunction = true;
-			temp->extraSymbolInto.isFunctionDeclared = true;
+			temp->extraSymbolInfo.isFunctionDeclared = true;
 			temp->setName($2->getName());
 			temp->setType($2->getType());
 
@@ -296,7 +296,8 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statem
 				s->extraSymbolInfo.isFunctionDefined = true;
 				string actReturnType = $1->getType();
 				string declaredReturnType = s->extraSymbolInfo.returnTypeOfFunction;
-				string declaredParamSize = s->extraSymbolInfo.functionParamList.size();string definedParamSize = temp_param_list.size();
+				int declaredParamSize = s->extraSymbolInfo.functionParamList.size();
+				int definedParamSize = temp_param_list.size();
 
 				// Case 1: Return type Check
 				if(actReturnType != declaredReturnType){
@@ -353,7 +354,7 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statem
 		temp->extraSymbolInfo.isFunction = true;
 		temp->extraSymbolInfo.isFunctionDefined = true;
 		temp->setName($2->getName());
-		temp->getType($2->getName());
+		temp->setType($2->getType());
 
 		symbolTable.InsertModified(temp);
 	}else{
@@ -373,7 +374,7 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statem
 		}
 	}
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator+$2->getName()+getFromSymbolSet("left_first")+getFromSymbolSet("right_first")+$5->extraSymbolInfo.stringConcatenator;
-	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str())
+	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 };
 
 parameter_list  : parameter_list COMMA type_specifier ID
@@ -410,7 +411,7 @@ compound_statement : LCURL {
 	symbolTable.EnterScope(logs);
 
 	// scope_counter_2 = symbolTable.getTableIdTracker();
-	scope_holder = symbolTable.getStringifyID();
+	// scope_holder = symbolTable.getStringifyID();
 
 	if(temp_param_list.size()!=0){
 		for(int i=0;i<temp_param_list.size();i++){
