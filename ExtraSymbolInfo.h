@@ -21,3 +21,5 @@ class ExtraSymbolInfo{
         }
 
 };
+
+#endif
