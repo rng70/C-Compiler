@@ -14,7 +14,7 @@ class ExtraSymbolInfo{
         bool isFunction;
         bool isFunctionDefined;
         bool isFunctionDeclared;
-        std::vector < pair<std::string,std::string> >functionParamList;
+        std::vector <std::pair<std::string,std::string>>functionParamList;
 
         std::string stringAdder(std::string addToStringConcatenator){
             return stringConcatenator.append(addToStringConcatenator);

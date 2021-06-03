@@ -79,7 +79,7 @@ public:
                     // std::cout << "<" << s << "," << type << "> already exists in current ScopeTable" << std::endl << std::endl;
                 if(root->getType()=="ID"){
                     std::string foundMsg = s + " already exists in current ScopeTable\n";
-                    fprintf(logs, "%s\n", foundMsg.c_str());
+                    //fprintf(logs, "%s\n", foundMsg.c_str());
                 }
                     return false;
                 }
@@ -91,7 +91,7 @@ public:
                 // std::cout << "<" << s << "," << type << "> already exists in current ScopeTable" << std::endl << std::endl;
             if(root->getType()=="ID"){
                 std::string foundMsg = s + " already exists in current ScopeTable\n";
-                fprintf(logs, "%s\n", foundMsg.c_str());
+                // fprintf(logs, "%s\n", foundMsg.c_str());
             }
                 return false;
             }
@@ -124,14 +124,14 @@ public:
 
     bool InsertModified(SymbolInfo* s)
     {
-        string key = s->getName();
-        string value  = s->getType();
+        std::string key = s->getName();
+        std::string value  = s->getType();
         int index = HashFunc(key);
 
         ///if the indexed node is empty
         if(HashTable[index]->getName() == "" ){
 
-            Table[index] = s;
+            HashTable[index] = s;
             return true;
         }else ///collision  occurred
         {
@@ -165,37 +165,37 @@ public:
         }
     }
 
-    void InsertAndPrintToFile(std::string s, std::string type) {
+    // void InsertAndPrintToFile(std::string s, std::string type) {
         
-        if(Insert(s, type)){
-            ScopeTable* temp = this;
-            while(temp!=0){
-            temp->printModified();
-            // SymbolInfo* p;
+    //     if(Insert(s, type)){
+    //         ScopeTable* temp = this;
+    //         while(temp!=0){
+    //         temp->printModified();
+    //         // SymbolInfo* p;
 
-            //     fprintf(logs,"ScopeTable # %s\n",this->getStringifyID().c_str());
+    //         //     fprintf(logs,"ScopeTable # %s\n",this->getStringifyID().c_str());
 
-            //     for(int i = 0; i<size; i++)
-            // {
-            //     if(HashTable[i]->getName()!="")
-            //     {
-            //         fprintf(logs," %d --> ",i);
+    //         //     for(int i = 0; i<size; i++)
+    //         // {
+    //         //     if(HashTable[i]->getName()!="")
+    //         //     {
+    //         //         fprintf(logs," %d --> ",i);
 
-            //         p = HashTable[i];
+    //         //         p = HashTable[i];
 
-            //         while(p != 0)
-            //         {
-            //             fprintf(logs,"< %s : %s> ",p->getName().c_str(),p->getType().c_str());
+    //         //         while(p != 0)
+    //         //         {
+    //         //             fprintf(logs,"< %s : %s> ",p->getName().c_str(),p->getType().c_str());
 
-            //             p = p->getNextPointer();
-            //         }
-            //         fprintf(logs,"\n");
-            //     }
-            // }
-            //fprintf(logs,"\n");
-            temp = temp->getParentScope();}
-        }
-    }
+    //         //             p = p->getNextPointer();
+    //         //         }
+    //         //         fprintf(logs,"\n");
+    //         //     }
+    //         // }
+    //         //fprintf(logs,"\n");
+    //         temp = temp->getParentScope();}
+    //     }
+    // }
 
     int getID() {
         return this->Id;

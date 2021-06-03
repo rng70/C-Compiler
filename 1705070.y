@@ -27,7 +27,7 @@ int control_arg;
 
 // error detection
 void yyerror(const char *s){
-    fprint(errors, "Line no %d: %s\n", numberOfLines, s);
+    fprintf(errors, "Line no %d: %s\n", numberOfLines, s);
 }
 
 string stringAdder(int count, ...){
@@ -37,12 +37,12 @@ string stringAdder(int count, ...){
 	string s;
 	va_start(varStringList, count);
 	for(int counter=0;counter<count;counter++){
-		t = va_arg(ap, const char*);
+		t = va_arg(varStringList, const char*);
 		string temp(t);
-		result += temp;
+		s += temp;
 	}
-	va_end(ap);
-	return result;
+	va_end(varStringList);
+	return s;
 }
 
 void symbolSet()
@@ -105,7 +105,7 @@ string getFromSymbolSet(string name)
 
 start : program {
 	fprintf(logs, "Symbol Table : \n\n");
-	symbolTable.printAll(logs);
+	symbolTable.printAllTable(logs);
 };
 
 program : program unit {
@@ -140,7 +140,7 @@ func_declaration : type_specifier ID LPAREN parameter_list RPAREN SEMICOLON{
 			3. Check parameter sequence is same
 			4. No void Parameters are declared
 			*/
-	fpirntf(logs, "At line no: %d func_declaration : type_specifier ID LPAREN parameter_list RPAREN SEMICOLON\n\n", numberOfLines);
+	fprintf(logs, "At line no: %d func_declaration : type_specifier ID LPAREN parameter_list RPAREN SEMICOLON\n\n", numberOfLines);
 	SymbolInfo* temp = symbolInfoPointer.LookUP($2->getName());
 
 	// if it found in symbol table
@@ -430,7 +430,7 @@ compound_statement : LCURL {
 	fprintf(logs,"At line no: %d compound_statement : LCURL statements RCURL\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = getFromSymbolTable("left_curl")+"\n"+$3->extraSymbolInfo.stringConcatenator+getFromSymbolTable("right_curl");
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
-	symbolTable.printAll(logs);
+	symbolTable.printAllTable(logs);
 	symbolTable.ExitScope();
 } | LCURL {
 	symbolTable.EnterScope();
@@ -445,7 +445,7 @@ compound_statement : LCURL {
 		s->setType("ID");
 		s->extraSymbolInfo.typeOfVar = type;
 		bool check = symbolTable.InsertModified(s);
-		symbolTable.printAll(logs);
+		symbolTable.printAllTable(logs);
 		//decld_var_carrier.push_back(make_pair(name+to_string(scope_counter),""));
 
 		if(check == 0){
@@ -458,7 +458,7 @@ compound_statement : LCURL {
 	fprintf(logs,"At line no: %d compound_statement : LCURL  RCURL\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = getFromSymbolSet("left_curl")+"\n"+getFromSymbolSet("right_curl");
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
-	symbolTable.printAll(logs);
+	symbolTable.printAllTable(logs);
 	symbolTable.ExitScope();
 };
 

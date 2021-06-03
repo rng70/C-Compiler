@@ -77,7 +77,7 @@ public:
         return 0;
     }
 
-    SymbolInfo* currentScopeLookUp(string Name){
+    SymbolInfo* currentScopeLookUp(std::string Name){
         SymbolInfo* result;
         result = currentScope->LookUp(Name);
 
@@ -87,7 +87,7 @@ public:
     }
 
     void printCurrentScopeTable(FILE *f) {
-        currentScope->print(f);
+        currentScope->printModified(f);
     }
 
     void printAllTable(FILE* f) {
