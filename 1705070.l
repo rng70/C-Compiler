@@ -56,9 +56,6 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
 "do" {
     return DO;
 }
-"break" {
-    return BREAK;
-}
 "int" {
     return INT;
 }
@@ -76,15 +73,6 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
 }
 "return" {
     return RETURN;
-}
-"switch" {
-    return SWITCH;
-}
-"case" {
-    return CASE;
-}
-"default" {
-    return DEFAULT;
 }
 "continue" {
     return CONTINUE;
