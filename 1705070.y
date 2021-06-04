@@ -121,7 +121,7 @@ program : program unit {
 	fprintf(logs,"%s\n\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 	} 
 	| unit {
-	fprintf(logs, "Line %d: program : program unit\n\n", numberOfLines);
+	fprintf(logs, "Line %d: program : unit\n\n", numberOfLines);
 	$$ -> extraSymbolInfo.stringConcatenator = $1 -> extraSymbolInfo.stringConcatenator;
 	fprintf(logs,"%s\n\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 };
@@ -382,21 +382,21 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statem
 
 parameter_list  : parameter_list COMMA type_specifier ID
 {
-		fprintf(logs,"Line %d: parameter_list  : parameter_list COMMA type_specifier ID\n\n",numberOfLines);
+		fprintf(logs,"Line %d: parameter_list : parameter_list COMMA type_specifier ID\n\n",numberOfLines);
 		temp_param_list.push_back(make_pair($4->getName(),$3->getType()));
 		$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator+getFromSymbolSet("comma")+$3->extraSymbolInfo.stringConcatenator+$4->getName();
 		fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 }
 | parameter_list COMMA type_specifier
 {
-		fprintf(logs,"Line %d: parameter_list  : parameter_list COMMA type_specifier\n\n",numberOfLines);
+		fprintf(logs,"Line %d: parameter_list : parameter_list COMMA type_specifier\n\n",numberOfLines);
 		temp_param_list.push_back(make_pair("",$3->getType()));
 		$$->extraSymbolInfo.stringConcatenator = $1->getName()+getFromSymbolSet("comma")+$3->extraSymbolInfo.stringConcatenator;
 		fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 }
 | type_specifier ID
 {
-		fprintf(logs,"Line %d: parameter_list  : type_specifier ID\n\n", numberOfLines);
+		fprintf(logs,"Line %d: parameter_list : type_specifier ID\n\n", numberOfLines);
 		temp_param_list.push_back(make_pair($2->getName(),$1->getType()));
 		$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator.append($2->getName());
 		fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
@@ -404,7 +404,7 @@ parameter_list  : parameter_list COMMA type_specifier ID
 }
 | type_specifier
 {
-		fprintf(logs,"Line %d: parameter_list  : type_specifier\n\n",numberOfLines);
+		fprintf(logs,"Line %d: parameter_list : type_specifier\n\n",numberOfLines);
 		temp_param_list.push_back(make_pair("",$1->getType()));
 		$$->extraSymbolInfo.stringConcatenator =$1->extraSymbolInfo.stringConcatenator;
 		fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
@@ -484,21 +484,21 @@ type_specifier : INT {
 	SymbolInfo* s = new SymbolInfo("", "INT");
 	type_of_var = "INT";
 	$$ = s;
-	$$->extraSymbolInfo.stringConcatenator = "int ";
+	$$->extraSymbolInfo.stringConcatenator = "int";
 	fprintf(logs, "%s\n\n", $$->extraSymbolInfo.stringConcatenator.c_str());
 } | FLOAT {
-	fprintf(logs,"Line %d: type_specifier	: FLOAT\n\n",numberOfLines);
+	fprintf(logs,"Line %d: type_specifier : FLOAT\n\n",numberOfLines);
 	SymbolInfo* s = new SymbolInfo("","FLOAT");
 	type_of_var = "FLOAT";
 	$$ = s;
-	$$->extraSymbolInfo.stringConcatenator = "float ";
+	$$->extraSymbolInfo.stringConcatenator = "float";
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 } | VOID {
-	fprintf(logs,"Line %d: type_specifier	: VOID\n\n",numberOfLines);
+	fprintf(logs,"Line %d: type_specifier : VOID\n\n",numberOfLines);
 	SymbolInfo* s = new SymbolInfo("","VOID");
 	type_of_var = "VOID";
 	$$ = s;
-	$$->extraSymbolInfo.stringConcatenator = "void ";
+	$$->extraSymbolInfo.stringConcatenator = "void";
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 };
 
@@ -691,7 +691,7 @@ expression_statement : SEMICOLON {
 };
 
 variable : ID {
-	fprintf(logs,"Line %d: variable : ID \n\n",numberOfLines);
+	fprintf(logs,"Line %d: variable : ID\n\n",numberOfLines);
 	SymbolInfo* temp =  symbolTable.LookUp($1->getName());
 	string type="";
 
