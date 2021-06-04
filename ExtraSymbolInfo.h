@@ -19,7 +19,6 @@ class ExtraSymbolInfo{
         std::string stringAdder(std::string addToStringConcatenator){
             return stringConcatenator.append(addToStringConcatenator);
         }
-
 };
 
 #endif

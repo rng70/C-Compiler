@@ -13,7 +13,6 @@ using namespace std;
 
 int numberOfLines = 1;
 int numberOfErrors = 0;
-int linestart;
 %}
 
 /* Declare Lex styled macros */

@@ -105,7 +105,7 @@ string getFromSymbolSet(string name)
 // this version of error-verbose is deprecated
 // %error-verbose
 // instead of using 'error-verbose' use the following one
-%define parse.error verbose
+// %define parse.error verbose
 
 %type <symbolInfoPointer>start
 %%

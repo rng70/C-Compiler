@@ -1,4 +1,3 @@
-
 // Created by rng70
 
 #ifndef COMPILER_SYMBOLINFO_H

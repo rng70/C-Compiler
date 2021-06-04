@@ -1,4 +1,3 @@
-
 // Created by rng70
 
 #ifndef COMPILER_SYMBOLTABLE_H
@@ -29,8 +28,6 @@ public:
         ScopeTable *parentScope = currentScope;
         currentScope = newScopeTable;
         currentScope->setParentScope(parentScope);
-        // std::cout << "New ScopeTable with id " << newScopeTable->getStringifyID() << " created" << std::endl
-        //           << std::endl;
         fprintf(f,"New ScopeTable with Id %d created\n",newScopeTable->getStringifyID().c_str());
     }
 
@@ -38,7 +35,6 @@ public:
         //currentScope->setTableIdTracker();
         ScopeTable *temp = currentScope;
         currentScope = temp->getParentScope();
-        // std::cout << "ScopeTable with id " << temp->getStringifyID() << " removed" << std::endl << std::endl;
         fprintf(f,"ScopeTable with ID %d removed\n",temp->getStringifyID().c_str());
         delete temp;
     }
@@ -52,10 +48,6 @@ public:
     {
         return currentScope->InsertModified(s);
     }
-
-    // void InsertWithoutReturn(std::string s, std::string type) {
-    //     currentScope->InsertAndPrintToFile(s, type);
-    // }
 
     bool Remove(std::string s) {
         if (currentScope->Delete(s))
@@ -73,7 +65,6 @@ public:
                 return yolo;
             temp = temp->getParentScope();
         }
-        // std::cout << "Not found" << std::endl << std::endl;
         return 0;
     }
 
