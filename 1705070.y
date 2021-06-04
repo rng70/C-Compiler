@@ -566,7 +566,7 @@ declaration_list : declaration_list COMMA ID {
 	$$->extraSymbolInfo.stringConcatenator = $1->getName();
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 } | ID LTHIRD CONST_INT RTHIRD {
-	fprintf(logs,"Line %d: ID LTHIRD CONST_INT RTHIRD\n\n",numberOfLines);
+	fprintf(logs,"Line %d: declaration_list : ID LTHIRD CONST_INT RTHIRD\n\n",numberOfLines);
 
 	//checking to see if array type is void or not
 	if(type_of_var!="VOID")
@@ -1112,7 +1112,7 @@ argument_list : arguments{
 };
 
 arguments : arguments COMMA logic_expression {
-	fprintf(logs,"Line %d: aarguments : arguments COMMA logic_expression\n\n",numberOfLines);
+	fprintf(logs,"Line %d: arguments : arguments COMMA logic_expression\n\n",numberOfLines);
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.stringConcatenator.append(getFromSymbolSet("comma")+$3->extraSymbolInfo.stringConcatenator);
 
 	string name = $3->getName();
