@@ -1,0 +1,8 @@
+Error at Line 20 : Unequal Number of function arguments
+
+Warning at Line 20 : Integer converted to float during Multiplication.
+
+Warning at Line 20  : Integer converted to float during Addition.
+
+Total Error: 1
+
