@@ -484,25 +484,25 @@ type_specifier : INT {
 	SymbolInfo* s = new SymbolInfo("", "INT");
 	type_of_var = "INT";
 	$$ = s;
-	$$->extraSymbolInfo.stringConcatenator = "int";
-	named = $$->extraSymbolInfo.stringConcatenator + " ";
-	fprintf(logs, "%s\n\n", named.c_str());
+	$$->extraSymbolInfo.stringConcatenator = "int ";
+	// named = $$->extraSymbolInfo.stringConcatenator + " ";
+	fprintf(logs, "%s\n\n", extraSymbolInfo.stringConcatenator.c_str());
 } | FLOAT {
 	fprintf(logs,"Line %d: type_specifier : FLOAT\n\n",numberOfLines);
 	SymbolInfo* s = new SymbolInfo("","FLOAT");
 	type_of_var = "FLOAT";
 	$$ = s;
-	$$->extraSymbolInfo.stringConcatenator = "float";
-	named = $$->extraSymbolInfo.stringConcatenator + " ";
-	fprintf(logs,"%s\n\n",named.c_str());
+	$$->extraSymbolInfo.stringConcatenator = "float ";
+	//named = $$->extraSymbolInfo.stringConcatenator + " ";
+	fprintf(logs,"%s\n\n",extraSymbolInfo.stringConcatenator.c_str());
 } | VOID {
 	fprintf(logs,"Line %d: type_specifier : VOID\n\n",numberOfLines);
 	SymbolInfo* s = new SymbolInfo("","VOID");
 	type_of_var = "VOID";
 	$$ = s;
-	$$->extraSymbolInfo.stringConcatenator = "void";
-	named = $$->extraSymbolInfo.stringConcatenator + " ";
-	fprintf(logs,"%s\n\n",named.c_str());
+	$$->extraSymbolInfo.stringConcatenator = "void ";
+	// named = $$->extraSymbolInfo.stringConcatenator + " ";
+	fprintf(logs,"%s\n\n",extraSymbolInfo.stringConcatenator.c_str());
 };
 
 declaration_list : declaration_list COMMA ID {
