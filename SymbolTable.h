@@ -28,14 +28,14 @@ public:
         ScopeTable *parentScope = currentScope;
         currentScope = newScopeTable;
         currentScope->setParentScope(parentScope);
-        fprintf(f,"New ScopeTable with Id %d created\n",newScopeTable->getStringifyID().c_str());
+        // fprintf(f,"New ScopeTable with Id %d created\n",newScopeTable->getStringifyID().c_str());
     }
 
     void ExitScope(FILE *f) {
         //currentScope->setTableIdTracker();
         ScopeTable *temp = currentScope;
         currentScope = temp->getParentScope();
-        fprintf(f,"ScopeTable with ID %d removed\n",temp->getStringifyID().c_str());
+        // fprintf(f,"ScopeTable with ID %d removed\n",temp->getStringifyID().c_str());
         delete temp;
     }
 
