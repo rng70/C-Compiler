@@ -21,7 +21,7 @@ vector< pair<string,string> >temp_param_list;
 vector< pair<string,string> >arg_param_list;
 vector<SymbolInfo*>v;
 
-string type_of_var, statement_solver, return_type_solver;
+string type_of_var, statement_solver, return_type_solver, named;
 bool is_func = false;
 int control_arg;
 int scope_counter = 1;
@@ -475,7 +475,7 @@ var_declaration : type_specifier declaration_list SEMICOLON {
 
 	$$->extraSymbolInfo.stringConcatenator = stringAdder(3,$1->extraSymbolInfo.stringConcatenator.c_str(),$2->extraSymbolInfo.stringConcatenator.c_str(),getFromSymbolSet("semicolon").c_str());
 
-	fprintf(logs,"%s\n\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 };
 
 type_specifier : INT {
@@ -485,21 +485,24 @@ type_specifier : INT {
 	type_of_var = "INT";
 	$$ = s;
 	$$->extraSymbolInfo.stringConcatenator = "int";
-	fprintf(logs, "%s\n\n", $$->extraSymbolInfo.stringConcatenator.c_str());
+	named = $$->extraSymbolInfo.stringConcatenator + " ";
+	fprintf(logs, "%s\n\n", named.c_str());
 } | FLOAT {
 	fprintf(logs,"Line %d: type_specifier : FLOAT\n\n",numberOfLines);
 	SymbolInfo* s = new SymbolInfo("","FLOAT");
 	type_of_var = "FLOAT";
 	$$ = s;
 	$$->extraSymbolInfo.stringConcatenator = "float";
-	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+	named = $$->extraSymbolInfo.stringConcatenator + " ";
+	fprintf(logs,"%s\n\n",named.c_str());
 } | VOID {
 	fprintf(logs,"Line %d: type_specifier : VOID\n\n",numberOfLines);
 	SymbolInfo* s = new SymbolInfo("","VOID");
 	type_of_var = "VOID";
 	$$ = s;
 	$$->extraSymbolInfo.stringConcatenator = "void";
-	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+	named = $$->extraSymbolInfo.stringConcatenator + " ";
+	fprintf(logs,"%s\n\n",named.c_str());
 };
 
 declaration_list : declaration_list COMMA ID {
