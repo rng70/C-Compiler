@@ -14,7 +14,7 @@ extern int numberOfErrors;
 FILE* logs;
 FILE* errors;
 
-SymbolTable symbolTable(7);
+SymbolTable symbolTable(30);
 // Symbol Set(s)
 map<string, string> SymbolSet;
 vector< pair<string,string> >temp_param_list;
@@ -765,7 +765,7 @@ expression : logic_expression {
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.typeOfVar;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 } | variable ASSIGNOP logic_expression {
-	fprintf(logs,"Line %d: expression :variable ASSIGNOP logic_expression\n\n",numberOfLines);
+	fprintf(logs,"Line %d: expression : variable ASSIGNOP logic_expression\n\n",numberOfLines);
 
 	SymbolInfo* s = symbolTable.LookUp($1->getName());
 
