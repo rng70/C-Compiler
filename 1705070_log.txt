@@ -1,6 +1,6 @@
 Line 1: type_specifier : INT
 
-int
+int 
 
 Line 1: declaration_list : ID
 
@@ -16,22 +16,22 @@ x,y,z
 
 Line 1: var_declaration : type_specifier declaration_list SEMICOLON
 
-intx,y,z;
+int x,y,z;
 
 
 Line 1: unit : var_declaration
 
-intx,y,z;
+int x,y,z;
 
 
 Line 1: program : unit
 
-intx,y,z;
+int x,y,z;
 
 
 Line 1: type_specifier : FLOAT
 
-float
+float 
 
 Line 1: declaration_list : ID
 
@@ -39,60 +39,60 @@ a
 
 Line 1: var_declaration : type_specifier declaration_list SEMICOLON
 
-floata;
+float a;
 
 
 Line 1: unit : var_declaration
 
-floata;
+float a;
 
 
 Line 1: program : program unit
 
-intx,y,z;
-floata;
+int x,y,z;
+float a;
 
 
 Line 3: type_specifier : VOID
 
-void
+void 
 
 Line 3: func_declaration : type_specifier ID LPAREN RPAREN SEMICOLON
 
-voidfoo();
+void foo();
 
 
 Line 3: unit : func_declaration
 
-voidfoo();
+void foo();
 
 
 Line 3: program : program unit
 
-intx,y,z;
-floata;
-voidfoo();
+int x,y,z;
+float a;
+void foo();
 
 
 Line 5: type_specifier : INT
 
-int
+int 
 
 Line 5: type_specifier : INT
 
-int
+int 
 
 Line 5: parameter_list : type_specifier ID
 
-inta
+int a
 
 Line 5: type_specifier : INT
 
-int
+int 
 
 Line 5: parameter_list : parameter_list COMMA type_specifier ID
 
-inta,intb
+int a,int b
 
 Line 6: variable : ID
 
@@ -173,30 +173,30 @@ ScopeTable # 1
 
 Line 7: func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement
 
-intvar(inta,intb){
+int var(int a,int b){
 return a+b;
 }
 
 Line 7: unit : func_definition
 
-intvar(inta,intb){
+int var(int a,int b){
 return a+b;
 }
 
 
 Line 7: program : program unit
 
-intx,y,z;
-floata;
-voidfoo();
-intvar(inta,intb){
+int x,y,z;
+float a;
+void foo();
+int var(int a,int b){
 return a+b;
 }
 
 
 Line 9: type_specifier : VOID
 
-void
+void 
 
 Line 10: variable : ID
 
@@ -327,14 +327,14 @@ ScopeTable # 1
 
 Line 12: func_definition ID LPAREN RPAREN compound_statement
 
-voidfoo(){
+void foo(){
 x=2;
 y=x-5;
 }
 
 Line 12: unit : func_definition
 
-voidfoo(){
+void foo(){
 x=2;
 y=x-5;
 }
@@ -342,13 +342,13 @@ y=x-5;
 
 Line 12: program : program unit
 
-intx,y,z;
-floata;
-voidfoo();
-intvar(inta,intb){
+int x,y,z;
+float a;
+void foo();
+int var(int a,int b){
 return a+b;
 }
-voidfoo(){
+void foo(){
 x=2;
 y=x-5;
 }
@@ -356,13 +356,13 @@ y=x-5;
 
 Line 14: type_specifier : INT
 
-int
+int 
 
 Line 15: type_specifier : INT
 
-int
+int 
 
-Line 15: ID LTHIRD CONST_INT RTHIRD
+Line 15: declaration_list : ID LTHIRD CONST_INT RTHIRD
 
 a[2]
 
@@ -380,21 +380,21 @@ a[2],c,i,j
 
 Line 15: var_declaration : type_specifier declaration_list SEMICOLON
 
-inta[2],c,i,j;
+int a[2],c,i,j;
 
 
 Line 15: statement : var_declaration
 
-inta[2],c,i,j;
+int a[2],c,i,j;
 
 Line 15: statements : statement
 
-inta[2],c,i,j;
+int a[2],c,i,j;
 
 
 Line 15: type_specifier : FLOAT
 
-float
+float 
 
 Line 15: declaration_list : ID
 
@@ -402,17 +402,17 @@ d
 
 Line 15: var_declaration : type_specifier declaration_list SEMICOLON
 
-floatd;
+float d;
 
 
 Line 15: statement : var_declaration
 
-floatd;
+float d;
 
 Line 15: statements : statements statement
 
-inta[2],c,i,j;
-floatd;
+int a[2],c,i,j;
+float d;
 
 
 Line 16: factor : CONST_INT
@@ -485,8 +485,8 @@ a[0];
 
 Line 16: statements : statements statement
 
-inta[2],c,i,j;
-floatd;
+int a[2],c,i,j;
+float d;
 a[0];
 
 
@@ -560,8 +560,8 @@ a[1]=5;
 
 Line 17: statements : statements statement
 
-inta[2],c,i,j;
-floatd;
+int a[2],c,i,j;
+float d;
 a[0];
 a[1]=5;
 
@@ -688,8 +688,8 @@ i=a[0]+a[1];
 
 Line 18: statements : statements statement
 
-inta[2],c,i,j;
-floatd;
+int a[2],c,i,j;
+float d;
 a[0];
 a[1]=5;
 i=a[0]+a[1];
@@ -861,8 +861,8 @@ j=2*3+(5%3<4&&8)||2;
 
 Line 19: statements : statements statement
 
-inta[2],c,i,j;
-floatd;
+int a[2],c,i,j;
+float d;
 a[0];
 a[1]=5;
 i=a[0]+a[1];
@@ -937,7 +937,7 @@ Line 20: logic_expression : rel_expression
 
 2*3
 
-Line 20: aarguments : arguments COMMA logic_expression
+Line 20: arguments : arguments COMMA logic_expression
 
 1,2*3
 
@@ -1013,8 +1013,8 @@ d=var(1,2*3)+3.5*2;
 
 Line 20: statements : statements statement
 
-inta[2],c,i,j;
-floatd;
+int a[2],c,i,j;
+float d;
 a[0];
 a[1]=5;
 i=a[0]+a[1];
@@ -1056,8 +1056,8 @@ return 0;
 
 Line 21: statements : statements statement
 
-inta[2],c,i,j;
-floatd;
+int a[2],c,i,j;
+float d;
 a[0];
 a[1]=5;
 i=a[0]+a[1];
@@ -1069,8 +1069,8 @@ return 0;
 Line 22: compound_statement : LCURL statements RCURL
 
 {
-inta[2],c,i,j;
-floatd;
+int a[2],c,i,j;
+float d;
 a[0];
 a[1]=5;
 i=a[0]+a[1];
@@ -1094,9 +1094,9 @@ ScopeTable # 1
 
 Line 22: func_definition ID LPAREN RPAREN compound_statement
 
-intmain(){
-inta[2],c,i,j;
-floatd;
+int main(){
+int a[2],c,i,j;
+float d;
 a[0];
 a[1]=5;
 i=a[0]+a[1];
@@ -1107,9 +1107,9 @@ return 0;
 
 Line 22: unit : func_definition
 
-intmain(){
-inta[2],c,i,j;
-floatd;
+int main(){
+int a[2],c,i,j;
+float d;
 a[0];
 a[1]=5;
 i=a[0]+a[1];
@@ -1121,19 +1121,19 @@ return 0;
 
 Line 22: program : program unit
 
-intx,y,z;
-floata;
-voidfoo();
-intvar(inta,intb){
+int x,y,z;
+float a;
+void foo();
+int var(int a,int b){
 return a+b;
 }
-voidfoo(){
+void foo(){
 x=2;
 y=x-5;
 }
-intmain(){
-inta[2],c,i,j;
-floatd;
+int main(){
+int a[2],c,i,j;
+float d;
 a[0];
 a[1]=5;
 i=a[0]+a[1];

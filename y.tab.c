@@ -91,7 +91,7 @@ vector< pair<string,string> >temp_param_list;
 vector< pair<string,string> >arg_param_list;
 vector<SymbolInfo*>v;
 
-string type_of_var, statement_solver, return_type_solver;
+string type_of_var, statement_solver, return_type_solver, named;
 bool is_func = false;
 int control_arg;
 int scope_counter = 1;
@@ -740,11 +740,11 @@ static const yytype_int16 yyrline[] =
 {
        0,   113,   113,   118,   123,   129,   133,   137,   143,   211,
      242,   347,   383,   390,   397,   405,   413,   413,   443,   443,
-     473,   481,   489,   496,   505,   524,   545,   565,   592,   596,
-     603,   607,   611,   615,   630,   641,   653,   664,   668,   682,
-     686,   693,   721,   759,   764,   802,   808,   823,   829,   846,
-     851,   879,   884,   962,   972,   983,   992,   997,  1053,  1062,
-    1072,  1082,  1087,  1094,  1106,  1111,  1127
+     473,   481,   490,   498,   508,   527,   548,   568,   595,   599,
+     606,   610,   614,   618,   633,   644,   656,   667,   671,   685,
+     689,   696,   724,   762,   767,   805,   811,   826,   832,   849,
+     854,   882,   887,   965,   975,   986,   995,  1000,  1056,  1065,
+    1075,  1085,  1090,  1097,  1109,  1114,  1130
 };
 #endif
 
@@ -1869,40 +1869,43 @@ yyreduce:
 	SymbolInfo* s = new SymbolInfo("", "INT");
 	type_of_var = "INT";
 	(yyval.symbolInfoPointer) = s;
-	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = "int";
+	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = "int ";
+	// named = $$->extraSymbolInfo.stringConcatenator + " ";
 	fprintf(logs, "%s\n\n", (yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 1876 "y.tab.c"
+#line 1877 "y.tab.c"
     break;
 
   case 22: /* type_specifier: FLOAT  */
-#line 489 "1705070.y"
+#line 490 "1705070.y"
           {
 	fprintf(logs,"Line %d: type_specifier : FLOAT\n\n",numberOfLines);
 	SymbolInfo* s = new SymbolInfo("","FLOAT");
 	type_of_var = "FLOAT";
 	(yyval.symbolInfoPointer) = s;
-	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = "float";
+	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = "float ";
+	//named = $$->extraSymbolInfo.stringConcatenator + " ";
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 1889 "y.tab.c"
+#line 1891 "y.tab.c"
     break;
 
   case 23: /* type_specifier: VOID  */
-#line 496 "1705070.y"
+#line 498 "1705070.y"
          {
 	fprintf(logs,"Line %d: type_specifier : VOID\n\n",numberOfLines);
 	SymbolInfo* s = new SymbolInfo("","VOID");
 	type_of_var = "VOID";
 	(yyval.symbolInfoPointer) = s;
-	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = "void";
+	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = "void ";
+	// named = $$->extraSymbolInfo.stringConcatenator + " ";
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 1902 "y.tab.c"
+#line 1905 "y.tab.c"
     break;
 
   case 24: /* declaration_list: declaration_list COMMA ID  */
-#line 505 "1705070.y"
+#line 508 "1705070.y"
                                              {
 	if(type_of_var!="VOID"){
 		fprintf(logs,"Line %d: declaration_list : declaration_list COMMA ID\n\n",numberOfLines);
@@ -1923,11 +1926,11 @@ yyreduce:
 		fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 	}
 }
-#line 1927 "y.tab.c"
+#line 1930 "y.tab.c"
     break;
 
   case 25: /* declaration_list: declaration_list COMMA ID LTHIRD CONST_INT RTHIRD  */
-#line 524 "1705070.y"
+#line 527 "1705070.y"
                                                       {
 	if(type_of_var!="VOID") {
 		fprintf(logs,"Line %d: declaration_list : declaration_list COMMA ID LTHIRD CONST_INT RTHIRD\n\n",numberOfLines);
@@ -1950,11 +1953,11 @@ yyreduce:
 		fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 	}
 }
-#line 1954 "y.tab.c"
+#line 1957 "y.tab.c"
     break;
 
   case 26: /* declaration_list: ID  */
-#line 545 "1705070.y"
+#line 548 "1705070.y"
        {
 	fprintf(logs,"Line %d: declaration_list : ID\n\n",numberOfLines);
 
@@ -1976,13 +1979,13 @@ yyreduce:
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = (yyvsp[0].symbolInfoPointer)->getName();
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 1980 "y.tab.c"
+#line 1983 "y.tab.c"
     break;
 
   case 27: /* declaration_list: ID LTHIRD CONST_INT RTHIRD  */
-#line 565 "1705070.y"
+#line 568 "1705070.y"
                                {
-	fprintf(logs,"Line %d: ID LTHIRD CONST_INT RTHIRD\n\n",numberOfLines);
+	fprintf(logs,"Line %d: declaration_list : ID LTHIRD CONST_INT RTHIRD\n\n",numberOfLines);
 
 	//checking to see if array type is void or not
 	if(type_of_var!="VOID")
@@ -2007,62 +2010,62 @@ yyreduce:
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.append(temp);
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2011 "y.tab.c"
+#line 2014 "y.tab.c"
     break;
 
   case 28: /* statements: statement  */
-#line 592 "1705070.y"
+#line 595 "1705070.y"
                       {
 	fprintf(logs,"Line %d: statements : statement\n\n",numberOfLines);
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = (yyvsp[0].symbolInfoPointer)->extraSymbolInfo.stringConcatenator+"\n";
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2021 "y.tab.c"
+#line 2024 "y.tab.c"
     break;
 
   case 29: /* statements: statements statement  */
-#line 596 "1705070.y"
+#line 599 "1705070.y"
                          {
 	fprintf(logs,"Line %d: statements : statements statement\n\n", numberOfLines);
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = (yyvsp[-1].symbolInfoPointer)->extraSymbolInfo.stringConcatenator+((yyvsp[0].symbolInfoPointer)->extraSymbolInfo.stringConcatenator+"\n");
 	statement_solver = (yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator;
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2032 "y.tab.c"
+#line 2035 "y.tab.c"
     break;
 
   case 30: /* statement: var_declaration  */
-#line 603 "1705070.y"
+#line 606 "1705070.y"
                             {
 	fprintf(logs,"Line %d: statement : var_declaration\n\n",numberOfLines);
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = (yyvsp[0].symbolInfoPointer)->extraSymbolInfo.stringConcatenator;
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2042 "y.tab.c"
+#line 2045 "y.tab.c"
     break;
 
   case 31: /* statement: expression_statement  */
-#line 607 "1705070.y"
+#line 610 "1705070.y"
                          {
 	fprintf(logs,"Line %d: statement : expression_statement\n\n",numberOfLines);
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = (yyvsp[0].symbolInfoPointer)->extraSymbolInfo.stringConcatenator;
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2052 "y.tab.c"
+#line 2055 "y.tab.c"
     break;
 
   case 32: /* statement: compound_statement  */
-#line 611 "1705070.y"
+#line 614 "1705070.y"
                        {
 	fprintf(logs,"Line %d: statement : compound_statement\n\n",numberOfLines);
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = (yyvsp[0].symbolInfoPointer)->extraSymbolInfo.stringConcatenator;
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2062 "y.tab.c"
+#line 2065 "y.tab.c"
     break;
 
   case 33: /* statement: FOR LPAREN expression_statement expression_statement expression RPAREN statement  */
-#line 615 "1705070.y"
+#line 618 "1705070.y"
                                                                                      {
 	fprintf(logs,"Line %d: statement : FOR LPAREN expression_statement expression_statement expression RPAREN statement\n\n",numberOfLines);
 	string temp = (yyvsp[-4].symbolInfoPointer)->extraSymbolInfo.stringAdder((yyvsp[-3].symbolInfoPointer)->extraSymbolInfo.stringAdder((yyvsp[-2].symbolInfoPointer)->extraSymbolInfo.stringConcatenator));
@@ -2079,11 +2082,11 @@ yyreduce:
 		fprintf(errors,"Error at Line %d : Expression can not be void\n\n",numberOfLines);
 	}
 }
-#line 2083 "y.tab.c"
+#line 2086 "y.tab.c"
     break;
 
   case 34: /* statement: IF LPAREN expression RPAREN statement  */
-#line 630 "1705070.y"
+#line 633 "1705070.y"
                                                                     {
 	fprintf(logs,"Line %d: IF LPAREN expression RPAREN statement\n\n",numberOfLines);
 	string temp = (yyvsp[-2].symbolInfoPointer)->extraSymbolInfo.stringAdder(getFromSymbolSet("right_first"));
@@ -2096,11 +2099,11 @@ yyreduce:
 		fprintf(errors,"Error at Line %d : Expression can not be void\n\n",numberOfLines);
 	}
 }
-#line 2100 "y.tab.c"
+#line 2103 "y.tab.c"
     break;
 
   case 35: /* statement: IF LPAREN expression RPAREN statement ELSE statement  */
-#line 641 "1705070.y"
+#line 644 "1705070.y"
                                                          {
 		fprintf(logs,"Line %d: IF LPAREN expression RPAREN statement ELSE statement\n\n",numberOfLines);
 		string temp = (yyvsp[-4].symbolInfoPointer)->extraSymbolInfo.stringAdder(getFromSymbolSet("right_first"));
@@ -2114,11 +2117,11 @@ yyreduce:
 			fprintf(errors,"Error at Line %d : Expression can not be void\n\n",numberOfLines);
 		}
 }
-#line 2118 "y.tab.c"
+#line 2121 "y.tab.c"
     break;
 
   case 36: /* statement: WHILE LPAREN expression RPAREN statement  */
-#line 653 "1705070.y"
+#line 656 "1705070.y"
                                              {
 	fprintf(logs,"Line %d: WHILE LPAREN expression RPAREN statement\n\n",numberOfLines);
 	string temp = (yyvsp[-2].symbolInfoPointer)->extraSymbolInfo.stringAdder(getFromSymbolSet("right_first")+(yyvsp[0].symbolInfoPointer)->extraSymbolInfo.stringConcatenator);
@@ -2131,21 +2134,21 @@ yyreduce:
 		fprintf(errors,"Error at Line %d : Expression can not be void\n\n",numberOfLines);
 	}
 }
-#line 2135 "y.tab.c"
+#line 2138 "y.tab.c"
     break;
 
   case 37: /* statement: PRINTLN LPAREN ID RPAREN SEMICOLON  */
-#line 664 "1705070.y"
+#line 667 "1705070.y"
                                        {
 	fprintf(logs,"Line %d: statement : PRINTLN LPAREN ID RPAREN SEMICOLON\n\n",numberOfLines);
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = "println"+getFromSymbolSet("left_first")+(yyvsp[-2].symbolInfoPointer)->getName()+getFromSymbolSet("right_first")+getFromSymbolSet("semicolon");
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2145 "y.tab.c"
+#line 2148 "y.tab.c"
     break;
 
   case 38: /* statement: RETURN expression SEMICOLON  */
-#line 668 "1705070.y"
+#line 671 "1705070.y"
                                 {
 	fprintf(logs,"Line %d: statement : RETURN expression SEMICOLON\n\n",numberOfLines);
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = "return "+(yyvsp[-1].symbolInfoPointer)->extraSymbolInfo.stringAdder(getFromSymbolSet("semicolon"));
@@ -2159,32 +2162,32 @@ yyreduce:
 	}
 	return_type_solver = a;
 }
-#line 2163 "y.tab.c"
+#line 2166 "y.tab.c"
     break;
 
   case 39: /* expression_statement: SEMICOLON  */
-#line 682 "1705070.y"
+#line 685 "1705070.y"
                                  {
 	fprintf(logs,"Line %d: expression_statement : SEMICOLON\n\n",numberOfLines);
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = getFromSymbolSet("semicolon");
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2173 "y.tab.c"
+#line 2176 "y.tab.c"
     break;
 
   case 40: /* expression_statement: expression SEMICOLON  */
-#line 686 "1705070.y"
+#line 689 "1705070.y"
                          {
 	fprintf(logs,"Line %d: expression_statement : expression SEMICOLON\n\n",numberOfLines);
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = (yyvsp[-1].symbolInfoPointer)->extraSymbolInfo.stringAdder(getFromSymbolSet("semicolon"));
 	(yyval.symbolInfoPointer)->extraSymbolInfo.typeOfVar = (yyvsp[-1].symbolInfoPointer)->extraSymbolInfo.typeOfVar;
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2184 "y.tab.c"
+#line 2187 "y.tab.c"
     break;
 
   case 41: /* variable: ID  */
-#line 693 "1705070.y"
+#line 696 "1705070.y"
               {
 	fprintf(logs,"Line %d: variable : ID\n\n",numberOfLines);
 	SymbolInfo* temp =  symbolTable.LookUp((yyvsp[0].symbolInfoPointer)->getName());
@@ -2214,11 +2217,11 @@ yyreduce:
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = (yyvsp[0].symbolInfoPointer)->getName();
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2218 "y.tab.c"
+#line 2221 "y.tab.c"
     break;
 
   case 42: /* variable: ID LTHIRD expression RTHIRD  */
-#line 721 "1705070.y"
+#line 724 "1705070.y"
                                 {
 	fprintf(logs,"Line %d: variable : ID LTHIRD expression RTHIRD\n\n",numberOfLines);
 
@@ -2256,22 +2259,22 @@ yyreduce:
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = (yyvsp[-3].symbolInfoPointer)->getName()+t;
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2260 "y.tab.c"
+#line 2263 "y.tab.c"
     break;
 
   case 43: /* expression: logic_expression  */
-#line 759 "1705070.y"
+#line 762 "1705070.y"
                               {
 	fprintf(logs,"Line %d: expression : logic_expression\n\n",numberOfLines);
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = (yyvsp[0].symbolInfoPointer)->extraSymbolInfo.stringConcatenator;
 	(yyval.symbolInfoPointer)->extraSymbolInfo.typeOfVar = (yyvsp[0].symbolInfoPointer)->extraSymbolInfo.typeOfVar;
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2271 "y.tab.c"
+#line 2274 "y.tab.c"
     break;
 
   case 44: /* expression: variable ASSIGNOP logic_expression  */
-#line 764 "1705070.y"
+#line 767 "1705070.y"
                                        {
 	fprintf(logs,"Line %d: expression :variable ASSIGNOP logic_expression\n\n",numberOfLines);
 
@@ -2309,11 +2312,11 @@ yyreduce:
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = (yyvsp[-2].symbolInfoPointer)->extraSymbolInfo.stringConcatenator+getFromSymbolSet("equal")+(yyvsp[0].symbolInfoPointer)->extraSymbolInfo.stringConcatenator;
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2313 "y.tab.c"
+#line 2316 "y.tab.c"
     break;
 
   case 45: /* logic_expression: rel_expression  */
-#line 802 "1705070.y"
+#line 805 "1705070.y"
                                   {
 	fprintf(logs,"Line %d: logic_expression : rel_expression \n\n",numberOfLines);
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = (yyvsp[0].symbolInfoPointer)->extraSymbolInfo.stringConcatenator;
@@ -2321,11 +2324,11 @@ yyreduce:
 
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2325 "y.tab.c"
+#line 2328 "y.tab.c"
     break;
 
   case 46: /* logic_expression: rel_expression LOGICOP rel_expression  */
-#line 808 "1705070.y"
+#line 811 "1705070.y"
                                           {
 	fprintf(logs,"Line %d: logic_expression : rel_expression LOGICOP rel_expression \n\n",numberOfLines);
 	string a_type  = (yyvsp[-2].symbolInfoPointer)->extraSymbolInfo.typeOfVar;
@@ -2340,11 +2343,11 @@ yyreduce:
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = temp;
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2344 "y.tab.c"
+#line 2347 "y.tab.c"
     break;
 
   case 47: /* rel_expression: simple_expression  */
-#line 823 "1705070.y"
+#line 826 "1705070.y"
                                     {
 	fprintf(logs,"Line %d: rel_expression : simple_expression \n\n",numberOfLines);
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = (yyvsp[0].symbolInfoPointer)->extraSymbolInfo.stringConcatenator;
@@ -2352,11 +2355,11 @@ yyreduce:
 
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2356 "y.tab.c"
+#line 2359 "y.tab.c"
     break;
 
   case 48: /* rel_expression: simple_expression RELOP simple_expression  */
-#line 829 "1705070.y"
+#line 832 "1705070.y"
                                               {
 	fprintf(logs,"Line %d: rel_expression : simple_expression RELOP simple_expression \n\n",numberOfLines);
 
@@ -2373,22 +2376,22 @@ yyreduce:
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = temp;
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2377 "y.tab.c"
+#line 2380 "y.tab.c"
     break;
 
   case 49: /* simple_expression: term  */
-#line 846 "1705070.y"
+#line 849 "1705070.y"
                          {
 	fprintf(logs,"Line %d: simple_expression : term \n\n",numberOfLines);
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = (yyvsp[0].symbolInfoPointer)->extraSymbolInfo.stringConcatenator;
 	(yyval.symbolInfoPointer)->extraSymbolInfo.typeOfVar = (yyvsp[0].symbolInfoPointer)->extraSymbolInfo.typeOfVar;
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2388 "y.tab.c"
+#line 2391 "y.tab.c"
     break;
 
   case 50: /* simple_expression: simple_expression ADDOP term  */
-#line 851 "1705070.y"
+#line 854 "1705070.y"
                                  {
 	fprintf(logs,"Line %d: simple_expression : simple_expression ADDOP term \n\n",numberOfLines);
 
@@ -2416,22 +2419,22 @@ yyreduce:
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = (yyvsp[-2].symbolInfoPointer)->extraSymbolInfo.stringAdder((yyvsp[-1].symbolInfoPointer)->getName().append((yyvsp[0].symbolInfoPointer)->extraSymbolInfo.stringConcatenator));
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2420 "y.tab.c"
+#line 2423 "y.tab.c"
     break;
 
   case 51: /* term: unary_expression  */
-#line 879 "1705070.y"
+#line 882 "1705070.y"
                          {
 	fprintf(logs,"Line %d: term : unary_expression \n\n",numberOfLines);
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = (yyvsp[0].symbolInfoPointer)->extraSymbolInfo.stringConcatenator;
 	(yyval.symbolInfoPointer)->extraSymbolInfo.typeOfVar = (yyvsp[0].symbolInfoPointer)->extraSymbolInfo.typeOfVar;
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2431 "y.tab.c"
+#line 2434 "y.tab.c"
     break;
 
   case 52: /* term: term MULOP unary_expression  */
-#line 884 "1705070.y"
+#line 887 "1705070.y"
                                 {
 	fprintf(logs,"Line %d: term : term MULOP unary_expression \n\n",numberOfLines);
 
@@ -2509,11 +2512,11 @@ yyreduce:
 			break;
 	}
 }
-#line 2513 "y.tab.c"
+#line 2516 "y.tab.c"
     break;
 
   case 53: /* unary_expression: ADDOP unary_expression  */
-#line 962 "1705070.y"
+#line 965 "1705070.y"
                                           {
 	fprintf(logs,"Line %d: unary_expression : ADDOP unary_expression\n\n",numberOfLines);
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = (yyvsp[-1].symbolInfoPointer)->getName().append((yyvsp[0].symbolInfoPointer)->extraSymbolInfo.stringConcatenator);
@@ -2525,11 +2528,11 @@ yyreduce:
 		numberOfErrors++;
 	}
 }
-#line 2529 "y.tab.c"
+#line 2532 "y.tab.c"
     break;
 
   case 54: /* unary_expression: NOT unary_expression  */
-#line 972 "1705070.y"
+#line 975 "1705070.y"
                          {
 	fprintf(logs,"Line %d: unary_expression : NOT unary_expression\n\n",numberOfLines);
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = (yyvsp[-1].symbolInfoPointer)->getName().append((yyvsp[0].symbolInfoPointer)->extraSymbolInfo.stringConcatenator);
@@ -2542,11 +2545,11 @@ yyreduce:
 		numberOfErrors++;
 	}
 }
-#line 2546 "y.tab.c"
+#line 2549 "y.tab.c"
     break;
 
   case 55: /* unary_expression: factor  */
-#line 983 "1705070.y"
+#line 986 "1705070.y"
            {
 	fprintf(logs,"Line %d: unary_expression : factor\n\n",numberOfLines);
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = (yyvsp[0].symbolInfoPointer)->extraSymbolInfo.stringConcatenator;
@@ -2555,22 +2558,22 @@ yyreduce:
 	// fprintf(logs,"%s\n\n",$$->extraSymbolInfo.typeOfVar.c_str());
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2559 "y.tab.c"
+#line 2562 "y.tab.c"
     break;
 
   case 56: /* factor: variable  */
-#line 992 "1705070.y"
+#line 995 "1705070.y"
                    {
 	fprintf(logs,"Line %d: factor : variable\n\n", numberOfLines);
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = (yyvsp[0].symbolInfoPointer)->extraSymbolInfo.stringConcatenator;
 	(yyval.symbolInfoPointer)->extraSymbolInfo.typeOfVar = (yyvsp[0].symbolInfoPointer)->extraSymbolInfo.typeOfVar;
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2570 "y.tab.c"
+#line 2573 "y.tab.c"
     break;
 
   case 57: /* factor: ID LPAREN argument_list RPAREN  */
-#line 997 "1705070.y"
+#line 1000 "1705070.y"
                                    {
 	fprintf(logs,"Line %d: factor : ID LPAREN argument_list RPAREN\n\n",numberOfLines);
 
@@ -2628,11 +2631,11 @@ yyreduce:
 		}
 	}
 }
-#line 2632 "y.tab.c"
+#line 2635 "y.tab.c"
     break;
 
   case 58: /* factor: LPAREN expression RPAREN  */
-#line 1053 "1705070.y"
+#line 1056 "1705070.y"
                              {
 	fprintf(logs,"Line %d: factor : LPAREN expression RPAREN\n\n",numberOfLines);
 	SymbolInfo* s = new SymbolInfo();
@@ -2643,11 +2646,11 @@ yyreduce:
 	(yyval.symbolInfoPointer)=s;
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2647 "y.tab.c"
+#line 2650 "y.tab.c"
     break;
 
   case 59: /* factor: CONST_INT  */
-#line 1062 "1705070.y"
+#line 1065 "1705070.y"
               {
 	fprintf(logs,"Line %d: factor : CONST_INT\n\n",numberOfLines);
 	(yyvsp[0].symbolInfoPointer)->extraSymbolInfo.typeOfVar = "INT";
@@ -2659,11 +2662,11 @@ yyreduce:
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 
 }
-#line 2663 "y.tab.c"
+#line 2666 "y.tab.c"
     break;
 
   case 60: /* factor: CONST_FLOAT  */
-#line 1072 "1705070.y"
+#line 1075 "1705070.y"
                 {
 	fprintf(logs,"Line %d: factor : CONST_FLOAT\n\n",numberOfLines);
 	(yyvsp[0].symbolInfoPointer)->extraSymbolInfo.typeOfVar = "FLOAT";
@@ -2675,33 +2678,33 @@ yyreduce:
 	(yyval.symbolInfoPointer)->extraSymbolInfo.typeOfVar = (yyvsp[0].symbolInfoPointer)->extraSymbolInfo.typeOfVar;
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2679 "y.tab.c"
+#line 2682 "y.tab.c"
     break;
 
   case 61: /* factor: variable INCOP  */
-#line 1082 "1705070.y"
+#line 1085 "1705070.y"
                    {
 	fprintf(logs,"Line %d: factor : variable INCOP\n\n",numberOfLines);
 	(yyval.symbolInfoPointer)->extraSymbolInfo.typeOfVar = (yyvsp[-1].symbolInfoPointer)->extraSymbolInfo.typeOfVar;
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = (yyvsp[-1].symbolInfoPointer)->getName()+(yyvsp[0].symbolInfoPointer)->getName();
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2690 "y.tab.c"
+#line 2693 "y.tab.c"
     break;
 
   case 62: /* factor: variable DECOP  */
-#line 1087 "1705070.y"
+#line 1090 "1705070.y"
                    {
 	fprintf(logs,"Line %d: factor : variable DECOP\n\n",numberOfLines);
 	(yyval.symbolInfoPointer)->extraSymbolInfo.typeOfVar = (yyvsp[-1].symbolInfoPointer)->extraSymbolInfo.typeOfVar;
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = (yyvsp[-1].symbolInfoPointer)->getName()+(yyvsp[0].symbolInfoPointer)->getName();
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2701 "y.tab.c"
+#line 2704 "y.tab.c"
     break;
 
   case 63: /* argument_list: arguments  */
-#line 1094 "1705070.y"
+#line 1097 "1705070.y"
                          {
 	fprintf(logs,"Line %d: argument_list : arguments\n\n",numberOfLines);
 
@@ -2715,22 +2718,22 @@ yyreduce:
 	(yyval.symbolInfoPointer) = s;
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2719 "y.tab.c"
+#line 2722 "y.tab.c"
     break;
 
   case 64: /* argument_list: %empty  */
-#line 1106 "1705070.y"
+#line 1109 "1705070.y"
     {
 	SymbolInfo* s = new SymbolInfo("","");
 	(yyval.symbolInfoPointer)=s;
 }
-#line 2728 "y.tab.c"
+#line 2731 "y.tab.c"
     break;
 
   case 65: /* arguments: arguments COMMA logic_expression  */
-#line 1111 "1705070.y"
+#line 1114 "1705070.y"
                                              {
-	fprintf(logs,"Line %d: aarguments : arguments COMMA logic_expression\n\n",numberOfLines);
+	fprintf(logs,"Line %d: arguments : arguments COMMA logic_expression\n\n",numberOfLines);
 	(yyval.symbolInfoPointer)->extraSymbolInfo.typeOfVar = (yyvsp[-2].symbolInfoPointer)->extraSymbolInfo.stringConcatenator.append(getFromSymbolSet("comma")+(yyvsp[0].symbolInfoPointer)->extraSymbolInfo.stringConcatenator);
 
 	string name = (yyvsp[0].symbolInfoPointer)->getName();
@@ -2746,11 +2749,11 @@ yyreduce:
 
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2750 "y.tab.c"
+#line 2753 "y.tab.c"
     break;
 
   case 66: /* arguments: logic_expression  */
-#line 1127 "1705070.y"
+#line 1130 "1705070.y"
                     {
 	fprintf(logs,"Line %d: arguments : logic_expression\n\n",numberOfLines);
 
@@ -2768,11 +2771,11 @@ yyreduce:
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = (yyvsp[0].symbolInfoPointer)->extraSymbolInfo.stringConcatenator;
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 2772 "y.tab.c"
+#line 2775 "y.tab.c"
     break;
 
 
-#line 2776 "y.tab.c"
+#line 2779 "y.tab.c"
 
       default: break;
     }
@@ -2966,7 +2969,7 @@ yyreturn:
   return yyresult;
 }
 
-#line 1144 "1705070.y"
+#line 1147 "1705070.y"
 
 
 int main(int argc,char *argv[])
