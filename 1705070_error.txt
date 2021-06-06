@@ -1,16 +1,18 @@
-Error at Line 15  : Multiple declration of a
+Error at Line 6  : Multiple declration of c
 
-Error at Line 16 : Index Not on Array
+Error at Line 7 : Non Integer Array Index
 
-Error at Line 17 : Index Not on Array
+Error at Line 8 : Type Mismatch
 
-Error at Line 18 : Index Not on Array
+Warning at Line 8 : Float assigned to Integer
 
-Error at Line 18 : Index Not on Array
+Error at Line 9 : Integer operand not on modulus operator
 
-Warning at Line 20 : Integer converted to float during Multiplication.
+Error at Line 10 : No index on array
 
-Warning at Line 20  : Integer converted to float during Addition.
+Error at Line 11 : No index on array
 
-Total Error: 5
+Error at Line 12 : Undeclared variable : b
+
+Total errors: 7
 

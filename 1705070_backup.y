@@ -31,9 +31,9 @@ string scope_holder = "";
 
 // error detection
 void yyerror(const char *s){
+	yyerrok;
 	numberOfErrors++;
     fprintf(errors, "Line no %d: %s\n", numberOfLines, s);
-	//yyerrok;
 }
 
 string stringAdder(int count, ...){
@@ -113,7 +113,7 @@ string getFromSymbolSet(string name)
 %%
 
 start : program {
-	fprintf(logs, "Symbol Table : \n\n");
+	fprintf(logs, "Line %d: start : program\n\n\n",numberOfLines-1);
 	symbolTable.printAllTable(logs);
 };
 
@@ -241,7 +241,7 @@ func_declaration : type_specifier ID LPAREN parameter_list RPAREN SEMICOLON{
 	fprintf(logs, "%s\n\n\n", $$->extraSymbolInfo.stringConcatenator.c_str());
 };
 
-func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement {
+func_definition : type_specifier ID LPAREN parameter_list RPAREN{
 		// scope_counter = scope_counter + 1
 		fprintf(logs, "Line %d: func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement\n\n", numberOfLines);
 		SymbolInfo *s = symbolTable.LookUp($2->getName());
@@ -285,7 +285,7 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statem
 				temp->extraSymbolInfo.isFunction=false;
 			}*/
 			symbolTable.InsertModified(temp);
-			// temp_param_list.clear();
+			//temp_param_list.clear();
 		}
 		// if it already exists in global scope
 		else{
@@ -345,9 +345,13 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statem
 				}
 			}
 		}
-		$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator+$2->getName()+getFromSymbolSet("left_first")+$4->extraSymbolInfo.stringConcatenator+getFromSymbolSet("right_first")+$6->extraSymbolInfo.stringConcatenator;
-		fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
-} | type_specifier ID LPAREN RPAREN compound_statement{
+		// $$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator+$2->getName()+getFromSymbolSet("left_first")+$4->extraSymbolInfo.stringConcatenator+getFromSymbolSet("right_first")+$6->extraSymbolInfo.stringConcatenator;
+		//fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+}compound_statement{
+	fprintf(logs, "Line %d: func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement\n\n", numberOfLines);
+	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator+$2->getName()+getFromSymbolSet("left_first")+$4->extraSymbolInfo.stringConcatenator+getFromSymbolSet("right_first")+$7->extraSymbolInfo.stringConcatenator;
+	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+}| type_specifier ID LPAREN RPAREN{
 	fprintf(logs, "Line %d: func_definition : type_specifier ID LPAREN RPAREN compound_statement\n\n", numberOfLines);
 
 	// scope_counter++;
@@ -379,7 +383,11 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statem
 			temp_param_list.clear();
 		}
 	}
-	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator+$2->getName()+getFromSymbolSet("left_first")+getFromSymbolSet("right_first")+$5->extraSymbolInfo.stringConcatenator;
+	//$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator+$2->getName()+getFromSymbolSet("left_first")+getFromSymbolSet("right_first")+$5->extraSymbolInfo.stringConcatenator;
+	//fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+}compound_statement{
+	fprintf(logs,"Line %d: func_definition : type_specifier ID LPAREN RPAREN compound_statement\n\n",numberOfLines);
+	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator+$2->getName()+getFromSymbolSet("left_first")+getFromSymbolSet("right_first")+$6->extraSymbolInfo.stringConcatenator;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 };
 
@@ -415,8 +423,8 @@ parameter_list  : parameter_list COMMA type_specifier ID
 
 compound_statement : LCURL {
 	symbolTable.EnterScope(logs);
-	fprintf(logs,"Line %d: Entering Scope compound_statement LCURL\n\n",numberOfLines);
-	//cout << "Entering scope 1" << endl;
+	// fprintf(logs,"Line %d: Entering Scope compound_statement LCURL\n\n",numberOfLines);
+	// cout << "Entering scope 1" << endl;
 
 	// scope_counter_2 = symbolTable.getTableIdTracker();
 	// scope_holder = symbolTable.getStringifyID();
@@ -438,7 +446,7 @@ compound_statement : LCURL {
 			}
 		}
 	}
-	// temp_param_list.clear();
+	temp_param_list.clear();
 } statements RCURL {
 	fprintf(logs,"Line %d: compound_statement : LCURL statements RCURL\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = getFromSymbolSet("left_curl")+"\n"+$3->extraSymbolInfo.stringConcatenator+getFromSymbolSet("right_curl");
@@ -447,7 +455,7 @@ compound_statement : LCURL {
 	symbolTable.ExitScope(logs);
 } | LCURL {
 	symbolTable.EnterScope(logs);
-	fprintf(logs,"Line %d: LCURL Entering Scope LCURL\n\n",numberOfLines);
+	// fprintf(logs,"Line %d: LCURL Entering Scope LCURL\n\n",numberOfLines);
 	// cout << "At line " << numberOfLines << " " << endl;
 	// scope_counter_2 = symbolTable.getTableIDTracker();
 
@@ -468,7 +476,7 @@ compound_statement : LCURL {
 			fprintf(errors, "Error at line %d : Duplicate Parameter Name of function\n\n", numberOfLines);
 		}
 	}
-	// temp_param_list.clear();
+	temp_param_list.clear();
 } RCURL {
 	fprintf(logs,"Line %d: compound_statement : LCURL  RCURL\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = getFromSymbolSet("left_curl")+"\n"+getFromSymbolSet("right_curl");
@@ -482,7 +490,7 @@ var_declaration : type_specifier declaration_list SEMICOLON {
 
 	$$->extraSymbolInfo.stringConcatenator = stringAdder(3,$1->extraSymbolInfo.stringConcatenator.c_str(),$2->extraSymbolInfo.stringConcatenator.c_str(),getFromSymbolSet("semicolon").c_str());
 
-	fprintf(logs,"%s\n\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 };
 
 type_specifier : INT {
@@ -617,7 +625,7 @@ statement : var_declaration {
 } | expression_statement {
 	fprintf(logs,"Line %d: statement : expression_statement\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator;
-	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+	fprintf(logs,"%s\n\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 } | compound_statement {
 	fprintf(logs,"Line %d: statement : compound_statement\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator;
@@ -678,7 +686,7 @@ statement : var_declaration {
 } | RETURN expression SEMICOLON {
 	fprintf(logs,"Line %d: statement : RETURN expression SEMICOLON\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = "return "+$2->extraSymbolInfo.stringAdder(getFromSymbolSet("semicolon"));
-	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+	fprintf(logs,"%s\n\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 
 	string a = $2->extraSymbolInfo.typeOfVar;
 
@@ -767,7 +775,7 @@ variable : ID {
 };
 
 expression : logic_expression {
-	fprintf(logs,"Line %d: expression : logic_expression\n\n",numberOfLines);
+	fprintf(logs,"Line %d: expression : logic expression\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator;
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.typeOfVar;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
@@ -810,13 +818,13 @@ expression : logic_expression {
 };
 
 logic_expression : rel_expression {
-	fprintf(logs,"Line %d: logic_expression : rel_expression \n\n",numberOfLines);
+	fprintf(logs,"Line %d: logic_expression : rel_expression\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator;
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.typeOfVar;
 
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 } | rel_expression LOGICOP rel_expression {
-	fprintf(logs,"Line %d: logic_expression : rel_expression LOGICOP rel_expression \n\n",numberOfLines);
+	fprintf(logs,"Line %d: logic_expression : rel_expression LOGICOP rel_expression\n\n",numberOfLines);
 	string a_type  = $1->extraSymbolInfo.typeOfVar;
 	string b_type  =  $2->extraSymbolInfo.typeOfVar;
 	if((a_type=="VOID") || (b_type =="VOID")){
@@ -831,13 +839,13 @@ logic_expression : rel_expression {
 };
 
 rel_expression	: simple_expression {
-	fprintf(logs,"Line %d: rel_expression : simple_expression \n\n",numberOfLines);
+	fprintf(logs,"Line %d: rel_expression : simple_expression\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator;
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.typeOfVar;
 
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 } | simple_expression RELOP simple_expression {
-	fprintf(logs,"Line %d: rel_expression : simple_expression RELOP simple_expression \n\n",numberOfLines);
+	fprintf(logs,"Line %d: rel_expression : simple_expression RELOP simple_expression\n\n",numberOfLines);
 
 	string a_type  = $1->extraSymbolInfo.typeOfVar;
 	string b_type  =  $2->extraSymbolInfo.typeOfVar;
@@ -854,12 +862,12 @@ rel_expression	: simple_expression {
 };
 
 simple_expression : term {
-	fprintf(logs,"Line %d: simple_expression : term \n\n",numberOfLines);
+	fprintf(logs,"Line %d: simple_expression : term\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator;
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.typeOfVar;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 } | simple_expression ADDOP term {
-	fprintf(logs,"Line %d: simple_expression : simple_expression ADDOP term \n\n",numberOfLines);
+	fprintf(logs,"Line %d: simple_expression : simple_expression ADDOP term\n\n",numberOfLines);
 
 	string a_type = $1->extraSymbolInfo.typeOfVar;
 	string b_type = $3->extraSymbolInfo.typeOfVar;
@@ -887,12 +895,12 @@ simple_expression : term {
 };
 
 term :	unary_expression {
-	fprintf(logs,"Line %d: term : unary_expression \n\n",numberOfLines);
+	fprintf(logs,"Line %d: term : unary_expression\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator;
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.typeOfVar;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 } | term MULOP unary_expression {
-	fprintf(logs,"Line %d: term : term MULOP unary_expression \n\n",numberOfLines);
+	fprintf(logs,"Line %d: term : term MULOP unary_expression\n\n",numberOfLines);
 
 	string term_type = $1->extraSymbolInfo.typeOfVar;
 	string unary_type = $3->extraSymbolInfo.typeOfVar;
@@ -1089,7 +1097,6 @@ factor	: variable {
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 
 } | CONST_FLOAT {
-	fprintf(logs,"Line %d: factor : CONST_FLOAT\n\n",numberOfLines);
 	$1->extraSymbolInfo.typeOfVar = "FLOAT";
 	$1->extraSymbolInfo.typeOfID = "CONST_FLOAT";
 	fprintf(logs,"Line %d: factor : CONST_FLOAT\n\n",numberOfLines);
@@ -1180,9 +1187,9 @@ int main(int argc,char *argv[])
 	yyin=fp;
 	yyparse();
 
-    fprintf(logs,"Total Line: %d\n\n",numberOfLines-1);
-	fprintf(logs,"Total Error: %d\n\n",numberOfErrors);
-    fprintf(errors,"Total Error: %d\n\n",numberOfErrors);
+    fprintf(logs,"Total lines: %d\n",numberOfLines-1);
+	fprintf(logs,"Total errors: %d\n\n",numberOfErrors);
+    fprintf(errors,"Total errors: %d\n\n",numberOfErrors);
 
 	fclose(yyin);
     fclose(errors);

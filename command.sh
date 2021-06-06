@@ -1,4 +1,4 @@
-bison -v -y -d 1705070.y
+bison -v -y -d 1705070_backup.y
 echo '1'
 g++ -w -c -o y.o y.tab.c
 echo '2'
