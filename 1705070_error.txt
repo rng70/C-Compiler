@@ -1,8 +1,16 @@
-Error at Line 20 : Unequal Number of function arguments
+Error at Line 15  : Multiple declration of a
+
+Error at Line 16 : Index Not on Array
+
+Error at Line 17 : Index Not on Array
+
+Error at Line 18 : Index Not on Array
+
+Error at Line 18 : Index Not on Array
 
 Warning at Line 20 : Integer converted to float during Multiplication.
 
 Warning at Line 20  : Integer converted to float during Addition.
 
-Total Error: 1
+Total Error: 5
 

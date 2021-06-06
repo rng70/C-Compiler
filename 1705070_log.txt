@@ -94,6 +94,8 @@ Line 5: parameter_list : parameter_list COMMA type_specifier ID
 
 int a,int b
 
+Line 6: Entering Scope compound_statement LCURL
+
 Line 6: variable : ID
 
 a
@@ -162,14 +164,15 @@ return a+b;
 }
 
 ScopeTable # 1.1
- 0 --> < b : ID> 
- 6 --> < a : ID> 
+ 7 --> < a : ID> 
+ 8 --> < b : ID> 
 
 ScopeTable # 1
- 1 --> < x : ID> 
- 2 --> < y : ID> < foo : ID> 
- 3 --> < z : ID> 
- 6 --> < a : ID> 
+ 0 --> < x : ID> 
+ 1 --> < y : ID> 
+ 2 --> < z : ID> 
+ 7 --> < a : ID> 
+ 24 --> < foo : ID> 
 
 Line 7: func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement
 
@@ -197,6 +200,8 @@ return a+b;
 Line 9: type_specifier : VOID
 
 void 
+
+Line 10: Entering Scope compound_statement LCURL
 
 Line 10: variable : ID
 
@@ -226,7 +231,7 @@ Line 10: logic_expression : rel_expression
 
 2
 
-Line 10: expression :variable ASSIGNOP logic_expression
+Line 10: expression : variable ASSIGNOP logic_expression
 
 x=2
 
@@ -291,7 +296,7 @@ Line 11: logic_expression : rel_expression
 
 x-5
 
-Line 11: expression :variable ASSIGNOP logic_expression
+Line 11: expression : variable ASSIGNOP logic_expression
 
 y=x-5
 
@@ -317,13 +322,16 @@ y=x-5;
 }
 
 ScopeTable # 1.2
+ 7 --> < a : ID> 
+ 8 --> < b : ID> 
 
 ScopeTable # 1
- 0 --> < var : ID> 
- 1 --> < x : ID> 
- 2 --> < y : ID> < foo : ID> 
- 3 --> < z : ID> 
- 6 --> < a : ID> 
+ 0 --> < x : ID> 
+ 1 --> < y : ID> 
+ 2 --> < z : ID> 
+ 7 --> < a : ID> 
+ 24 --> < foo : ID> 
+ 29 --> < var : ID> 
 
 Line 12: func_definition ID LPAREN RPAREN compound_statement
 
@@ -357,6 +365,8 @@ y=x-5;
 Line 14: type_specifier : INT
 
 int 
+
+Line 15: Entering Scope compound_statement LCURL
 
 Line 15: type_specifier : INT
 
@@ -546,7 +556,7 @@ Line 17: logic_expression : rel_expression
 
 5
 
-Line 17: expression :variable ASSIGNOP logic_expression
+Line 17: expression : variable ASSIGNOP logic_expression
 
 a[1]=5
 
@@ -674,7 +684,7 @@ Line 18: logic_expression : rel_expression
 
 a[0]+a[1]
 
-Line 18: expression :variable ASSIGNOP logic_expression
+Line 18: expression : variable ASSIGNOP logic_expression
 
 i=a[0]+a[1]
 
@@ -847,7 +857,7 @@ Line 19: logic_expression : rel_expression LOGICOP rel_expression
 
 2*3+(5%3<4&&8)||2
 
-Line 19: expression :variable ASSIGNOP logic_expression
+Line 19: expression : variable ASSIGNOP logic_expression
 
 j=2*3+(5%3<4&&8)||2
 
@@ -999,7 +1009,7 @@ Line 20: logic_expression : rel_expression
 
 var(1,2*3)+3.5*2
 
-Line 20: expression :variable ASSIGNOP logic_expression
+Line 20: expression : variable ASSIGNOP logic_expression
 
 d=var(1,2*3)+3.5*2
 
@@ -1080,17 +1090,20 @@ return 0;
 }
 
 ScopeTable # 1.3
- 0 --> < i : ID> 
- 1 --> < c : ID> < j : ID> 
- 2 --> < d : ID> 
- 6 --> < a : ID> 
+ 7 --> < a : ID> 
+ 8 --> < b : ID> 
+ 9 --> < c : ID> 
+ 10 --> < d : ID> 
+ 15 --> < i : ID> 
+ 16 --> < j : ID> 
 
 ScopeTable # 1
- 0 --> < var : ID> 
- 1 --> < x : ID> 
- 2 --> < y : ID> < foo : ID> 
- 3 --> < z : ID> 
- 6 --> < a : ID> 
+ 0 --> < x : ID> 
+ 1 --> < y : ID> 
+ 2 --> < z : ID> 
+ 7 --> < a : ID> 
+ 24 --> < foo : ID> 
+ 29 --> < var : ID> 
 
 Line 22: func_definition ID LPAREN RPAREN compound_statement
 
@@ -1146,13 +1159,14 @@ return 0;
 Symbol Table : 
 
 ScopeTable # 1
- 0 --> < var : ID> 
- 1 --> < x : ID> < main : ID> 
- 2 --> < y : ID> < foo : ID> 
- 3 --> < z : ID> 
- 6 --> < a : ID> 
+ 0 --> < x : ID> 
+ 1 --> < y : ID> < main : ID> 
+ 2 --> < z : ID> 
+ 7 --> < a : ID> 
+ 24 --> < foo : ID> 
+ 29 --> < var : ID> 
 
 Total Line: 22
 
-Total Error: 1
+Total Error: 5
 

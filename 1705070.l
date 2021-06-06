@@ -13,6 +13,10 @@ using namespace std;
 
 int numberOfLines = 1;
 int numberOfErrors = 0;
+extern FILE* errors;
+int linestart;
+string s2 = "";
+string s1 = "";
 %}
 
 /* Declare Lex styled macros */
@@ -32,7 +36,7 @@ TOOMANYDECIMAL     {DIGIT}*([\.]{DIGIT}*)+([\.]+{DIGIT}*)+{EXP}?
 ILLFORMEDERROR     {DIGIT}*([\.]+{DIGIT}*)*?([Ee][+-]?([0-9]+)?([\.]*{DIGIT}*)+)+
 INVALIDIDENTIFIER  {FLOATINGPOINT}{IDENTIFIER}{FLOATINGPOINT}*
 MULTICHARACTERERROR   '[^\',][^\n\',]+'
-UNFINISHEDCHARACTER   '[\\]'|'[^\n\']*|'\\[nt\\afr"bv0]|'\\
+UNFINISHEDCHARACTER   '[\\]'|'[^\n\']|'\\[nt\\afr"bv0]|'\\
 EMPTYCHARERROR        ''
 UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
 
@@ -235,41 +239,58 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
 }
 
 "/*" {
+    s1 = s1+yytext;
+    linestart = numberOfLines;
     BEGIN COMMENTMULTI;
 }
 
 <COMMENTMULTI>"*/" {
+    s1 = "";
     BEGIN INITIAL;
 }
 
 <COMMENTMULTI>\n {
+    s1 = s1+yytext;
     numberOfLines++;
 }
 
 <COMMENTMULTI>.|[^*\n] {
+    s1 = s1+yytext;
 }
 
 <COMMENTMULTI><<EOF>> { 
+    fprintf(errors,"Error observed at Line No:%d: Unterminated Comment:\n\n",linestart);
+    s1 = "";
     numberOfErrors++;
+    fprintf(errors,"Total Line No:%d\n",--numberOfLines);
+    fprintf(errors,"Total Errors:%d\n\n",numberOfErrors);
     return 0;
 }
 
 \" {
+    s1 = s1+yytext;
+    linestart = numberOfLines;
     BEGIN STRINGSTATE;
 }
 
-<STRINGSTATE>\" {     
+<STRINGSTATE>\" {
+    s1 = s1+yytext;
+    s1 = "";
+    s2 = "";     
     BEGIN INITIAL;
 }
 
 <STRINGSTATE>\n {
     numberOfLines++;
+    fprintf(errors,"Error observed at Line No:%d: Unterminated string: %s\n\n",linestart,s1.c_str());
+    s1 = "";
     numberOfErrors++;    
     BEGIN INITIAL;
 }
 
 <STRINGSTATE>\\\n {
     numberOfLines++;
+    s1 = s1+yytext;
 }
 
 <STRINGSTATE>\\[nt\\afr"bv0] {
@@ -283,35 +304,43 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
 
 {TOOMANYDECIMAL} {
     numberOfErrors++;
+    fprintf(errors,"Error at line %d: Too many decimal point: %s\n\n",numberOfLines,yytext);
 }
 
 {ILLFORMEDERROR} {
     numberOfErrors++;
+    fprintf(errors,"Error at line %d: Ill formed Number: %s\n\n",numberOfLines,yytext);
 }
 
 {INVALIDIDENTIFIER} {
     numberOfErrors++;
+    fprintf(errors,"Error at line %d: Invalid prefix on ID or invalid suffix on Number: %s\n\n",numberOfLines,yytext);
 }
 
 {UNRECOGNIZEDCHARACTER} {
     numberOfErrors++;
+    fprintf(errors,"Error at line %d: Unrecognized character constant error: %s\n\n",numberOfLines,yytext);
 }
 
 {MULTICHARACTERERROR} {
     numberOfErrors++;
+    fprintf(errors,"Error at line %d: Multi character constant error: %s\n\n",numberOfLines,yytext);
 }
 
 {EMPTYCHARERROR} {
     numberOfErrors++;
+    fprintf(errors,"Error at line %d: Empty character constant error: %s\n\n",numberOfLines,yytext);
 }
 
 
 {UNFINISHEDCHARACTER} {
     numberOfErrors++;
+    fprintf(errors,"Error at line %d: Unterminated character: %s\n\n",numberOfLines,yytext);
 }
 
 . {
     numberOfErrors++;
+    fprintf(errors,"Error at line %d: Unrecognized character constant error: %s\n\n",numberOfLines,yytext);
 }
 
 <<EOF>> { 
