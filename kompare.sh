@@ -1,2 +1,2 @@
-kompare -c 1705070_log.txt ./inputFileDirectory/offline-3/v1/log5.txt&
-kompare -c 1705070_error.txt ./inputFileDirectory/offline-3/v1/error5.txt&
+kompare -c 1705070_log.txt ./inputFileDirectory/offline-3/v2/log3.txt&
+kompare -c 1705070_error.txt ./inputFileDirectory/offline-3/v2/error3.txt&

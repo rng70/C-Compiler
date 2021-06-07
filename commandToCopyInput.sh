@@ -1,1 +1,1 @@
-cp inputFileDirectory/offline-3/v1/input5.txt input.txt
+cp inputFileDirectory/offline-3/v2/input3.txt input.txt
