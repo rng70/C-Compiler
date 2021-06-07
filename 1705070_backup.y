@@ -31,11 +31,16 @@ string scope_holder = "";
 
 // error detection
 void yyerror(const char *s){
-	yyerrok;
 	numberOfErrors++;
     fprintf(errors, "Line no %d: %s\n", numberOfLines, s);
 }
-
+// void yyerror(const char *s, ...){
+// 	va_list ap;
+// 	va_start(ap, s); 
+// 	fprintf(errors, "%s:%d.%d-%d.%d: error: ", yylloc.filename, yylloc.first_line, yylloc.first_column, yylloc.last_line, yylloc.last_column); 
+// 	///vfprintf(stderr, s, ap); 
+// 	///fprintf(stderr, "\n");
+// }
 string stringAdder(int count, ...){
 	va_list varStringList;
 	int counter;

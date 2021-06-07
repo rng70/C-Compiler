@@ -1,18 +1,3 @@
-Error at Line 6  : Multiple declration of c
-
-Error at Line 7 : Non Integer Array Index
-
-Error at Line 8 : Type Mismatch
-
-Warning at Line 8 : Float assigned to Integer
-
-Error at Line 9 : Integer operand not on modulus operator
-
-Error at Line 10 : No index on array
-
-Error at Line 11 : No index on array
-
-Error at Line 12 : Undeclared variable : b
-
-Total errors: 7
+Line no 3: syntax error
+Total errors: 1
 
