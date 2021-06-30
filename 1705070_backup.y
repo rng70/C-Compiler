@@ -34,13 +34,7 @@ void yyerror(const char *s){
 	numberOfErrors++;
     fprintf(errors, "Line no %d: %s\n", numberOfLines, s);
 }
-// void yyerror(const char *s, ...){
-// 	va_list ap;
-// 	va_start(ap, s); 
-// 	fprintf(errors, "%s:%d.%d-%d.%d: error: ", yylloc.filename, yylloc.first_line, yylloc.first_column, yylloc.last_line, yylloc.last_column); 
-// 	///vfprintf(stderr, s, ap); 
-// 	///fprintf(stderr, "\n");
-// }
+
 string stringAdder(int count, ...){
 	va_list varStringList;
 	int counter;
@@ -72,6 +66,36 @@ void symbolSet()
 	SymbolSet["right_curl"] = "}";
 	SymbolSet["incop"] = "++";
 	SymbolSet["decop"] = "--";
+}
+
+/* ******************* */
+/*    New Temporary    */
+/* 		  Label        */
+/*     Generator       */
+/* ******************* */
+char* generateNewLabel(){
+	char* newLabel = new char[4];
+	strcpy(lb, "L");
+	char newLabelCounter[3];
+	sprintf(newLabelCounter, "%d", labelCount);
+	labelCount++;
+	strcat(newLabel, newLabelCounter);
+	return newLabel;
+}
+
+/* ******************* */
+/*    New Temporary    */
+/* 		Variable       */
+/*     Generator       */
+/* ******************* */
+char* generateTempVar(){
+	char* tempVar = new char[4];
+	strcpy(t, "t");
+	char tempVarCounter[3];
+	sprintf(tempVarCounter, "%d", tempCount);
+	tempCount++;
+	strcat(tempVar, tempVarCounter);
+	return tempVar; 
 }
 // get it
 string getFromSymbolSet(string name)
@@ -623,11 +647,25 @@ statements : statement{
 	fprintf(logs,"Line %d: statements : statement\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator+"\n";
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code;
 } | statements statement {
 	fprintf(logs,"Line %d: statements : statements statement\n\n", numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator+($2->extraSymbolInfo.stringConcatenator+"\n");
 	statement_solver = $$->extraSymbolInfo.stringConcatenator;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code + $2->extraSymbolInfo.assm_code;
 };
 
 statement : var_declaration {
