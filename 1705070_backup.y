@@ -835,6 +835,14 @@ logic_expression : rel_expression {
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.typeOfVar;
 
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$->extraSymbolInfo.carr1 = $1->extraSymbolInfo.carr1;
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code;
 } | rel_expression LOGICOP rel_expression {
 	fprintf(logs,"Line %d: logic_expression : rel_expression LOGICOP rel_expression\n\n",numberOfLines);
 	string a_type  = $1->extraSymbolInfo.typeOfVar;
@@ -848,6 +856,53 @@ logic_expression : rel_expression {
 	string temp = $1->extraSymbolInfo.stringAdder($2->getName()+$3->extraSymbolInfo.stringConcatenator);
 	$$->extraSymbolInfo.stringConcatenator = temp;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	string temp_code = $1->extraSymbolInfo.assm_code+
+					$3->extraSymbolInfo.assm_code;
+	char *label1 = newLabel, *label2 = newLabel(), *label3 = newLabel();
+	char *temp_var = newTemp();
+
+	if($2->getName() == "&&"){
+		temp_code += "\n\tMOV AX, "+
+					$1->extraSymbolInfo.carr1+"\n"+
+					"\tCMP AX, 1"+
+					"\n\tJNE "+
+					string(label2)+"\n"+
+					"\tMOV AX, "+
+					$3->extraSymbolInfo.carr1+"\n"+
+					"\tCMP AX, 1"+
+					"\n\tJNE "+string(label2)+"\n"+
+					string(label1)+":\n\tMOV "+
+					string(temp_var)+", 1\n"+
+					"\tJMP "+string(label3)+"\n"+
+					string(label2)+":\n\tMOV "+
+					string(temp_var)+", 0\n"+
+					string(label3)+":\n\n";
+	}else if($2->getName()=="||"){
+		temp_code += "\n\tMOV AX, "+
+					$1->extraSymbolInfo.carr1+"\n"+
+					"\tCMP AX, 1"+
+					"\n\tJE "+
+					string(label2)+"\n"+
+					"\tMOV AX, "+
+					$3->extraSymbolInfo.carr1+"\n"+
+					"\tCMP AX, 1"+
+					"\n\tJE "+string(label2)+"\n"+
+					string(label1)+":\n\tMOV "+
+					string(temp_var)+", 0\n"+
+					"\tJMP "+string(label3)+"\n"+
+					string(label2)+":\n\tMOV "+
+					string(temp_var)+", 1\n"+
+					string(label3)+":\n\n";
+	}
+	$$->extraSymbolInfo.assm_code = temp_code;
+	$$extraSymbolInfo.carr1 = string(temp_var);
+	decld_var_carrier.push_back(make_pair(string(temp_var), ""));
 };
 
 rel_expression	: simple_expression {
