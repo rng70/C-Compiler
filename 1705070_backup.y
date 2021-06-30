@@ -748,6 +748,15 @@ variable : ID {
 	}
 	$$->extraSymbolInfo.stringConcatenator = $1->getName();
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$->extraSymbolInfo.carr1 = $1->getName()+
+	to_string(symbolTable.IDlookUpWithParam($1->getName()));
+	$$->extraSymbolInfo.assm_code = "";
 } | ID LTHIRD expression RTHIRD {
 	fprintf(logs,"Line %d: variable : ID LTHIRD expression RTHIRD\n\n",numberOfLines);
 
@@ -784,6 +793,19 @@ variable : ID {
 	string t = getFromSymbolSet("left_third")+$3->extraSymbolInfo.stringAdder(getFromSymbolSet("right_third"));
 	$$->extraSymbolInfo.stringConcatenator = $1->getName()+t;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	string temp_code = $3->extraSymbolInfo.assm_code+
+					"\tMOV BX, "+
+					$3->extraSymbolInfo.carr1+
+					"\n\tADD BX, BX\n";
+	$$->extraSymbolInfo.assm_code = temp_code;
+	$$->extraSymbolInfo.carr1 = $1->getName()+
+	to_string(symbolTable.IDlookUpWithParam($1->getName()));
 };
 
 expression : logic_expression {
@@ -827,6 +849,43 @@ expression : logic_expression {
 
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator+getFromSymbolSet("equal")+$3->extraSymbolInfo.stringConcatenator;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+
+	string temp;
+	char* idx_saver = newTemp();
+	if($1->extraSymbolInfo.typeOfID == "ARRAY"){
+		decld_var_carrier.push_back(make_pair(string(idx_saver), ""));
+		temp = $1->extraSymbolInfo.assm_code+
+			"\n\tMOV "+
+			"string(idx_saver)+", BX\n"+
+			$3->extraSymbolInfo.assm_code+
+			"\tMOV AX, "+
+			$3->extraSymbolInfo.carr1+
+			"\n"+
+			"\tMOV BX, "+
+			string(idx_saver)+
+			"\n"+
+			"\tMOV "+
+			$1->extraSymbolInfo.carr1+
+			"[BX], AX\n\n";
+		$$->extraSymbolInfo.assm_code = temp_code;
+	}else{
+		temp = $1->extraSymbolInfo.assm_code+
+			$3->extraSymbolInfo.assm_code+
+			"\tMOV AX, "+
+			$3->extraSymbolInfo.carr1+
+			"\n"+
+			"\tMOV "+
+			$1->extraSymbolInfo.carr1+
+			", AX\n\n";
+
+		$$->extraSymbolInfo.assm_code = temp;
+	}
 };
 
 logic_expression : rel_expression {
