@@ -911,6 +911,14 @@ term :	unary_expression {
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator;
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.typeOfVar;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$->extraSymbolInfo.carr1 = $1->extraSymbolInfo.carr1;
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code;
 } | term MULOP unary_expression {
 	fprintf(logs,"Line %d: term : term MULOP unary_expression\n\n",numberOfLines);
 
@@ -923,6 +931,16 @@ term :	unary_expression {
 	command_map["*"] = 1;
 	command_map["/"] = 2;
 	command_map["%"] = 3;
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	char* temp_var = newTemp();
+	string res = string(temp_var);
+	string temp_code = $1->extraSymbolInfo.assm_code+
+						$3->extraSymbolInfo.assm_code;
 
 	switch(command_map[mult_operator])
 	{
@@ -944,6 +962,22 @@ term :	unary_expression {
 				$$->extraSymbolInfo.typeOfVar = ret_type;
 				$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringAdder($2->getName().append($3->extraSymbolInfo.stringConcatenator));
 				fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+				/* ******************* */
+				/*                     */
+				/* 		ICG Code       */
+				/*                     */
+				/* ******************* */
+				temp_code += "\n\tMOV AX, +
+				$1->extraSymbolInfo.carr1+"\n"+
+							"\tMOV BX, "+$3->extraSymbolInfo.carr1+"\n"+
+							"\tMUL BX\n"+
+							"\tMOV "+
+							res+
+							", AX\n\n";
+				$$->extraSymbolInfo.assm_code = temp_code;
+				$$->extraSymbolInfo.carr1 = res;
+				decld_var_carrier.push_back(make_pair(res, ""));
 			}
 			break;
 		case 2:{
@@ -964,6 +998,22 @@ term :	unary_expression {
 				$$->extraSymbolInfo.typeOfVar = ret_type;
 				$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringAdder($2->getName().append($3->extraSymbolInfo.stringConcatenator));
 				fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+				/* ******************* */
+				/*                     */
+				/* 		ICG Code       */
+				/*                     */
+				/* ******************* */
+				temp_code += "\n\tXOR DX, DX\n"+
+							"\tMOV AX, "+$1->extraSymbolInfo.carr1+"\n"+
+							"\tMOV BX, "+$3->extraSymbolInfo.carr1+"\n"+
+							"\tDIV BX\n"+
+							"\tMOV "+
+							res+
+							", AX\n\n";
+				$$->extraSymbolInfo.assm_code = temp_code;
+				$$->extraSymbolInfo.carr1 = res;
+				decld_var_carrier.push_back(make_pair(res, ""));
 			}
 			break;
 		case 3:{
@@ -984,6 +1034,23 @@ term :	unary_expression {
 				$$->extraSymbolInfo.typeOfVar = ret_type;
 				$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringAdder($2->getName().append($3->extraSymbolInfo.stringConcatenator));
 				fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+				/* ******************* */
+				/*                     */
+				/* 		ICG Code       */
+				/*                     */
+				/* ******************* */
+				temp_code += "\tXOR DX, DX\n"+
+							"\tMOV AX, "+$1->extraSymbolInfo.carr1+
+							"\n"+"\tMOV BX, "+
+							$3->extraSymbolInfo.carr1+
+							"\n"+"\tDIV BX\n"+
+							"\tMOV "+
+							res+
+							", DX\n\n";
+				$$->extraSymbolInfo.assm_code = temp_code;
+				$$->extraSymbolInfo.carr1 = res;
+				decld_var_carrier.push_back(make_pair(res, ""));
 			}
 			break;
 	}
@@ -998,6 +1065,20 @@ unary_expression : ADDOP unary_expression {
 	if($2->extraSymbolInfo.stringConcatenator=="VOID"){
 		fprintf(errors,"Error at Line %d : Unary expression cannot be void\n\n",numberOfLines);
 		numberOfErrors++;
+	}else{
+		string temp_code = $2->extraSymbolInfo.assm_code;
+
+		if($1->getName == "-"){
+			temp_code += "\tMOV AX, "+
+						$2->extraSymbolInfo.carr1+"\n"+
+						"\tNEG AX\n"+
+						"\tMOV "+
+						$2->extraSymbolInfo.carr1+
+						", AX\n\n";
+			$$->extraSymbolInfo.assm_code = temp_code;
+			$$->extraSymbolInfo.carr1 = $2->extraSymbolInfo.carr1;	
+
+		}
 	}
 } | NOT unary_expression {
 	fprintf(logs,"Line %d: unary_expression : NOT unary_expression\n\n",numberOfLines);
@@ -1009,6 +1090,17 @@ unary_expression : ADDOP unary_expression {
 	{
 		fprintf(errors,"Error at Line %d : Unary expression cannot be void\n\n",numberOfLines);
 		numberOfErrors++;
+	}else{
+		char* temp_var = newTemp();
+		string temp_code = $2->extraSymbolInfo.assm_code;
+		temp_code += "\tMOV AX, "+
+					$2->extraSymbolInfo.carr1+"\n"+
+					"\tNOT AX\n"+
+					"\tMOV "+string(temp_var)+
+					", AX\n\n";
+		$$->extraSymbolInfo.assm_code = temp_code;
+		$$->extraSymbolInfo.carr1 = string(temp_var);
+		decld_var_carrier.push_back(make_pair(string(temp_var), ""));
 	}
 } | factor {
 	fprintf(logs,"Line %d: unary_expression : factor\n\n",numberOfLines);
@@ -1017,6 +1109,14 @@ unary_expression : ADDOP unary_expression {
 	// at this point don't need t print variable type
 	// fprintf(logs,"%s\n\n",$$->extraSymbolInfo.typeOfVar.c_str());
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$->extraSymbolInfo.carr1 = $1->extraSymbolInfo.carr1;
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code;
 };
 
 factor	: variable {
@@ -1024,6 +1124,7 @@ factor	: variable {
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator;
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.typeOfVar;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
 	/* ******************* */
 	/*                     */
 	/* 		ICG Code       */
