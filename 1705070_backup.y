@@ -856,6 +856,14 @@ rel_expression	: simple_expression {
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.typeOfVar;
 
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$->extraSymbolInfo.carr1 = $1->extraSymbolInfo.carr1;
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code;
 } | simple_expression RELOP simple_expression {
 	fprintf(logs,"Line %d: rel_expression : simple_expression RELOP simple_expression\n\n",numberOfLines);
 
@@ -871,6 +879,46 @@ rel_expression	: simple_expression {
 	string temp = $1->extraSymbolInfo.stringAdder($2->getName()+$3->extraSymbolInfo.stringConcatenator);
 	$$->extraSymbolInfo.stringConcatenator = temp;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	string temp_code = $1->extraSymbolInfo.assm_code+
+					$3->extraSymbolInfo.assm_code+
+					"\tMOV AX, "+
+					$1->extraSymbolInfo.carr1+"\n"+
+					"\tCMP AX, "+$3->extraSymbolInfo.carr1+
+					"\n";
+	char* temp_var = newTemp();
+	char *label1=newLabel(), *label2=newLabel();
+
+	if($2->getName() == "<"){
+		temp_code += "\tJL "+string(label1)+"\n";
+	}else if($2->getName == "<="){
+		temp_code += "\tJLE "+string(label1)+"\n";
+	}else if($2->getName() == ">"){
+		temp_code += "\tJG "+string(label1)+"\n";
+	}else if($2->getName() == ">="){
+		temp_code += "\tJGE "+string(label1)+"\n";
+	}else if($2->getName()== "=="){
+		temp_code += "\tJE "+string(label1)+"\n";
+	}else{
+		temp_code += "\tJNE "+string(label1)+"\n";
+	}
+	temp_code += "\tMOV "+string(temp_var)+
+				", 0\n"+
+				"\tJMP "+
+				string(label2)+"\n"+
+				string(label1)+":\n\tMOV "+
+				string(temp_var)+
+				", 1\n"+
+				string(label2)+":\n\n"
+	$$->extraSymbolInfo.assm_code = temp_code;
+	$$->extraSymbolInfo.carr1 = string(temp_var);
+	decld_var_carrier.push_back(make_pair(string(temp_var), ""));
+
 };
 
 simple_expression : term {
@@ -878,6 +926,14 @@ simple_expression : term {
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator;
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.typeOfVar;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$->extraSymbolInfo.carr1 = $1->extraSymbolInfo.carr1;
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code;
 } | simple_expression ADDOP term {
 	fprintf(logs,"Line %d: simple_expression : simple_expression ADDOP term\n\n",numberOfLines);
 
@@ -904,6 +960,31 @@ simple_expression : term {
 	$$->extraSymbolInfo.typeOfVar = ret_type;
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringAdder($2->getName().append($3->extraSymbolInfo.stringConcatenator));
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	string temp_code = "\n"+$1->extraSymbolInfo.assm_code+
+						$3->extraSymbolInfo.assm_code+"\n\tMOV AX, "+
+						$1->extraSymbolInfo.carr1+"\n";
+	char* temp_var = newTemp();
+
+	if($2->getName() == "+"){
+		temp_code += "\tADD AX, "+$3->extraSymbolInfo.carr1+
+					"\n"+
+					"\tMOV "+string(temp_var)+
+					", AX\n\n";
+	}else if($2->getName() == "-"){
+		temp_code += "\tSUB AX, "+$3->extraSymbolInfo.carr1+
+					"\n"+
+					"\tMOV "+string(temp_var)+
+					", AX\n\n";
+	}
+	$$->extraSymbolInfo.assm_code = temp_code;
+	$$->extraSymbolInfo.carr1 = string(temp_var);
+	decld_var_carrier.push_back(make_pair(string(temp_var), ""));
 };
 
 term :	unary_expression {
