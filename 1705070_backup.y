@@ -120,6 +120,13 @@ string getFromSymbolSet(string name)
 start : program {
 	fprintf(logs, "Line %d: start : program\n\n\n",numberOfLines-1);
 	symbolTable.printAllTable(logs);
+
+	if(numberOfErrors==0){
+		string temp, first, second;
+		temp = ".MODEL SMALL\n.STACK 100H\n\n.DATA\n";
+
+		for(int i=0;i<de)
+	}
 };
 
 program : program unit {
@@ -1017,6 +1024,26 @@ factor	: variable {
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator;
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.typeOfVar;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	string temp_code = $1->extraSymbolInfo.assm_code;
+
+	if($1->extraSymbolInfo.typeOfID == "ARRAY"){
+		char* temp_var = newTemp();
+		temp_code += "\tMOV AX, "+
+					$1->extraSymbolInfo.carr1+
+					"[BX]\n"+
+					"\tMOV "+
+					string(temp_var)+", AX\n";
+		decld_var_carrier.push_back(make_pair(string(temp_var), ""));
+		$$->extraSymbolInfo.carr1 = string(temp_var);	
+	}else{
+		$$->extraSymbolInfo.carr1 = $1->extraSymbolInfo.carr1;
+	}
+	$$->extraSymbolInfo.assm_code = temp_code;
 } | ID LPAREN argument_list RPAREN {
 	fprintf(logs,"Line %d: factor : ID LPAREN argument_list RPAREN\n\n",numberOfLines);
 
@@ -1081,6 +1108,34 @@ factor	: variable {
 			$$->extraSymbolInfo.typeOfVar = "INT";
 			arg_param_list.clear();
 		}
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	string temp_code = $3->extraSymbolInfo.assm_code;
+
+	for(int i=0;i<s->extraSymbolInfo.modfd_param_list.size();i++){
+		temp_code += "\tMOV AX, "+
+					$3->extraSymbolInfo.var_declared_list[i].first+"\n"+
+					"\tMOV "+s->extraSymbolInfo.modfd_param_list[i]+
+					", AX\n";
+	}
+
+	temp_code += "\tCALL "+$1->getName()+"\n"+
+				"\tMOV AX, "+
+				$1->getName()+
+				"_return_val"+"\n";
+
+	char* temp_var = newTemp();
+	string result = string(temp_var);
+	temp_code += "\tMOV "+result+
+				", AX\n";
+	
+	$$->extraSymbolInfo.assm_code = temp_code;
+	$$->extraSymbolInfo.carr1 = result;
+	decld_var_carrier.push_back(make_pair(result, ""));
 	}
 } | LPAREN expression RPAREN {
 	fprintf(logs,"Line %d: factor : LPAREN expression RPAREN\n\n",numberOfLines);
@@ -1091,6 +1146,14 @@ factor	: variable {
 	s->extraSymbolInfo.typeOfVar = $2->extraSymbolInfo.typeOfVar;
 	$$=s;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$->extraSymbolInfo.assm_code = $2->extraSymbolInfo.assm_code;
+	$$->extraSymbolInfo.carr1 = $2->extraSymbolInfo.carr1;
 } | CONST_INT {
 	fprintf(logs,"Line %d: factor : CONST_INT\n\n",numberOfLines);
 	$1->extraSymbolInfo.typeOfVar = "INT";
@@ -1101,6 +1164,13 @@ factor	: variable {
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.typeOfVar;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$->extraSymbolInfo.carr1 = $1->getName();
+
 } | CONST_FLOAT {
 	$1->extraSymbolInfo.typeOfVar = "FLOAT";
 	$1->extraSymbolInfo.typeOfID = "CONST_FLOAT";
@@ -1110,16 +1180,90 @@ factor	: variable {
 	$$->extraSymbolInfo.typeOfID = $1->extraSymbolInfo.typeOfID;
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.typeOfVar;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$->extraSymbolInfo.carr1 = $1->getName();
+
 } | variable INCOP {
 	fprintf(logs,"Line %d: factor : variable INCOP\n\n",numberOfLines);
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.typeOfVar;
 	$$->extraSymbolInfo.stringConcatenator = $1->getName()+$2->getName();
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		IGC Code       */
+	/*                     */
+	/* ******************* */
+	char* temp_var = newTemp();
+	string temp_code = $1->extraSymbolInfo.assm_code;
+	if($1->extraSymbolInfo.typeOfID=="ARRAY"){
+		temp_code += "\tMOV AX, "+
+					$1->extraSymbolInfo.carr1+
+					"[BX]"+"\n"+
+					"\tMOV "+
+					string(temp_var)+
+					", AX\n"+
+					"\tINC AX\n"+
+					"\tMOV "+
+					$1->extraSymbolInfo.carr1+
+					"[BX], AX"+"\n\n";
+	}else{
+		temp_code += "\tMOV AX, "+
+					$1->extraSymbolInfo.carr1+"\n"+
+					"\tMOV "+
+					string(temp_var)+
+					", AX\n"+
+					"\tINC AX\n"+
+					"\tMOV "+
+					$1->extraSymbolInfo.carr1+
+					", AX"+"\n\n";
+	}
+	$$->extraSymbolInfo.assm_code = temp_code;
+	$$->extraSymbolInfo.carr1 = string(temp_var);
+	decld_var_carrier.push_back(make_pair(string(temp_var), ""));
 } | variable DECOP {
 	fprintf(logs,"Line %d: factor : variable DECOP\n\n",numberOfLines);
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.typeOfVar;
 	$$->extraSymbolInfo.stringConcatenator = $1->getName()+$2->getName();
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		IGC Code       */
+	/*                     */
+	/* ******************* */
+	char* temp_var = newTemp();
+	string temp_code = $1->extraSymbolInfo.assm_code;
+	if($1->extraSymbolInfo.typeOfID=="ARRAY"){
+		temp_code += "\tMOV AX, "+
+					$1->extraSymbolInfo.carr1+
+					"[BX]"+"\n"+
+					"\tMOV "+
+					string(temp_var)+
+					", AX\n"+
+					"\tDEC AX\n"+
+					"\tMOV "+
+					$1->extraSymbolInfo.carr1+
+					"[BX], AX"+"\n\n";
+	}else{
+		temp_code += "\tMOV AX, "+
+					$1->extraSymbolInfo.carr1+"\n"+
+					"\tMOV "+
+					string(temp_var)+
+					", AX\n"+
+					"\tDEC AX\n"+
+					"\tMOV "+
+					$1->extraSymbolInfo.carr1+
+					", AX"+"\n\n";
+	}
+	$$->extraSymbolInfo.assm_code = temp_code;
+	$$->extraSymbolInfo.carr1 = string(temp_var);
+	decld_var_carrier.push_back(make_pair(string(temp_var), ""));
 };
 
 argument_list : arguments{
@@ -1131,7 +1275,16 @@ argument_list : arguments{
 	for(int i=0;i<$1->extraSymbolInfo.functionParamList.size();i++)
 	{
 		s->extraSymbolInfo.functionParamList.push_back(make_pair($1->extraSymbolInfo.functionParamList[i].first,$1->extraSymbolInfo.functionParamList[i].second));
+		s->extraSymbolInfo.var_declared_list.push_back(make_pair($1->extraSymbolInfo.var_declared_list[i].first, ""));
 	}
+
+	/* ******************* */
+	/*                     */
+	/* 		IGC Code       */
+	/*                     */
+	/* ******************* */
+
+	s->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code;
 	$$ = s;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 } | {
@@ -1155,6 +1308,15 @@ arguments : arguments COMMA logic_expression {
 	}
 
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		IGC Code       */
+	/*                     */
+	/* ******************* */
+
+	$$ -> extraSymbolInfo.var_declared_list.push_back(make_pair($3->extraSymbolInfo.carr1, ""));
+	$$ -> extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code + $3->extraSymbolInfo.assm_code;
 } | logic_expression{
 	fprintf(logs,"Line %d: arguments : logic_expression\n\n",numberOfLines);
 
@@ -1171,6 +1333,15 @@ arguments : arguments COMMA logic_expression {
 
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		IGC Code       */
+	/*                     */
+	/* ******************* */
+
+	$$ -> extraSymbolInfo.var_declared_list.push_back(make_pair($1->extraSymbolInfo.carr1m ""));
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code;
 };
 %%
 
