@@ -638,10 +638,24 @@ statement : var_declaration {
 	fprintf(logs,"Line %d: statement : expression_statement\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator;
 	fprintf(logs,"%s\n\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code;
 } | compound_statement {
 	fprintf(logs,"Line %d: statement : compound_statement\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code;
 } | FOR LPAREN expression_statement expression_statement expression RPAREN statement {
 	fprintf(logs,"Line %d: statement : FOR LPAREN expression_statement expression_statement expression RPAREN statement\n\n",numberOfLines);
 	string temp = $3->extraSymbolInfo.stringAdder($4->extraSymbolInfo.stringAdder($5->extraSymbolInfo.stringConcatenator));
@@ -656,6 +670,26 @@ statement : var_declaration {
 	if((a=="VOID")||(b=="VOID")||(c=="VOID")){
 		numberOfErrors++;
 		fprintf(errors,"Error at Line %d : Expression can not be void\n\n",numberOfLines);
+	}else{
+		/* ******************* */
+		/*                     */
+		/* 		ICG Code       */
+		/*                     */
+		/* ******************* */
+		char *label1 = newLabel(), *label2 = newLabel();
+
+		string temp_code = $3->extraSymbolInfo.assm_code+
+						string(label1)+":\n"+
+						$4->extraSymbolInfo.assm_code+
+						"\tMOV AX, "+
+						$4->extraSymbolInfo.carr1+"\n"+
+						"\tCMP AX, 0\n"+
+						"\tJE "+string(label2)+"\n"+
+						$7->extraSymbolInfo.assm_code+
+						$5->extraSymbolInfo.assm_code+
+						"\tJMP "+string(label1)+"\n"+
+						string(label2)+":\n\n";
+		$$->extraSymbolInfo.assm_code = temp_code;
 	}
 } | IF LPAREN expression RPAREN statement %prec LOWER_PREC_THAN_ELSE{
 	fprintf(logs,"Line %d: IF LPAREN expression RPAREN statement\n\n",numberOfLines);
@@ -668,6 +702,23 @@ statement : var_declaration {
 		numberOfErrors++;
 		fprintf(errors,"Error at Line %d : Expression can not be void\n\n",numberOfLines);
 	}
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	char *label1 = newLabel();
+	string temp_code = $3->extraSymbolInfo.assm_code+
+					"\tMOV AX, "+
+					$3->extraSymbolInfo.carr1+
+					"\n"+
+					"\tCMP AX, 0\n"+
+					"\tJE "+
+					string(label1)+"\n"+
+					$5->extraSymbolInfo.assm_code+
+					string(label1)+":\n\n";
+	$$->extraSymbolInfo.assm_code = temp_code;
+
 } | IF LPAREN expression RPAREN statement ELSE statement {
 		fprintf(logs,"Line %d: IF LPAREN expression RPAREN statement ELSE statement\n\n",numberOfLines);
 		string temp = $3->extraSymbolInfo.stringAdder(getFromSymbolSet("right_first"));
@@ -679,6 +730,31 @@ statement : var_declaration {
 		if(a=="VOID"){
 			numberOfErrors++;
 			fprintf(errors,"Error at Line %d : Expression can not be void\n\n",numberOfLines);
+		}else{
+			/* ******************* */
+			/*                     */
+			/* 		ICG Code       */
+			/*                     */
+			/* ******************* */
+			char *label1 = newLabel(), *label2 = newLabel();
+			string temp_code = $3->extraSymbolInfo.assm_code+
+							"\tMOV AX, "+
+							$3->extraSymbolInfo.carr1+
+							"\n"+
+							"\tCMP AX, 0\n"+
+							"\tJE "+
+							string(label1)+
+							"\n"+
+							$5->extraSymbolInfo.assm_code+
+							"\tJMP "+
+							string(label2)+
+							"\n"+
+							"\tJMP "+string(label2)+"\n"+
+							string(label1)+":\n"+
+							$7->extraSymbolInfo.assm_code+
+							string(label2)+":\n\n";
+
+			$$extraSymbolInfo.assm_code = temp_code;
 		}
 } | WHILE LPAREN expression RPAREN statement {
 	fprintf(logs,"Line %d: WHILE LPAREN expression RPAREN statement\n\n",numberOfLines);
@@ -690,11 +766,47 @@ statement : var_declaration {
 	if(a=="VOID"){
 		numberOfErrors++;
 		fprintf(errors,"Error at Line %d : Expression can not be void\n\n",numberOfLines);
+	}else{
+		/* ******************* */
+		/*                     */
+		/* 		ICG Code       */
+		/*                     */
+		/* ******************* */
+		char *label1 = newLabel(), *label2 = newLabel();
+
+		string temp_code = string(label1)+":\n"+
+						$3->extraSymbolInfo.assm_code+
+						"\tMOV AX, "+
+						$3->extraSymbolInfo.carr1+
+						"\n"+
+						"\tCMP AX, 0\n"+
+						"\tJE "+
+						string(label2)+
+						"\n"+
+						$5->extraSymbolInfo.assm_code+
+						"\tJMP "+
+						string(label1)+
+						"\n"+
+						string(label2)+
+						":\n\n";
+		$$->extraSymbolInfo.assm_code = temp_code;
 	}
 } | PRINTLN LPAREN ID RPAREN SEMICOLON {
 	fprintf(logs,"Line %d: statement : PRINTLN LPAREN ID RPAREN SEMICOLON\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = "println"+getFromSymbolSet("left_first")+$3->getName()+getFromSymbolSet("right_first")+getFromSymbolSet("semicolon");
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	string temp_code = "\n\n\tMOV AX, "+
+					$3->getName()+
+					to_string(symbolTable.IDlookUpWithParam($3->getName()))+
+					"\n\tCALL PRINT_INT\n\n";
+	$$->extraSymbolInfo.assm_code = temp_code;
+
 } | RETURN expression SEMICOLON {
 	fprintf(logs,"Line %d: statement : RETURN expression SEMICOLON\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = "return "+$2->extraSymbolInfo.stringAdder(getFromSymbolSet("semicolon"));
@@ -707,6 +819,23 @@ statement : var_declaration {
 		fprintf(errors,"Error at Line %d : Expression can not be void\n\n",numberOfLines);
 	}
 	return_type_solver = a;
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	string temp_code = $2->extraSymbolInfo.assm_code+
+					"\tMOV AX, "+$2->extraSymbolInfo.carr1+
+					"\n"+
+					"\tMOV "+
+					running_f_name+
+					"_return_val"+
+					", AX\n\n"+
+					"\tJMP LABEL_RETURN_"+
+					running_f_name+
+					"\n";
+	$$->extraSymbolInfo.assm_code = temp_code;
 };
 
 expression_statement : SEMICOLON {
@@ -718,6 +847,13 @@ expression_statement : SEMICOLON {
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringAdder(getFromSymbolSet("semicolon"));
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.typeOfVar;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$->extraSymbolInfo.assign = $1->extraSymbolInfo.assm_code;
 };
 
 variable : ID {
