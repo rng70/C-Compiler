@@ -358,8 +358,7 @@ program : program unit {
 	/*      ICG Code       */
 	/* ******************* */
 	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assembly + $2->extraSymbolInfo.assm_code;
-	} 
-	| unit {
+	} | unit {
 	fprintf(logs, "Line %d: program : unit\n\n", numberOfLines);
 	$$ -> extraSymbolInfo.stringConcatenator = $1 -> extraSymbolInfo.stringConcatenator;
 	fprintf(logs,"%s\n\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
@@ -369,6 +368,11 @@ unit : var_declaration{
 	fprintf(logs, "Line %d: unit : var_declaration\n\n", numberOfLines);
 	$$ -> extraSymbolInfo.stringConcatenator = $1 -> extraSymbolInfo.stringConcatenator;
 	fprintf(logs,"%s\n\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*      ICG Code       */
+	/* ******************* */
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code;
 } | func_declaration{
 	fprintf(logs, "Line %d: unit : func_declaration\n\n", numberOfLines);
 	$$ -> extraSymbolInfo.stringConcatenator = $1-> extraSymbolInfo.stringConcatenator;
@@ -377,15 +381,23 @@ unit : var_declaration{
 	fprintf(logs, "Line %d: unit : func_definition\n\n", numberOfLines);
 	$$ -> extraSymbolInfo.stringConcatenator = $1-> extraSymbolInfo.stringConcatenator;
 	fprintf(logs,"%s\n\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*      ICG Code       */
+	/* ******************* */
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code;
 };
 
 func_declaration : type_specifier ID LPAREN parameter_list RPAREN SEMICOLON{
-	/* We need to check some properties of function declaration in this step:
-			1. Check return type is same
-			2. Check number of parameter is same
-			3. Check parameter sequence is same
-			4. No void Parameters are declared
-			*/
+	
+	/* ************************************************************************ */
+	/*	We need to check some properties of function declaration in this step:  */
+	/*           		1. Check return type is same                            */
+	/*      		 2. Check number of parameter is same                       */
+	/*         	      3. Check parameter sequence is same                       */
+	/*       	      4. No void Parameters are declared                        */
+	/* ************************************************************************ */
+
 	fprintf(logs, "Line %d: func_declaration : type_specifier ID LPAREN parameter_list RPAREN SEMICOLON\n\n", numberOfLines);
 	SymbolInfo* temp = symbolTable.LookUp($2->getName());
 
