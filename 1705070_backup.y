@@ -619,11 +619,12 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN{
 								"\tINT 21H\n"+
 								"END MAIN";
 	}else{
-
-		string temp_code = $2->getName()+" PROC\n";
-
-		/*---pushing the register to the STACK---*/
-		temp_code += "\tPUSH AX\n\tPUSH BX\n\tPUSH CX\n\tPUSH DX\n\n";
+		string temp_code = $2->getName()+
+						" PROC\n"+
+						"\tPUSH AX\n"+
+						"\tPUSH BX\n"+
+						"\tPUSH CX\n"+
+						"\tPUSH DX\n\n";
 
 		/*---we lookup the func_id to access the parameter list---*/
 		SymbolInfo* s = stable.LookUp($2->getName());
@@ -632,69 +633,59 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN{
 		stack<string>s2;
 
 		/*---we push the parameters of the function to the stack of assm_code---*/
-		for(int i=0;i<s->extra_var.func_param_list.size();i++)
-		{
+		for(int i=0;i<s->extra_var.func_param_list.size();i++){
 			hold = s->extra_var.func_param_list[i].first+to_string(scope_counter);
-			//cour<<hold<<endl;
-			//s->extra_var.modfd_param_list.push_back(hold);               //pushing to the modified paramater list of the pointer
 			temp_code += "\tPUSH "+hold+"\n";
 			s1.push(hold);
-
 		}
-
 		temp_code += "\n";
 		scope_holder = "";
 
 		/*---we push the declared variables of the function scope inside the stack of assm_code---*/
-		for(int i=0;i<decld_f_var.size();i++)
-		{
+		for(int i=0;i<decld_f_var.size();i++){
 			hold = decld_f_var[i].first;
-			//cout<<"declared variable inside func  "<<$2->getName()<<" "<<hold<<endl;
 			temp_code += "\tPUSH "+hold+"\n";
 			s2.push(hold);
-
 		}
-
 		decld_f_var.clear(); //clearing the list so that we would not get any weird variables
 
-		temp_code += "\n";
-		temp_code += $7->extra_var.assm_code;
-		////cour<<$7->extra_var.assm_code<<endl;
-
-		//changed Here
-		temp_code += "LABEL_RETURN_"+running_f_name+":\n";
+		temp_code += "\n"+
+					$7->extra_var.assm_code+
+					"LABEL_RETURN_"+
+					running_f_name+
+					":\n";
 
 		/*---we pop the parameters of the function from the stack of assm_code---*/
-		while (!s2.empty())
-	{
+		while (!s2.empty()){
 		temp_code += "\tPOP "+s2.top()+"\n";
 		s2.pop();
-	}
-
+		}
 		temp_code += "\n";
 
 		/*---we pop the declared variables of the function from the stack of assm_code---*/
-		while (!s1.empty())
-	{
+		while (!s1.empty()){
 		temp_code += "\tPOP "+s1.top()+"\n";
 		s1.pop();
-	}
+		}
 
 		/*finally we pop the registers from the stack---*/
-		temp_code += "\n\tPOP DX\n\tPOP CX\n\tPOP BX\n\tPOP AX\n\tret\n\n";
-
-		temp_code += $2->getName()+" ENDP\n\n";
+		temp_code += "\n\tPOP DX\n"+
+					"\tPOP CX\n"+
+					"\tPOP BX\n"+
+					"\tPOP AX\n"+
+					"\tret\n\n"+
+					$2->getName()+
+					" ENDP\n\n";
 
 		/** we set the scope counter to the adjusted value so that next time another f is defined, we get the correct result */
 		scope_counter = scope_counter_2;
 
-		$$->extra_var.assm_code += temp_code;
-
+		$$->extraSymbolInfo.assm_code += temp_code;
 	}
-}| type_specifier ID LPAREN RPAREN{
+} | type_specifier ID LPAREN RPAREN{
 	fprintf(logs, "Line %d: func_definition : type_specifier ID LPAREN RPAREN compound_statement\n\n", numberOfLines);
 
-	// scope_counter++;
+	scope_counter++;
 	SymbolInfo *s = symbolTable.LookUp($2->getName());
 
 	if(s==0){
@@ -725,10 +716,80 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN{
 	}
 	//$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator+$2->getName()+getFromSymbolSet("left_first")+getFromSymbolSet("right_first")+$5->extraSymbolInfo.stringConcatenator;
 	//fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*      ICG Code       */
+	/* ******************* */
+	running_f_name = $2->getName(); //saving the name to be used during returning
+	decld_var_carrier.push_back(make_pair(running_f_name+"_return_val", ""));
 }compound_statement{
 	fprintf(logs,"Line %d: func_definition : type_specifier ID LPAREN RPAREN compound_statement\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator+$2->getName()+getFromSymbolSet("left_first")+getFromSymbolSet("right_first")+$6->extraSymbolInfo.stringConcatenator;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*      ICG Code       */
+	/*for the main function*/
+	/* ******************* */
+	
+	if($2->getName() == "main"){
+		$$->extra_var.assm_code += "MAIN PROC\n"+
+									"\tMOV AX, @DATA\n"
+									"\tMOV DS ,AX\n"+
+									$6->extra_var.assm_code+
+									"\nLABEL_RETURN_"+
+									running_f_name+
+									":\n"+
+									"\n\tMOV AH, 4CH\n"+
+									"\tINT 21H\n"+
+									"END MAIN";
+	}else{
+		string temp_code = $2->getName()+" PROC\n";
+
+		/*---pushing the register to the STACK---*/
+		temp_code += "\tPUSH AX\n"+
+					"\tPUSH BX\n"+
+					"\tPUSH CX\n"+
+					"\tPUSH DX\n\n";
+		string hold = "";
+		stack<string>s2;
+
+		/*---we push the declared variables of the function scope inside the stack of assm_code---*/
+		for(int i=0;i<decld_f_var.size();i++){
+			hold = decld_f_var[i].first;
+			temp_code += "\tPUSH "+hold+"\n";
+			s2.push(hold);
+		}
+
+		decld_f_var.clear(); //clearing the list so that we would not get any weird variables
+
+		temp_code += "\n"+
+					$6->extraSymbolInfo.assm_code+
+					"LABEL_RETURN_"+
+					running_f_name+
+					":\n";
+
+		/*---we pop the parameters of the function from the stack of assm_code---*/
+		while (!s2.empty()){
+			temp_code += "\tPOP "+s2.top()+"\n";
+			s2.pop();
+		}
+
+		temp_code += "\n";
+
+		/*finally we pop the registers from the stack---*/
+		temp_code += "\n\tPOP DX\n"
+					"\tPOP CX\n"+
+					"\tPOP BX\n"+
+					"\tPOP AX\n"+
+					"\tret\n\n";
+
+		temp_code += $2->getName()+" ENDP\n\n";
+		$$->extraSymbolInfo.assm_code += temp_code;
+
+		/** we set the scope counter to the adjusted value so that next time another f is defined, we get the correct result */
+		scope_counter = scope_counter_2;
+	}
 };
 
 parameter_list  : parameter_list COMMA type_specifier ID
