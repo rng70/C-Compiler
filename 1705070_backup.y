@@ -316,10 +316,15 @@ start : program {
 	fprintf(logs, "Line %d: start : program\n\n\n",numberOfLines-1);
 	symbolTable.printAllTable(logs);
 
+	/* ******************* */
+	/*      ICG Code       */
+	/* ******************* */
 	if(numberOfErrors == 0){
 
 		string first, second, temp = "";
-		temp = ".MODEL SMALL\n\n.STACK 100H\n\n.DATA\n";
+		temp = ".MODEL SMALL\n\n"+
+			".STACK 100H\n\n"+
+			".DATA\n";
 
 		for(int i = 0;i<decld_var_carrier.size(); i++)
 		{
@@ -327,19 +332,20 @@ start : program {
 			second = decld_var_carrier[i].second;
 
 			if(second == ""){
-				temp = temp + first+" DW ?\n";
+				temp = temp + first + " DW ?\n";
 			}else{
-				temp = temp + first+" DW " + second + " dup(?)\n";
+				temp = temp + first + " DW "+ 
+					second + " dup(?)\n";
 			}
 		}
 
-		$1->extra_var.assm_code = temp + ".CODE\n\n" +output_procedure+ $1->extra_var.assm_code;
+		$1->extraSymbolInfo.assm_code = temp + ".CODE\n\n" + output_procedure + $1->extraSymbolInfo.assm_code;
 
 		ofstream out, optOut;
 		out.open("code.asm");
-		out << $1->extra_var.assm_code;
+		out << $1->extraSymbolInfo.assm_code;
 		optOut.open("optimized-Code.asm");
-		optOut << optimizer($1->extra_var.assm_code);
+		optOut << optimizer($1->extraSymbolInfo.assm_code);
 	}
 };
 
@@ -347,6 +353,11 @@ program : program unit {
 	fprintf(logs, "Line %d: program : program unit\n\n", numberOfLines);
 	$$ -> extraSymbolInfo.stringAdder(getFromSymbolSet("newline") + $2 -> extraSymbolInfo.stringConcatenator);
 	fprintf(logs,"%s\n\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*      ICG Code       */
+	/* ******************* */
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assembly + $2->extraSymbolInfo.assm_code;
 	} 
 	| unit {
 	fprintf(logs, "Line %d: program : unit\n\n", numberOfLines);
