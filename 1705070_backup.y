@@ -316,11 +316,30 @@ start : program {
 	fprintf(logs, "Line %d: start : program\n\n\n",numberOfLines-1);
 	symbolTable.printAllTable(logs);
 
-	if(numberOfErrors==0){
-		string temp, first, second;
-		temp = ".MODEL SMALL\n.STACK 100H\n\n.DATA\n";
+	if(numberOfErrors == 0){
 
-		for(int i=0;i<de)
+		string first, second, temp = "";
+		temp = ".MODEL SMALL\n\n.STACK 100H\n\n.DATA\n";
+
+		for(int i = 0;i<decld_var_carrier.size(); i++)
+		{
+			first  = decld_var_carrier[i].first;
+			second = decld_var_carrier[i].second;
+
+			if(second == ""){
+				temp = temp + first+" DW ?\n";
+			}else{
+				temp = temp + first+" DW " + second + " dup(?)\n";
+			}
+		}
+
+		$1->extra_var.assm_code = temp + ".CODE\n\n" +output_procedure+ $1->extra_var.assm_code;
+
+		ofstream out, optOut;
+		out.open("code.asm");
+		out << $1->extra_var.assm_code;
+		optOut.open("optimized-Code.asm");
+		optOut << optimizer($1->extra_var.assm_code);
 	}
 };
 
