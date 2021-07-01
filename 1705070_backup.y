@@ -21,13 +21,64 @@ vector< pair<string,string> >temp_param_list;
 vector< pair<string,string> >arg_param_list;
 vector<SymbolInfo*>v;
 
+------------------------------------------------------------------------------
+vector< pair<string,string> >decld_var_carrier;   //vector for adding the variables to the assembly CODES
+vector< pair<string,string> >var_carrier;
+vector< pair<string,string> >decld_f_var;         //vector for the declared variables inside the function to push the variables to the STACK
+------------------------------------------------------------------------------
+
 string type_of_var, statement_solver, return_type_solver, named;
 bool is_func = false;
-int control_arg;
+int control_arg, labelCount = 0, tempCount = 0;
 int scope_counter = 1;
 int scope_counter_2 = 0;
 string running_f_name = "";
 string scope_holder = "";
+
+/* ******************* */
+/*       Output        */
+/* 	    Procedure      */
+/* ******************* */
+string output_procedure ="\nPRINT_INT PROC"+
+						"\n\tPUSH AX"+
+						"\n\tPUSH BX"+
+						"\n\tPUSH CX"+
+						"\n\tPUSH DX"+
+						"\n\n\tOR AX, AX"+
+						"\n\tJGE END_IF1"+
+						"\n\tPUSH AX"+
+						"\n\tMOV DL,'-'"+
+						"\n\tMOV AH, 2"+
+						"\n\tINT 21H"+
+						"\n\tPOP AX"+
+						"\n\tNEG AX"+
+						"\n\nEND_IF1:"+
+						"\n\tXOR CX, CX"+
+						"\n\tMOV BX, 10D"+
+						"\n\nREPEAT1:"+
+						"\n\tXOR DX, DX"+
+						"\n\tDIV BX"+
+						"\n\tPUSH DX"+
+						"\n\tINC CX"+
+						"\n\n\tOR AX, AX"+
+						"\n\tJNE REPEAT1"+
+						"\n\n\tMOV AH, 2"+
+						"\n\nPRINT_LOOP:"+
+						"\n\tPOP DX"+
+						"\n\tOR DL, 30H"+
+						"\n\tINT 21H"+
+						"\n\tLOOP PRINT_LOOP"+
+						"\n\tMOV AH, 2"+
+						"\n\tMOV DL, 10"+
+						"\n\tINT 21H"+
+						"\n\n\tMOV DL, 13"+
+						"\n\tINT 21H"+
+						"\n\n\tPOP DX"+
+						"\n\tPOP CX"+
+						"\n\tPOP BX"+
+						"\n\tPOP AX"+
+						"\n\tRET"+
+						"\nPRINT_INT ENDP\n\n";
 
 // error detection
 void yyerror(const char *s){
