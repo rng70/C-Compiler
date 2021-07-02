@@ -827,8 +827,8 @@ compound_statement : LCURL {
 	// fprintf(logs,"Line %d: Entering Scope compound_statement LCURL\n\n",numberOfLines);
 	// cout << "Entering scope 1" << endl;
 
-	// scope_counter_2 = symbolTable.getTableIdTracker();
-	// scope_holder = symbolTable.getStringifyID();
+	scope_counter_2 = symbolTable.getTableIdTracker();
+	scope_holder = symbolTable.getStringifyID();
 
 	if(temp_param_list.size()!=0){
 		for(int i=0;i<temp_param_list.size();i++){
@@ -840,7 +840,7 @@ compound_statement : LCURL {
 			s->setType("ID");
 			s->extraSymbolInfo.typeOfVar = type;
 			bool check = symbolTable.InsertModified(s);
-
+			decld_var_carrier.push_back(make_pair(name+to_string(scope_counter),""));
 			if(check == 0){
 				numberOfErrors++;
 				fprintf(errors, "Error at line %d: Duplicate Parameter Name of function\n\n", numberOfLines);
@@ -854,11 +854,12 @@ compound_statement : LCURL {
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 	symbolTable.printAllTable(logs);
 	symbolTable.ExitScope(logs);
+	$$->extraSymbolInfo.assm_code = $3->extraSymbolInfo.assm_code;
 } | LCURL {
 	symbolTable.EnterScope(logs);
 	// fprintf(logs,"Line %d: LCURL Entering Scope LCURL\n\n",numberOfLines);
 	// cout << "At line " << numberOfLines << " " << endl;
-	// scope_counter_2 = symbolTable.getTableIDTracker();
+	scope_counter_2 = symbolTable.getTableIDTracker();
 
 	for(int i=0;i<temp_param_list.size();i++){
 		string name = temp_param_list[i].first;
@@ -869,6 +870,7 @@ compound_statement : LCURL {
 		s->setType("ID");
 		s->extraSymbolInfo.typeOfVar = type;
 		bool check = symbolTable.InsertModified(s);
+		decld_var_carrier.push_back(make_pair(name+to_string(scope_counter), ""));
 		symbolTable.printAllTable(logs);
 		//decld_var_carrier.push_back(make_pair(name+to_string(scope_counter),""));
 
@@ -891,6 +893,17 @@ var_declaration : type_specifier declaration_list SEMICOLON {
 
 	$$->extraSymbolInfo.stringConcatenator = stringAdder(3,$1->extraSymbolInfo.stringConcatenator.c_str(),$2->extraSymbolInfo.stringConcatenator.c_str(),getFromSymbolSet("semicolon").c_str());
 
+	string first, second;
+	for(int i = 0; i<var_carrier.size() ; i++){
+		first  = var_carrier[i].first;
+		second = var_carrier[i].second;
+
+		decld_var_carrier.push_back(make_pair(first+to_string(stable.getCurrScopeID()),second)); //pushing bacl to vector for assm_code declaration
+		if(stable.getCurrScopeID()!=1){
+			decld_f_var.push_back(make_pair(first+to_string(stable.getCurrScopeID()),second));  //pushing to the vector to be used during function defination procedure
+		}
+	}
+	var_carrier.clear();
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 };
 
@@ -938,6 +951,7 @@ declaration_list : declaration_list COMMA ID {
 
 		$1->extraSymbolInfo.stringConcatenator.append(getFromSymbolSet("comma"));
 		$$->extraSymbolInfo.stringConcatenator.append($3->getName());
+		var_carrier.push_back(make_pair($3->getName(),""));
 		fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 	}
 } | declaration_list COMMA ID LTHIRD CONST_INT RTHIRD {
@@ -959,6 +973,7 @@ declaration_list : declaration_list COMMA ID {
 		string temp = $3->getName()+getFromSymbolSet("left_third")+$5->getName()+getFromSymbolSet("right_third");
 		$1->extraSymbolInfo.stringConcatenator.append(getFromSymbolSet("comma"));
 		$$->extraSymbolInfo.stringConcatenator.append(temp);
+		var_carrier.push_back(make_pair($3->getName(), $5->getName()));
 		fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 	}
 } | ID {
@@ -980,6 +995,7 @@ declaration_list : declaration_list COMMA ID {
 		fprintf(errors,"Error at Line %d  : Variable declared void\n\n",numberOfLines);
 	}
 	$$->extraSymbolInfo.stringConcatenator = $1->getName();
+	var_carrier.push_back(make_pair($1->getName(), ""));
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 } | ID LTHIRD CONST_INT RTHIRD {
 	fprintf(logs,"Line %d: declaration_list : ID LTHIRD CONST_INT RTHIRD\n\n",numberOfLines);
@@ -1005,6 +1021,7 @@ declaration_list : declaration_list COMMA ID {
     string temp = getFromSymbolSet("left_third")+$3->getName()+getFromSymbolSet("right_third");
 	$$->extraSymbolInfo.stringConcatenator = $1->getName();
 	$$->extraSymbolInfo.stringConcatenator.append(temp);
+	var_carrier.push_back(make_pair($1->getName(), $3->getName()));
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 };
 
