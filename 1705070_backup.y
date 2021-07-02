@@ -1418,7 +1418,7 @@ expression : logic_expression {
 		decld_var_carrier.push_back(make_pair(string(idx_saver), ""));
 		temp = $1->extraSymbolInfo.assm_code+
 			"\n\tMOV "+
-			"string(idx_saver)+", BX\n"+
+			string(idx_saver)+", BX\n"+
 			$3->extraSymbolInfo.assm_code+
 			"\tMOV AX, "+
 			$3->extraSymbolInfo.carr1+
@@ -1719,7 +1719,7 @@ term :	unary_expression {
 				/* 		ICG Code       */
 				/*                     */
 				/* ******************* */
-				temp_code += "\n\tMOV AX, +
+				temp_code += "\n\tMOV AX, "+
 				$1->extraSymbolInfo.carr1+"\n"+
 							"\tMOV BX, "+$3->extraSymbolInfo.carr1+"\n"+
 							"\tMUL BX\n"+

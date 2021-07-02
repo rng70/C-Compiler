@@ -1,28 +1,4 @@
-Error at Line 7 : return type error 
+Error at Line 28 : Undefined or Undeclared function
 
-Error at Line 8 : Undeclared variable : a
-
-Error at Line 8 : Undeclared variable : a
-
-Error at Line 9 : Undeclared variable : a
-
-Error at Line 9 : Undeclared variable : b
-
-Warning at Line 37 : Integer converted to float during Multiplication.
-
-Error at Line 41 : Type Mismatch
-
-Warning at Line 41 : Integer assigned to Float
-
-Warning at Line 44 : Integer converted to float during Multiplication.
-
-Warning at Line 44  : Integer converted to float during Addition.
-
-Error at Line 52 : Undefined or Undeclared function
-
-Warning at Line 57 : Integer converted to float during Multiplication.
-
-Warning at Line 57  : Integer converted to float during Addition.
-
-Total errors: 7
+Total errors: 1
 

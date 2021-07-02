@@ -86,7 +86,7 @@ public:
                 temp = temp->getParentScope();
             }
         }
-        retur -1;
+        return -1;
     }
 
     SymbolInfo* currentScopeLookUp(std::string Name){
