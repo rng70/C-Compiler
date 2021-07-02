@@ -20,6 +20,10 @@ public:
         return this->currentScope;
     }
 
+    int getCurrentScopeID(){
+        return currentScope->getID();
+    }
+
     // required methods for offline
     void EnterScope(FILE *f) {
         ScopeTable *newScopeTable = new ScopeTable(this->sizeOfTable, currentScope->getTableIdTracker());
@@ -66,6 +70,23 @@ public:
             temp = temp->getParentScope();
         }
         return 0;
+    }
+
+    int IDlookUpWithParam(std::string Name){
+        SymbolInfo *result;
+        ScopeTable *temp;
+        temp = currentScope;
+
+        while(temp!=0){
+            result = temp->LookUP(Name);
+
+            if(result != 0){
+                return temp->getID();
+            }else{
+                temp = temp->getParentScope();
+            }
+        }
+        retur -1;
     }
 
     SymbolInfo* currentScopeLookUp(std::string Name){
