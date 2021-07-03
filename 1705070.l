@@ -81,6 +81,14 @@ UNRECOGNIZEDCHARACTER '(\\[^nt\\afr"bv0\n])+'
     return CONTINUE;
 }
 
+"printf" {
+    return PRINTLN;
+}
+
+"println" {
+    return PRINTLN;
+}
+
 {DIGIT}+ {
     SymbolInfo *s = new SymbolInfo(yytext, "CONST_INT");
     yylval.symbolInfoPointer = s;

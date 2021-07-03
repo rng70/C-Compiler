@@ -203,28 +203,28 @@ string optimizer(string code)
     vector<string>vect2;
 
     /*we get the splitted code*/
-     vector<string>splitted_code =split_string(code,"\n");
+    vector<string>splitted_code =split_string(code,"\n");
 
      //removing all the extra newlines from the splitted string
-     for(int i=0;i<splitted_code.size();i++)
-     {
-         if(splitted_code[i]!="")
-         {
-             vect1.push_back(splitted_code[i]);
-         }
-     }
+    for(int i=0;i<splitted_code.size();i++)
+    {
+        if(splitted_code[i]!="")
+        {
+            vect1.push_back(splitted_code[i]);
+		}
+	}
 
-     splitted_code.clear();
+	splitted_code.clear();
 
-     for(int i=0;i<vect1.size();i++)
-     {
-         splitted_code.push_back(vect1[i]);
-     }
+	for(int i=0;i<vect1.size();i++)
+	{
+		splitted_code.push_back(vect1[i]);
+	}
 
-     vect1.clear();
+	vect1.clear();
 
-		 /*this portion checks if a pair of string is valid for comparison and then if we can find our required condition, we skip
-		 over one concatenation of the result string, thus giving us an optimized string*/
+		/*this portion checks if a pair of string is valid for comparison and then if we can find our required condition, we skip
+		over one concatenation of the result string, thus giving us an optimized string*/
 
     for( i=0;i<splitted_code.size();i++)
     {
@@ -1733,7 +1733,8 @@ term :	unary_expression {
 				/* 		ICG Code       */
 				/*                     */
 				/* ******************* */
-				temp_code += "\n\tXOR DX, DX\n" + "\tMOV AX, " + $1->extraSymbolInfo.carr1 +" \n" +" \tMOV BX, " + $3->extraSymbolInfo.carr1 + "\n"+"\tDIV BX\n" + "\tMOV " + res + ", AX\n\n";
+				temp_code += "\n\tXOR DX, DX";
+				temp_code += "\n\tMOV AX, " +$1->extraSymbolInfo.carr1+"\n"+"\tMOV BX, "+$3->extraSymbolInfo.carr1 +"\n"+"\tDIV BX\n"+"\tMOV "+res+", AX\n\n";
 				$$->extraSymbolInfo.assm_code = temp_code;
 				$$->extraSymbolInfo.carr1 = res;
 				decld_var_carrier.push_back(make_pair(res, ""));
@@ -1763,7 +1764,8 @@ term :	unary_expression {
 				/* 		ICG Code       */
 				/*                     */
 				/* ******************* */
-				temp_code += "\tXOR DX, DX\n"+"\tMOV AX, " + $1->extraSymbolInfo.carr1 + "\n" + "\tMOV BX, " + $3->extraSymbolInfo.carr1 + "\n" + "\tDIV BX\n" + "\tMOV " + res + ", DX\n\n";
+				temp_code += "\tXOR DX, DX\n";
+				temp_code += "\tMOV AX, " + $1->extraSymbolInfo.carr1 + "\n" + "\tMOV BX, " + $3->extraSymbolInfo.carr1 + "\n" + "\tDIV BX\n" + "\tMOV " + res + ", DX\n\n";
 				$$->extraSymbolInfo.assm_code = temp_code;
 				$$->extraSymbolInfo.carr1 = res;
 				decld_var_carrier.push_back(make_pair(res, ""));

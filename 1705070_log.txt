@@ -1409,78 +1409,9 @@ d=35;
 max=max4(a,b,c,d);
 
 
-Line 28: variable : ID
+Line 28: statement : PRINTLN LPAREN ID RPAREN SEMICOLON
 
-max
-
-Line 28: factor : variable
-
-max
-
-Line 28: unary_expression : factor
-
-max
-
-Line 28: term : unary_expression
-
-max
-
-Line 28: simple_expression : term
-
-max
-
-Line 28: rel_expression : simple_expression
-
-max
-
-Line 28: logic_expression : rel_expression
-
-max
-
-Line 28: arguments : logic_expression
-
-max
-
-Line 28: argument_list : arguments
-
-max
-
-Line 28: factor : ID LPAREN argument_list RPAREN
-
-printf(max)
-
-Line 28: unary_expression : factor
-
-printf(max)
-
-Line 28: term : unary_expression
-
-printf(max)
-
-Line 28: simple_expression : term
-
-printf(max)
-
-Line 28: rel_expression : simple_expression
-
-printf(max)
-
-Line 28: logic_expression : rel_expression
-
-printf(max)
-
-Line 28: expression : logic expression
-
-printf(max)
-
-Line 28: expression_statement : expression SEMICOLON
-
-printf(max);
-
-Line 28: statement : expression_statement
-
-printf(max);
-
+println(max);
 
 Line 28: statements : statements statement
 
@@ -1490,7 +1421,7 @@ b=69+0;
 c=1;
 d=35;
 max=max4(a,b,c,d);
-printf(max);
+println(max);
 
 
 Line 29: compound_statement : LCURL statements RCURL
@@ -1502,7 +1433,7 @@ b=69+0;
 c=1;
 d=35;
 max=max4(a,b,c,d);
-printf(max);
+println(max);
 }
 
 ScopeTable # 1.4
@@ -1527,7 +1458,7 @@ b=69+0;
 c=1;
 d=35;
 max=max4(a,b,c,d);
-printf(max);
+println(max);
 }
 
 Line 29: unit : func_definition
@@ -1539,7 +1470,7 @@ b=69+0;
 c=1;
 d=35;
 max=max4(a,b,c,d);
-printf(max);
+println(max);
 }
 
 
@@ -1569,7 +1500,7 @@ b=69+0;
 c=1;
 d=35;
 max=max4(a,b,c,d);
-printf(max);
+println(max);
 }
 
 
@@ -1583,5 +1514,5 @@ ScopeTable # 1
  18 --> < max4 : ID> 
 
 Total lines: 29
-Total errors: 1
+Total errors: 0
 

@@ -273,28 +273,28 @@ string optimizer(string code)
     vector<string>vect2;
 
     /*we get the splitted code*/
-     vector<string>splitted_code =split_string(code,"\n");
+    vector<string>splitted_code =split_string(code,"\n");
 
      //removing all the extra newlines from the splitted string
-     for(int i=0;i<splitted_code.size();i++)
-     {
-         if(splitted_code[i]!="")
-         {
-             vect1.push_back(splitted_code[i]);
-         }
-     }
+    for(int i=0;i<splitted_code.size();i++)
+    {
+        if(splitted_code[i]!="")
+        {
+            vect1.push_back(splitted_code[i]);
+		}
+	}
 
-     splitted_code.clear();
+	splitted_code.clear();
 
-     for(int i=0;i<vect1.size();i++)
-     {
-         splitted_code.push_back(vect1[i]);
-     }
+	for(int i=0;i<vect1.size();i++)
+	{
+		splitted_code.push_back(vect1[i]);
+	}
 
-     vect1.clear();
+	vect1.clear();
 
-		 /*this portion checks if a pair of string is valid for comparison and then if we can find our required condition, we skip
-		 over one concatenation of the result string, thus giving us an optimized string*/
+		/*this portion checks if a pair of string is valid for comparison and then if we can find our required condition, we skip
+		over one concatenation of the result string, thus giving us an optimized string*/
 
     for( i=0;i<splitted_code.size();i++)
     {
@@ -947,8 +947,8 @@ static const yytype_int16 yyrline[] =
      855,   855,   888,   907,   916,   924,   934,   954,   976,   997,
     1025,  1036,  1050,  1054,  1065,  1076,  1111,  1139,  1176,  1211,
     1227,  1258,  1262,  1276,  1313,  1364,  1369,  1444,  1458,  1520,
-    1534,  1579,  1592,  1645,  1658,  1775,  1799,  1821,  1838,  1864,
-    1957,  1974,  1991,  2008,  2046,  2086,  2107,  2112,  2137
+    1534,  1579,  1592,  1645,  1658,  1777,  1801,  1823,  1840,  1866,
+    1959,  1976,  1993,  2010,  2048,  2088,  2109,  2114,  2139
 };
 #endif
 
@@ -3302,7 +3302,8 @@ yyreduce:
 				/* 		ICG Code       */
 				/*                     */
 				/* ******************* */
-				temp_code += "\n\tXOR DX, DX\n" + "\tMOV AX, " + (yyvsp[-2].symbolInfoPointer)->extraSymbolInfo.carr1 +" \n" +" \tMOV BX, " + (yyvsp[0].symbolInfoPointer)->extraSymbolInfo.carr1 + "\n"+"\tDIV BX\n" + "\tMOV " + res + ", AX\n\n";
+				temp_code += "\n\tXOR DX, DX";
+				temp_code += "\n\tMOV AX, " +(yyvsp[-2].symbolInfoPointer)->extraSymbolInfo.carr1+"\n"+"\tMOV BX, "+(yyvsp[0].symbolInfoPointer)->extraSymbolInfo.carr1 +"\n"+"\tDIV BX\n"+"\tMOV "+res+", AX\n\n";
 				(yyval.symbolInfoPointer)->extraSymbolInfo.assm_code = temp_code;
 				(yyval.symbolInfoPointer)->extraSymbolInfo.carr1 = res;
 				decld_var_carrier.push_back(make_pair(res, ""));
@@ -3332,7 +3333,8 @@ yyreduce:
 				/* 		ICG Code       */
 				/*                     */
 				/* ******************* */
-				temp_code += "\tXOR DX, DX\n"+"\tMOV AX, " + (yyvsp[-2].symbolInfoPointer)->extraSymbolInfo.carr1 + "\n" + "\tMOV BX, " + (yyvsp[0].symbolInfoPointer)->extraSymbolInfo.carr1 + "\n" + "\tDIV BX\n" + "\tMOV " + res + ", DX\n\n";
+				temp_code += "\tXOR DX, DX\n";
+				temp_code += "\tMOV AX, " + (yyvsp[-2].symbolInfoPointer)->extraSymbolInfo.carr1 + "\n" + "\tMOV BX, " + (yyvsp[0].symbolInfoPointer)->extraSymbolInfo.carr1 + "\n" + "\tDIV BX\n" + "\tMOV " + res + ", DX\n\n";
 				(yyval.symbolInfoPointer)->extraSymbolInfo.assm_code = temp_code;
 				(yyval.symbolInfoPointer)->extraSymbolInfo.carr1 = res;
 				decld_var_carrier.push_back(make_pair(res, ""));
@@ -3340,11 +3342,11 @@ yyreduce:
 			break;
 	}
 }
-#line 3344 "y.tab.c"
+#line 3346 "y.tab.c"
     break;
 
   case 55: /* unary_expression: ADDOP unary_expression  */
-#line 1775 "1705070_backup.y"
+#line 1777 "1705070_backup.y"
                                           {
 	fprintf(logs,"Line %d: unary_expression : ADDOP unary_expression\n\n",numberOfLines);
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = (yyvsp[-1].symbolInfoPointer)->getName().append((yyvsp[0].symbolInfoPointer)->extraSymbolInfo.stringConcatenator);
@@ -3370,11 +3372,11 @@ yyreduce:
 		}
 	}
 }
-#line 3374 "y.tab.c"
+#line 3376 "y.tab.c"
     break;
 
   case 56: /* unary_expression: NOT unary_expression  */
-#line 1799 "1705070_backup.y"
+#line 1801 "1705070_backup.y"
                          {
 	fprintf(logs,"Line %d: unary_expression : NOT unary_expression\n\n",numberOfLines);
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = (yyvsp[-1].symbolInfoPointer)->getName().append((yyvsp[0].symbolInfoPointer)->extraSymbolInfo.stringConcatenator);
@@ -3398,11 +3400,11 @@ yyreduce:
 		decld_var_carrier.push_back(make_pair(string(temp_var), ""));
 	}
 }
-#line 3402 "y.tab.c"
+#line 3404 "y.tab.c"
     break;
 
   case 57: /* unary_expression: factor  */
-#line 1821 "1705070_backup.y"
+#line 1823 "1705070_backup.y"
            {
 	fprintf(logs,"Line %d: unary_expression : factor\n\n",numberOfLines);
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = (yyvsp[0].symbolInfoPointer)->extraSymbolInfo.stringConcatenator;
@@ -3419,11 +3421,11 @@ yyreduce:
 	(yyval.symbolInfoPointer)->extraSymbolInfo.carr1 = (yyvsp[0].symbolInfoPointer)->extraSymbolInfo.carr1;
 	(yyval.symbolInfoPointer)->extraSymbolInfo.assm_code = (yyvsp[0].symbolInfoPointer)->extraSymbolInfo.assm_code;
 }
-#line 3423 "y.tab.c"
+#line 3425 "y.tab.c"
     break;
 
   case 58: /* factor: variable  */
-#line 1838 "1705070_backup.y"
+#line 1840 "1705070_backup.y"
                    {
 	fprintf(logs,"Line %d: factor : variable\n\n", numberOfLines);
 	(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator = (yyvsp[0].symbolInfoPointer)->extraSymbolInfo.stringConcatenator;
@@ -3451,11 +3453,11 @@ yyreduce:
 	}
 	(yyval.symbolInfoPointer)->extraSymbolInfo.assm_code = temp_code;
 }
-#line 3455 "y.tab.c"
+#line 3457 "y.tab.c"
     break;
 
   case 59: /* factor: ID LPAREN argument_list RPAREN  */
-#line 1864 "1705070_backup.y"
+#line 1866 "1705070_backup.y"
                                    {
 	fprintf(logs,"Line %d: factor : ID LPAREN argument_list RPAREN\n\n",numberOfLines);
 
@@ -3550,11 +3552,11 @@ yyreduce:
 	decld_var_carrier.push_back(make_pair(result, ""));
 	}
 }
-#line 3554 "y.tab.c"
+#line 3556 "y.tab.c"
     break;
 
   case 60: /* factor: LPAREN expression RPAREN  */
-#line 1957 "1705070_backup.y"
+#line 1959 "1705070_backup.y"
                              {
 	fprintf(logs,"Line %d: factor : LPAREN expression RPAREN\n\n",numberOfLines);
 	SymbolInfo* s = new SymbolInfo();
@@ -3573,11 +3575,11 @@ yyreduce:
 	(yyval.symbolInfoPointer)->extraSymbolInfo.assm_code = (yyvsp[-1].symbolInfoPointer)->extraSymbolInfo.assm_code;
 	(yyval.symbolInfoPointer)->extraSymbolInfo.carr1 = (yyvsp[-1].symbolInfoPointer)->extraSymbolInfo.carr1;
 }
-#line 3577 "y.tab.c"
+#line 3579 "y.tab.c"
     break;
 
   case 61: /* factor: CONST_INT  */
-#line 1974 "1705070_backup.y"
+#line 1976 "1705070_backup.y"
               {
 	fprintf(logs,"Line %d: factor : CONST_INT\n\n",numberOfLines);
 	(yyvsp[0].symbolInfoPointer)->extraSymbolInfo.typeOfVar = "INT";
@@ -3596,11 +3598,11 @@ yyreduce:
 	(yyval.symbolInfoPointer)->extraSymbolInfo.carr1 = (yyvsp[0].symbolInfoPointer)->getName();
 
 }
-#line 3600 "y.tab.c"
+#line 3602 "y.tab.c"
     break;
 
   case 62: /* factor: CONST_FLOAT  */
-#line 1991 "1705070_backup.y"
+#line 1993 "1705070_backup.y"
                 {
 	(yyvsp[0].symbolInfoPointer)->extraSymbolInfo.typeOfVar = "FLOAT";
 	(yyvsp[0].symbolInfoPointer)->extraSymbolInfo.typeOfID = "CONST_FLOAT";
@@ -3619,11 +3621,11 @@ yyreduce:
 	(yyval.symbolInfoPointer)->extraSymbolInfo.carr1 = (yyvsp[0].symbolInfoPointer)->getName();
 
 }
-#line 3623 "y.tab.c"
+#line 3625 "y.tab.c"
     break;
 
   case 63: /* factor: variable INCOP  */
-#line 2008 "1705070_backup.y"
+#line 2010 "1705070_backup.y"
                    {
 	fprintf(logs,"Line %d: factor : variable INCOP\n\n",numberOfLines);
 	(yyval.symbolInfoPointer)->extraSymbolInfo.typeOfVar = (yyvsp[-1].symbolInfoPointer)->extraSymbolInfo.typeOfVar;
@@ -3663,11 +3665,11 @@ yyreduce:
 	(yyval.symbolInfoPointer)->extraSymbolInfo.carr1 = string(temp_var);
 	decld_var_carrier.push_back(make_pair(string(temp_var), ""));
 }
-#line 3667 "y.tab.c"
+#line 3669 "y.tab.c"
     break;
 
   case 64: /* factor: variable DECOP  */
-#line 2046 "1705070_backup.y"
+#line 2048 "1705070_backup.y"
                    {
 	fprintf(logs,"Line %d: factor : variable DECOP\n\n",numberOfLines);
 	(yyval.symbolInfoPointer)->extraSymbolInfo.typeOfVar = (yyvsp[-1].symbolInfoPointer)->extraSymbolInfo.typeOfVar;
@@ -3707,11 +3709,11 @@ yyreduce:
 	(yyval.symbolInfoPointer)->extraSymbolInfo.carr1 = string(temp_var);
 	decld_var_carrier.push_back(make_pair(string(temp_var), ""));
 }
-#line 3711 "y.tab.c"
+#line 3713 "y.tab.c"
     break;
 
   case 65: /* argument_list: arguments  */
-#line 2086 "1705070_backup.y"
+#line 2088 "1705070_backup.y"
                          {
 	fprintf(logs,"Line %d: argument_list : arguments\n\n",numberOfLines);
 
@@ -3734,20 +3736,20 @@ yyreduce:
 	(yyval.symbolInfoPointer) = s;
 	fprintf(logs,"%s\n\n",(yyval.symbolInfoPointer)->extraSymbolInfo.stringConcatenator.c_str());
 }
-#line 3738 "y.tab.c"
+#line 3740 "y.tab.c"
     break;
 
   case 66: /* argument_list: %empty  */
-#line 2107 "1705070_backup.y"
+#line 2109 "1705070_backup.y"
     {
 	SymbolInfo* s = new SymbolInfo("","");
 	(yyval.symbolInfoPointer)=s;
 }
-#line 3747 "y.tab.c"
+#line 3749 "y.tab.c"
     break;
 
   case 67: /* arguments: arguments COMMA logic_expression  */
-#line 2112 "1705070_backup.y"
+#line 2114 "1705070_backup.y"
                                              {
 	fprintf(logs,"Line %d: arguments : arguments COMMA logic_expression\n\n",numberOfLines);
 	(yyval.symbolInfoPointer)->extraSymbolInfo.typeOfVar = (yyvsp[-2].symbolInfoPointer)->extraSymbolInfo.stringConcatenator.append(getFromSymbolSet("comma")+(yyvsp[0].symbolInfoPointer)->extraSymbolInfo.stringConcatenator);
@@ -3774,11 +3776,11 @@ yyreduce:
 	(yyval.symbolInfoPointer) -> extraSymbolInfo.var_declared_list.push_back(make_pair((yyvsp[0].symbolInfoPointer)->extraSymbolInfo.carr1, ""));
 	(yyval.symbolInfoPointer) -> extraSymbolInfo.assm_code = (yyvsp[-2].symbolInfoPointer)->extraSymbolInfo.assm_code + (yyvsp[0].symbolInfoPointer)->extraSymbolInfo.assm_code;
 }
-#line 3778 "y.tab.c"
+#line 3780 "y.tab.c"
     break;
 
   case 68: /* arguments: logic_expression  */
-#line 2137 "1705070_backup.y"
+#line 2139 "1705070_backup.y"
                     {
 	fprintf(logs,"Line %d: arguments : logic_expression\n\n",numberOfLines);
 
@@ -3805,11 +3807,11 @@ yyreduce:
 	(yyval.symbolInfoPointer) -> extraSymbolInfo.var_declared_list.push_back(make_pair((yyvsp[0].symbolInfoPointer)->extraSymbolInfo.carr1, ""));
 	(yyval.symbolInfoPointer)->extraSymbolInfo.assm_code = (yyvsp[0].symbolInfoPointer)->extraSymbolInfo.assm_code;
 }
-#line 3809 "y.tab.c"
+#line 3811 "y.tab.c"
     break;
 
 
-#line 3813 "y.tab.c"
+#line 3815 "y.tab.c"
 
       default: break;
     }
@@ -4003,7 +4005,7 @@ yyreturn:
   return yyresult;
 }
 
-#line 2163 "1705070_backup.y"
+#line 2165 "1705070_backup.y"
 
 
 int main(int argc,char *argv[])
