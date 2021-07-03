@@ -21,11 +21,11 @@ vector< pair<string,string> >temp_param_list;
 vector< pair<string,string> >arg_param_list;
 vector<SymbolInfo*>v;
 
-------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 vector< pair<string,string> >decld_var_carrier;   //vector for adding the variables to the assembly CODES
 vector< pair<string,string> >var_carrier;
 vector< pair<string,string> >decld_f_var;         //vector for the declared variables inside the function to push the variables to the STACK
-------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 
 string type_of_var, statement_solver, return_type_solver, named;
 bool is_func = false;
@@ -39,46 +39,46 @@ string scope_holder = "";
 /*       Output        */
 /* 	    Procedure      */
 /* ******************* */
-string output_procedure ="\nPRINT_INT PROC"+
-						"\n\tPUSH AX"+
-						"\n\tPUSH BX"+
-						"\n\tPUSH CX"+
-						"\n\tPUSH DX"+
-						"\n\n\tOR AX, AX"+
-						"\n\tJGE END_IF1"+
-						"\n\tPUSH AX"+
-						"\n\tMOV DL,'-'"+
-						"\n\tMOV AH, 2"+
-						"\n\tINT 21H"+
-						"\n\tPOP AX"+
-						"\n\tNEG AX"+
-						"\n\nEND_IF1:"+
-						"\n\tXOR CX, CX"+
-						"\n\tMOV BX, 10D"+
-						"\n\nREPEAT1:"+
-						"\n\tXOR DX, DX"+
-						"\n\tDIV BX"+
-						"\n\tPUSH DX"+
-						"\n\tINC CX"+
-						"\n\n\tOR AX, AX"+
-						"\n\tJNE REPEAT1"+
-						"\n\n\tMOV AH, 2"+
-						"\n\nPRINT_LOOP:"+
-						"\n\tPOP DX"+
-						"\n\tOR DL, 30H"+
-						"\n\tINT 21H"+
-						"\n\tLOOP PRINT_LOOP"+
-						"\n\tMOV AH, 2"+
-						"\n\tMOV DL, 10"+
-						"\n\tINT 21H"+
-						"\n\n\tMOV DL, 13"+
-						"\n\tINT 21H"+
-						"\n\n\tPOP DX"+
-						"\n\tPOP CX"+
-						"\n\tPOP BX"+
-						"\n\tPOP AX"+
-						"\n\tRET"+
-						"\nPRINT_INT ENDP\n\n";
+string output_procedure ="\nPRINT_INT PROC\
+						\n\tPUSH AX\
+						\n\tPUSH BX\
+						\n\tPUSH CX\
+						\n\tPUSH DX\
+						\n\n\tOR AX, AX\
+						\n\tJGE END_IF1\
+						\n\tPUSH AX\
+						\n\tMOV DL,'-'\
+						\n\tMOV AH, 2\
+						\n\tINT 21H\
+						\n\tPOP AX\
+						\n\tNEG AX\
+						\n\nEND_IF1:\
+						\n\tXOR CX, CX\
+						\n\tMOV BX, 10D\
+						\n\nREPEAT1:\
+						\n\tXOR DX, DX\
+						\n\tDIV BX\
+						\n\tPUSH DX\
+						\n\tINC CX\
+						\n\n\tOR AX, AX\
+						\n\tJNE REPEAT1\
+						\n\n\tMOV AH, 2\
+						\n\nPRINT_LOOP:\
+						\n\tPOP DX\
+						\n\tOR DL, 30H\
+						\n\tINT 21H\
+						\n\tLOOP PRINT_LOOP\
+						\n\tMOV AH, 2\
+						\n\tMOV DL, 10\
+						\n\tINT 21H\
+						\n\n\tMOV DL, 13\
+						\n\tINT 21H\
+						\n\n\tPOP DX\
+						\n\tPOP CX\
+						\n\tPOP BX\
+						\n\tPOP AX\
+						\n\tRET\
+						\nPRINT_INT ENDP\n\n";
 
 // error detection
 void yyerror(const char *s){
@@ -126,7 +126,7 @@ void symbolSet()
 /* ******************* */
 char* generateNewLabel(){
 	char* newLabel = new char[4];
-	strcpy(lb, "L");
+	strcpy(newLabel, "L");
 	char newLabelCounter[3];
 	sprintf(newLabelCounter, "%d", labelCount);
 	labelCount++;
@@ -141,7 +141,7 @@ char* generateNewLabel(){
 /* ******************* */
 char* generateTempVar(){
 	char* tempVar = new char[4];
-	strcpy(t, "t");
+	strcpy(tempVar, "t");
 	char tempVarCounter[3];
 	sprintf(tempVarCounter, "%d", tempCount);
 	tempCount++;
@@ -154,7 +154,7 @@ string getFromSymbolSet(string name)
 	return SymbolSet.at(name);
 }
 
-----------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------
 vector<string> split_string(const string& str,const string& delimiter)
 {
     vector<string> splitted;
@@ -272,7 +272,7 @@ string optimizer(string code)
 
     return result;
 }
-----------------------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------------
 %}
 
 %union{
@@ -322,9 +322,9 @@ start : program {
 	if(numberOfErrors == 0){
 
 		string first, second, temp = "";
-		temp = ".MODEL SMALL\n\n"+
-			".STACK 100H\n\n"+
-			".DATA\n";
+		temp = ".MODEL SMALL\
+			\n\n.STACK 100H\
+			\n\n.DATA\n";
 
 		for(int i = 0;i<decld_var_carrier.size(); i++)
 		{
@@ -357,7 +357,7 @@ program : program unit {
 	/* ******************* */
 	/*      ICG Code       */
 	/* ******************* */
-	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assembly + $2->extraSymbolInfo.assm_code;
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code + $2->extraSymbolInfo.assm_code;
 	} | unit {
 	fprintf(logs, "Line %d: program : unit\n\n", numberOfLines);
 	$$ -> extraSymbolInfo.stringConcatenator = $1 -> extraSymbolInfo.stringConcatenator;
@@ -491,7 +491,7 @@ func_declaration : type_specifier ID LPAREN parameter_list RPAREN SEMICOLON{
 };
 
 func_definition : type_specifier ID LPAREN parameter_list RPAREN{
-		scope_counter = scope_counter + 1
+		scope_counter = scope_counter + 1;
 		fprintf(logs, "Line %d: func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement\n\n", numberOfLines);
 		SymbolInfo *s = symbolTable.LookUp($2->getName());
 		SymbolInfo *temp = new SymbolInfo();
@@ -609,32 +609,31 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN{
 	/*      ICG Code       */
 	/* ******************* */
 	if($2->getName() == "main"){
-		$$->extra_var.assm_code += "MAIN PROC\n"+
-								"\tMOV AX, @DATA\n"+
-								"\tMOV DS, AX\n"+
-								$7->extra_var.assm_code+
-								"\nLABEL_RETURN_"+
-								running_f_name+
-								":\n+\n\tMOV AH, 4CH\n"+
-								"\tINT 21H\n"+
-								"END MAIN";
+		$$->extraSymbolInfo.assm_code += "MAIN PROC\
+								\n\tMOV AX, @DATA\
+								\n\tMOV DS, AX\n";
+		$$->extraSymbolInfo.assm_code += $7->extraSymbolInfo.assm_code;
+		$$->extraSymbolInfo.assm_code += "\nLABEL_RETURN_";
+		$$->extraSymbolInfo.assm_code += running_f_name;
+		$$->extraSymbolInfo.assm_code += ":\n+\n\tMOV AH, 4CH\
+								\n\tINT 21H\
+								\nEND MAIN";
 	}else{
-		string temp_code = $2->getName()+
-						" PROC\n"+
-						"\tPUSH AX\n"+
-						"\tPUSH BX\n"+
-						"\tPUSH CX\n"+
-						"\tPUSH DX\n\n";
+		string temp_code = $2->getName()+"PROC\
+						\n\tPUSH AX\
+						\n\tPUSH BX\
+						\n\tPUSH CX\
+						\n\tPUSH DX\n\n";
 
 		/*---we lookup the func_id to access the parameter list---*/
-		SymbolInfo* s = stable.LookUp($2->getName());
+		SymbolInfo* s = symbolTable.LookUp($2->getName());
 		string hold = "";
 		stack<string>s1;
 		stack<string>s2;
 
 		/*---we push the parameters of the function to the stack of assm_code---*/
-		for(int i=0;i<s->extra_var.func_param_list.size();i++){
-			hold = s->extra_var.func_param_list[i].first+to_string(scope_counter);
+		for(int i=0;i<s->extraSymbolInfo.functionParamList.size();i++){
+			hold = s->extraSymbolInfo.functionParamList[i].first+to_string(scope_counter);
 			temp_code += "\tPUSH "+hold+"\n";
 			s1.push(hold);
 		}
@@ -650,7 +649,7 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN{
 		decld_f_var.clear(); //clearing the list so that we would not get any weird variables
 
 		temp_code += "\n"+
-					$7->extra_var.assm_code+
+					$7->extraSymbolInfo.assm_code+
 					"LABEL_RETURN_"+
 					running_f_name+
 					":\n";
@@ -669,13 +668,13 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN{
 		}
 
 		/*finally we pop the registers from the stack---*/
-		temp_code += "\n\tPOP DX\n"+
-					"\tPOP CX\n"+
-					"\tPOP BX\n"+
-					"\tPOP AX\n"+
-					"\tret\n\n"+
-					$2->getName()+
-					" ENDP\n\n";
+		temp_code += "\n\tPOP DX\
+					\n\tPOP CX\
+					\n\tPOP BX\
+					\n\tPOP AX\
+					\n\tret\n\n";
+		temp_code += $2->getName();
+		temp_code += " ENDP\n\n";
 
 		/** we set the scope counter to the adjusted value so that next time another f is defined, we get the correct result */
 		scope_counter = scope_counter_2;
@@ -733,24 +732,23 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN{
 	/* ******************* */
 	
 	if($2->getName() == "main"){
-		$$->extra_var.assm_code += "MAIN PROC\n"+
-									"\tMOV AX, @DATA\n"
-									"\tMOV DS ,AX\n"+
-									$6->extra_var.assm_code+
-									"\nLABEL_RETURN_"+
-									running_f_name+
-									":\n"+
-									"\n\tMOV AH, 4CH\n"+
-									"\tINT 21H\n"+
-									"END MAIN";
+		$$->extraSymbolInfo.assm_code += "MAIN PROC\
+									\n\tMOV AX, @DATA\
+									\n\tMOV DS ,AX\n";
+		$$->extraSymbolInfo.assm_code += $6->extraSymbolInfo.assm_code;
+		$$->extraSymbolInfo.assm_code += "\nLABEL_RETURN_";
+		$$->extraSymbolInfo.assm_code += running_f_name;
+		$$->extraSymbolInfo.assm_code += ":\n\n\tMOV AH, 4CH\
+									\n\tINT 21H\
+									\nEND MAIN";
 	}else{
 		string temp_code = $2->getName()+" PROC\n";
 
 		/*---pushing the register to the STACK---*/
-		temp_code += "\tPUSH AX\n"+
-					"\tPUSH BX\n"+
-					"\tPUSH CX\n"+
-					"\tPUSH DX\n\n";
+		temp_code += "\tPUSH AX\
+					\n\tPUSH BX\
+					\n\tPUSH CX\
+					\n\tPUSH DX\n\n";
 		string hold = "";
 		stack<string>s2;
 
@@ -763,11 +761,10 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN{
 
 		decld_f_var.clear(); //clearing the list so that we would not get any weird variables
 
-		temp_code += "\n"+
-					$6->extraSymbolInfo.assm_code+
-					"LABEL_RETURN_"+
-					running_f_name+
-					":\n";
+		temp_code += "\n"+$6->extraSymbolInfo.assm_code;
+		temp_code += "LABEL_RETURN_";
+		temp_code += running_f_name;
+		temp_code += ":\n";
 
 		/*---we pop the parameters of the function from the stack of assm_code---*/
 		while (!s2.empty()){
@@ -778,11 +775,11 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN{
 		temp_code += "\n";
 
 		/*finally we pop the registers from the stack---*/
-		temp_code += "\n\tPOP DX\n"
-					"\tPOP CX\n"+
-					"\tPOP BX\n"+
-					"\tPOP AX\n"+
-					"\tret\n\n";
+		temp_code += "\n\tPOP DX\
+					\n\tPOP CX\
+					\n\tPOP BX\
+					\n\tPOP AX\
+					\n\tret\n\n";
 
 		temp_code += $2->getName()+" ENDP\n\n";
 		$$->extraSymbolInfo.assm_code += temp_code;
@@ -827,8 +824,8 @@ compound_statement : LCURL {
 	// fprintf(logs,"Line %d: Entering Scope compound_statement LCURL\n\n",numberOfLines);
 	// cout << "Entering scope 1" << endl;
 
-	scope_counter_2 = symbolTable.getTableIdTracker();
-	scope_holder = symbolTable.getStringifyID();
+	scope_counter_2 = symbolTable.getCurrentScopeID();
+	scope_holder = scope_counter_2;
 
 	if(temp_param_list.size()!=0){
 		for(int i=0;i<temp_param_list.size();i++){
@@ -859,7 +856,7 @@ compound_statement : LCURL {
 	symbolTable.EnterScope(logs);
 	// fprintf(logs,"Line %d: LCURL Entering Scope LCURL\n\n",numberOfLines);
 	// cout << "At line " << numberOfLines << " " << endl;
-	scope_counter_2 = symbolTable.getTableIDTracker();
+	scope_counter_2 = symbolTable.getCurrentScopeID();
 
 	for(int i=0;i<temp_param_list.size();i++){
 		string name = temp_param_list[i].first;
@@ -898,9 +895,9 @@ var_declaration : type_specifier declaration_list SEMICOLON {
 		first  = var_carrier[i].first;
 		second = var_carrier[i].second;
 
-		decld_var_carrier.push_back(make_pair(first+to_string(stable.getCurrScopeID()),second)); //pushing bacl to vector for assm_code declaration
-		if(stable.getCurrScopeID()!=1){
-			decld_f_var.push_back(make_pair(first+to_string(stable.getCurrScopeID()),second));  //pushing to the vector to be used during function defination procedure
+		decld_var_carrier.push_back(make_pair(first+to_string(symbolTable.getCurrentScopeID()),second)); //pushing bacl to vector for assm_code declaration
+		if(symbolTable.getCurrentScopeID()!=1){
+			decld_f_var.push_back(make_pair(first+to_string(symbolTable.getCurrentScopeID()),second));  //pushing to the vector to be used during function defination procedure
 		}
 	}
 	var_carrier.clear();
@@ -1096,7 +1093,7 @@ statement : var_declaration {
 		/* 		ICG Code       */
 		/*                     */
 		/* ******************* */
-		char *label1 = newLabel(), *label2 = newLabel();
+		char *label1 = generateNewLabel(), *label2 = generateNewLabel();
 
 		string temp_code = $3->extraSymbolInfo.assm_code+
 						string(label1)+":\n"+
@@ -1127,7 +1124,7 @@ statement : var_declaration {
 	/* 		ICG Code       */
 	/*                     */
 	/* ******************* */
-	char *label1 = newLabel();
+	char *label1 = generateNewLabel();
 	string temp_code = $3->extraSymbolInfo.assm_code+
 					"\tMOV AX, "+
 					$3->extraSymbolInfo.carr1+
@@ -1156,7 +1153,7 @@ statement : var_declaration {
 			/* 		ICG Code       */
 			/*                     */
 			/* ******************* */
-			char *label1 = newLabel(), *label2 = newLabel();
+			char *label1 = generateNewLabel(), *label2 = generateNewLabel();
 			string temp_code = $3->extraSymbolInfo.assm_code+
 							"\tMOV AX, "+
 							$3->extraSymbolInfo.carr1+
@@ -1174,7 +1171,7 @@ statement : var_declaration {
 							$7->extraSymbolInfo.assm_code+
 							string(label2)+":\n\n";
 
-			$$extraSymbolInfo.assm_code = temp_code;
+			$$->extraSymbolInfo.assm_code = temp_code;
 		}
 } | WHILE LPAREN expression RPAREN statement {
 	fprintf(logs,"Line %d: WHILE LPAREN expression RPAREN statement\n\n",numberOfLines);
@@ -1192,7 +1189,7 @@ statement : var_declaration {
 		/* 		ICG Code       */
 		/*                     */
 		/* ******************* */
-		char *label1 = newLabel(), *label2 = newLabel();
+		char *label1 = generateNewLabel(), *label2 = generateNewLabel();
 
 		string temp_code = string(label1)+":\n"+
 						$3->extraSymbolInfo.assm_code+
@@ -1273,7 +1270,7 @@ expression_statement : SEMICOLON {
 	/* 		ICG Code       */
 	/*                     */
 	/* ******************* */
-	$$->extraSymbolInfo.assign = $1->extraSymbolInfo.assm_code;
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code;
 };
 
 variable : ID {
@@ -1412,11 +1409,11 @@ expression : logic_expression {
 	/*                     */
 	/* ******************* */
 
-	string temp;
-	char* idx_saver = newTemp();
+	string temp_code;
+	char* idx_saver = generateTempVar();
 	if($1->extraSymbolInfo.typeOfID == "ARRAY"){
 		decld_var_carrier.push_back(make_pair(string(idx_saver), ""));
-		temp = $1->extraSymbolInfo.assm_code+
+		temp_code = $1->extraSymbolInfo.assm_code+
 			"\n\tMOV "+
 			string(idx_saver)+", BX\n"+
 			$3->extraSymbolInfo.assm_code+
@@ -1431,7 +1428,7 @@ expression : logic_expression {
 			"[BX], AX\n\n";
 		$$->extraSymbolInfo.assm_code = temp_code;
 	}else{
-		temp = $1->extraSymbolInfo.assm_code+
+		temp_code = $1->extraSymbolInfo.assm_code+
 			$3->extraSymbolInfo.assm_code+
 			"\tMOV AX, "+
 			$3->extraSymbolInfo.carr1+
@@ -1440,7 +1437,7 @@ expression : logic_expression {
 			$1->extraSymbolInfo.carr1+
 			", AX\n\n";
 
-		$$->extraSymbolInfo.assm_code = temp;
+		$$->extraSymbolInfo.assm_code = temp_code;
 	}
 };
 
@@ -1479,8 +1476,8 @@ logic_expression : rel_expression {
 	/* ******************* */
 	string temp_code = $1->extraSymbolInfo.assm_code+
 					$3->extraSymbolInfo.assm_code;
-	char *label1 = newLabel, *label2 = newLabel(), *label3 = newLabel();
-	char *temp_var = newTemp();
+	char *label1 = generateNewLabel(), *label2 = generateNewLabel(), *label3 = generateNewLabel();
+	char *temp_var = generateTempVar();
 
 	if($2->getName() == "&&"){
 		temp_code += "\n\tMOV AX, "+
@@ -1516,7 +1513,7 @@ logic_expression : rel_expression {
 					string(label3)+":\n\n";
 	}
 	$$->extraSymbolInfo.assm_code = temp_code;
-	$$extraSymbolInfo.carr1 = string(temp_var);
+	$$->extraSymbolInfo.carr1 = string(temp_var);
 	decld_var_carrier.push_back(make_pair(string(temp_var), ""));
 };
 
@@ -1555,18 +1552,13 @@ rel_expression	: simple_expression {
 	/* 		ICG Code       */
 	/*                     */
 	/* ******************* */
-	string temp_code = $1->extraSymbolInfo.assm_code+
-					$3->extraSymbolInfo.assm_code+
-					"\tMOV AX, "+
-					$1->extraSymbolInfo.carr1+"\n"+
-					"\tCMP AX, "+$3->extraSymbolInfo.carr1+
-					"\n";
-	char* temp_var = newTemp();
-	char *label1=newLabel(), *label2=newLabel();
+	string temp_code = $1->extraSymbolInfo.assm_code+$3->extraSymbolInfo.assm_code+"\tMOV AX, "+$1->extraSymbolInfo.carr1+"\n"+"\tCMP AX, "+$3->extraSymbolInfo.carr1+"\n";
+	char* temp_var = generateTempVar();
+	char *label1=generateNewLabel(), *label2=generateNewLabel();
 
 	if($2->getName() == "<"){
 		temp_code += "\tJL "+string(label1)+"\n";
-	}else if($2->getName == "<="){
+	}else if($2->getName() == "<="){
 		temp_code += "\tJLE "+string(label1)+"\n";
 	}else if($2->getName() == ">"){
 		temp_code += "\tJG "+string(label1)+"\n";
@@ -1577,14 +1569,7 @@ rel_expression	: simple_expression {
 	}else{
 		temp_code += "\tJNE "+string(label1)+"\n";
 	}
-	temp_code += "\tMOV "+string(temp_var)+
-				", 0\n"+
-				"\tJMP "+
-				string(label2)+"\n"+
-				string(label1)+":\n\tMOV "+
-				string(temp_var)+
-				", 1\n"+
-				string(label2)+":\n\n"
+	temp_code += "\tMOV "+string(temp_var)+", 0\n"+"\tJMP "+string(label2)+"\n"+string(label1)+":\n\tMOV "+string(temp_var)+", 1\n"+string(label2)+":\n\n";
 	$$->extraSymbolInfo.assm_code = temp_code;
 	$$->extraSymbolInfo.carr1 = string(temp_var);
 	decld_var_carrier.push_back(make_pair(string(temp_var), ""));
@@ -1639,7 +1624,7 @@ simple_expression : term {
 	string temp_code = "\n"+$1->extraSymbolInfo.assm_code+
 						$3->extraSymbolInfo.assm_code+"\n\tMOV AX, "+
 						$1->extraSymbolInfo.carr1+"\n";
-	char* temp_var = newTemp();
+	char* temp_var = generateTempVar();
 
 	if($2->getName() == "+"){
 		temp_code += "\tADD AX, "+$3->extraSymbolInfo.carr1+
@@ -1688,10 +1673,9 @@ term :	unary_expression {
 	/* 		ICG Code       */
 	/*                     */
 	/* ******************* */
-	char* temp_var = newTemp();
+	char* temp_var = generateTempVar();
 	string res = string(temp_var);
-	string temp_code = $1->extraSymbolInfo.assm_code+
-						$3->extraSymbolInfo.assm_code;
+	string temp_code = $1->extraSymbolInfo.assm_code+$3->extraSymbolInfo.assm_code;
 
 	switch(command_map[mult_operator])
 	{
@@ -1719,13 +1703,7 @@ term :	unary_expression {
 				/* 		ICG Code       */
 				/*                     */
 				/* ******************* */
-				temp_code += "\n\tMOV AX, "+
-				$1->extraSymbolInfo.carr1+"\n"+
-							"\tMOV BX, "+$3->extraSymbolInfo.carr1+"\n"+
-							"\tMUL BX\n"+
-							"\tMOV "+
-							res+
-							", AX\n\n";
+				temp_code += "\n\tMOV AX, " + $1->extraSymbolInfo.carr1 + "\n" + "\tMOV BX, " + $3->extraSymbolInfo.carr1 + "\n" + "\tMUL BX\n" + "\tMOV " + res + ", AX\n\n";
 				$$->extraSymbolInfo.assm_code = temp_code;
 				$$->extraSymbolInfo.carr1 = res;
 				decld_var_carrier.push_back(make_pair(res, ""));
@@ -1755,13 +1733,7 @@ term :	unary_expression {
 				/* 		ICG Code       */
 				/*                     */
 				/* ******************* */
-				temp_code += "\n\tXOR DX, DX\n"+
-							"\tMOV AX, "+$1->extraSymbolInfo.carr1+"\n"+
-							"\tMOV BX, "+$3->extraSymbolInfo.carr1+"\n"+
-							"\tDIV BX\n"+
-							"\tMOV "+
-							res+
-							", AX\n\n";
+				temp_code += "\n\tXOR DX, DX\n" + "\tMOV AX, " + $1->extraSymbolInfo.carr1 +" \n" +" \tMOV BX, " + $3->extraSymbolInfo.carr1 + "\n"+"\tDIV BX\n" + "\tMOV " + res + ", AX\n\n";
 				$$->extraSymbolInfo.assm_code = temp_code;
 				$$->extraSymbolInfo.carr1 = res;
 				decld_var_carrier.push_back(make_pair(res, ""));
@@ -1791,14 +1763,7 @@ term :	unary_expression {
 				/* 		ICG Code       */
 				/*                     */
 				/* ******************* */
-				temp_code += "\tXOR DX, DX\n"+
-							"\tMOV AX, "+$1->extraSymbolInfo.carr1+
-							"\n"+"\tMOV BX, "+
-							$3->extraSymbolInfo.carr1+
-							"\n"+"\tDIV BX\n"+
-							"\tMOV "+
-							res+
-							", DX\n\n";
+				temp_code += "\tXOR DX, DX\n"+"\tMOV AX, " + $1->extraSymbolInfo.carr1 + "\n" + "\tMOV BX, " + $3->extraSymbolInfo.carr1 + "\n" + "\tDIV BX\n" + "\tMOV " + res + ", DX\n\n";
 				$$->extraSymbolInfo.assm_code = temp_code;
 				$$->extraSymbolInfo.carr1 = res;
 				decld_var_carrier.push_back(make_pair(res, ""));
@@ -1819,7 +1784,7 @@ unary_expression : ADDOP unary_expression {
 	}else{
 		string temp_code = $2->extraSymbolInfo.assm_code;
 
-		if($1->getName == "-"){
+		if($1->getName() == "-"){
 			temp_code += "\tMOV AX, "+
 						$2->extraSymbolInfo.carr1+"\n"+
 						"\tNEG AX\n"+
@@ -1842,7 +1807,7 @@ unary_expression : ADDOP unary_expression {
 		fprintf(errors,"Error at Line %d : Unary expression cannot be void\n\n",numberOfLines);
 		numberOfErrors++;
 	}else{
-		char* temp_var = newTemp();
+		char* temp_var = generateTempVar();
 		string temp_code = $2->extraSymbolInfo.assm_code;
 		temp_code += "\tMOV AX, "+
 					$2->extraSymbolInfo.carr1+"\n"+
@@ -1884,7 +1849,7 @@ factor	: variable {
 	string temp_code = $1->extraSymbolInfo.assm_code;
 
 	if($1->extraSymbolInfo.typeOfID == "ARRAY"){
-		char* temp_var = newTemp();
+		char* temp_var = generateTempVar();
 		temp_code += "\tMOV AX, "+
 					$1->extraSymbolInfo.carr1+
 					"[BX]\n"+
@@ -1980,7 +1945,7 @@ factor	: variable {
 				$1->getName()+
 				"_return_val"+"\n";
 
-	char* temp_var = newTemp();
+	char* temp_var = generateTempVar();
 	string result = string(temp_var);
 	temp_code += "\tMOV "+result+
 				", AX\n";
@@ -2051,7 +2016,7 @@ factor	: variable {
 	/* 		IGC Code       */
 	/*                     */
 	/* ******************* */
-	char* temp_var = newTemp();
+	char* temp_var = generateTempVar();
 	string temp_code = $1->extraSymbolInfo.assm_code;
 	if($1->extraSymbolInfo.typeOfID=="ARRAY"){
 		temp_code += "\tMOV AX, "+
@@ -2089,7 +2054,7 @@ factor	: variable {
 	/* 		IGC Code       */
 	/*                     */
 	/* ******************* */
-	char* temp_var = newTemp();
+	char* temp_var = generateTempVar();
 	string temp_code = $1->extraSymbolInfo.assm_code;
 	if($1->extraSymbolInfo.typeOfID=="ARRAY"){
 		temp_code += "\tMOV AX, "+
@@ -2192,7 +2157,7 @@ arguments : arguments COMMA logic_expression {
 	/*                     */
 	/* ******************* */
 
-	$$ -> extraSymbolInfo.var_declared_list.push_back(make_pair($1->extraSymbolInfo.carr1m ""));
+	$$ -> extraSymbolInfo.var_declared_list.push_back(make_pair($1->extraSymbolInfo.carr1, ""));
 	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code;
 };
 %%
