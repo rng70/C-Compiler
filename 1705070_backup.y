@@ -576,7 +576,7 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN{
 							break;
 						}
 					}
-					temp_param_list.clear();
+					// temp_param_list.clear();
 					for(int i =0;i<temp_param_list.size();i++)
 					{
 						s->extraSymbolInfo.modfd_param_list.push_back(temp_param_list[i].first+to_string(scope_counter));               //pushing to the modified paramater list of the pointer
@@ -619,7 +619,7 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN{
 								\n\tINT 21H\
 								\nEND MAIN";
 	}else{
-		string temp_code = $2->getName()+"PROC\
+		string temp_code = $2->getName()+" PROC\
 						\n\tPUSH AX\
 						\n\tPUSH BX\
 						\n\tPUSH CX\
