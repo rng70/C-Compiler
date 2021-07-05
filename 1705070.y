@@ -160,7 +160,7 @@ start : program {
 			}
 		}
 
-		$1->extraSymbolInfo.assm_code = temp + "\n.CODE\n" + output_procedure + $1->extraSymbolInfo.assm_code;
+		$1->extraSymbolInfo.assm_code = temp + "\n.CODE" + output_procedure + $1->extraSymbolInfo.assm_code;
 
 		ofstream out, optOut;
 		out.open("code.asm");
