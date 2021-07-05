@@ -256,8 +256,12 @@ will be stored as <ID, a> or <ID, location of a in Symbol Table> in symbol table
 * ***Parser.y***: The parser file that has the parsing rule with specific grammar that can be found [here](./Backup%20Files/Offline%20-%203/BisonAssignmentGrammar.PDF)
 * ***Script.sh***: The shell-script with all necessary command to parse and execute the code.
 * ***Input.c***: Input file to test validity of the program.
+* ***log.txt***: File to show outputs.
+* ***error.txt***: File to show errors(if any).
+* ***code.asm***: File with unoptimized assembly code.
+* ***optimized_code.asm***: File with optimized assembly code.
 
-
+***[Note]***: `code.asm and optimized_code.asm will only generate when there is no error in the provided input file.`
 
 # How to Run
 
@@ -288,4 +292,3 @@ will be stored as <ID, a> or <ID, location of a in Symbol Table> in symbol table
 ---
 
 ---
-
