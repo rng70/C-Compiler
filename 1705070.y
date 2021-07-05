@@ -345,10 +345,8 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN{
 			for(int i=0;i<temp_param_list.size();i++){
 				temp->extraSymbolInfo.functionParamList.push_back(make_pair(temp_param_list[i].first, temp_param_list[i].second));
 				temp->extraSymbolInfo.modfd_param_list.push_back(temp_param_list[i].first+to_string(scope_counter));              
-				// cout << "IN function definition " << temp_param_list[i].first+to_string(scope_counter) << endl;
 				// pushing to the modified paramater list of the pointer
 			}
-			// cout << " Endl complete " << endl;
 
 			/*if(return_type_solver!=$1->getType())
 			{
@@ -405,7 +403,6 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN{
 					for(int i =0;i<temp_param_list.size();i++)
 					{
 						s->extraSymbolInfo.modfd_param_list.push_back(temp_param_list[i].first+to_string(scope_counter));               //pushing to the modified paramater list of the pointer
-						// cout << "IN function definition2 " << temp_param_list[i].first+to_string(symbolTable.getCurrentScopeID()) << endl;
 					}
 				}
 				if(return_type_solver!=$1->getType())
@@ -644,7 +641,6 @@ parameter_list  : parameter_list COMMA type_specifier ID
 compound_statement : LCURL {
 	symbolTable.EnterScope(logs);
 	// fprintf(logs,"Line %d: Entering Scope compound_statement LCURL\n\n",numberOfLines);
-	// cout << "Entering scope 1" << endl;
 
 	scope_counter_2 = symbolTable.getCurrentScopeID();
 	scope_holder = to_string(scope_counter_2);
@@ -677,7 +673,6 @@ compound_statement : LCURL {
 } | LCURL {
 	symbolTable.EnterScope(logs);
 	// fprintf(logs,"Line %d: LCURL Entering Scope LCURL\n\n",numberOfLines);
-	// cout << "At line " << numberOfLines << " " << endl;
 	scope_counter_2 = symbolTable.getCurrentScopeID();
 
 	for(int i=0;i<temp_param_list.size();i++){
@@ -716,8 +711,6 @@ var_declaration : type_specifier declaration_list SEMICOLON {
 	for(int i = 0; i<var_carrier.size() ; i++){
 		first  = var_carrier[i].first;
 		second = var_carrier[i].second;
-
-		// cout << first << " " << second << " " << "in var_declaration " << first + to_string(symbolTable.getCurrentScopeID()) << endl;
 
 		decld_var_carrier.push_back(make_pair(first+to_string(symbolTable.getCurrentScopeID()),second)); //pushing bacl to vector for assm_code declaration
 		if(symbolTable.getCurrentScopeID()!=1){
@@ -1573,15 +1566,6 @@ factor	: variable {
 				//check the num of arguments matches or not
 				int given_arg_list = $3->extraSymbolInfo.functionParamList.size();
 				int defined_arg_list = s->extraSymbolInfo.functionParamList.size();
-
-				// for(int co=0;co<$3->extraSymbolInfo.functionParamList.size();co++){
-				// 	cout << $3->extraSymbolInfo.functionParamList[co].first <<  " " << $3->extraSymbolInfo.functionParamList[co].second;
-				// }
-				// cout << endl << "If not so" << endl;
-				// for(int co=0;co<s->extraSymbolInfo.functionParamList.size();co++){
-				// 	cout << s->extraSymbolInfo.functionParamList[co].first <<  " " << s->extraSymbolInfo.functionParamList[co].second;
-				// }
-				// cout << endl << "If not so 1" << endl;;
 
 				if(given_arg_list!=defined_arg_list){
 					numberOfErrors++;
