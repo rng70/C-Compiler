@@ -344,7 +344,7 @@ start : program {
 		ofstream out, optOut;
 		out.open("code.asm");
 		out << $1->extraSymbolInfo.assm_code;
-		optOut.open("optimized-Code.asm");
+		optOut.open("optimized_code.asm");
 		optOut << optimizer($1->extraSymbolInfo.assm_code);
 	}
 };
@@ -2004,8 +2004,8 @@ int main(int argc,char *argv[])
 		exit(1);
 	}
 
-	logs = fopen("1705070_log.txt","w");
-	errors = fopen("1705070_error.txt","w");
+	logs = fopen("log.txt","w");
+	errors = fopen("error.txt","w");
 
 	symbolSet();
 	yyin=fp;
