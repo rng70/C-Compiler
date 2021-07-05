@@ -1,6 +1,7 @@
 %{
 #include<bits/stdc++.h>
 #include "SymbolTable.cpp"
+#include "StringHandler.h"
 
 using namespace std;
 
@@ -15,44 +16,70 @@ FILE* logs;
 FILE* errors;
 
 SymbolTable symbolTable(30);
-// Symbol Set(s)
 map<string, string> SymbolSet;
 vector< pair<string,string> >temp_param_list;
 vector< pair<string,string> >arg_param_list;
 vector<SymbolInfo*>v;
+vector< pair<string,string> >decld_var_carrier;   //vector for adding the variables to the assembly CODES
+vector< pair<string,string> >var_carrier;
+vector< pair<string,string> >decld_f_var;         //vector for the declared variables inside the function to push the variables to the STACK
 
-string type_of_var, statement_solver, return_type_solver, named;
+string type_of_var, statement_solver, return_type_solver, running_f_name = "", scope_holder = "";
 bool is_func = false;
-int control_arg;
-int scope_counter = 1;
-int scope_counter_2 = 0;
-string running_f_name = "";
-string scope_holder = "";
+int control_arg, scope_counter = 1, scope_counter_2 = 0;
+
+/* ******************* */
+/*       Output        */
+/* 	    Procedure      */
+/* ******************* */
+string output_procedure ="\nPRINT_INT PROC\
+						\n\tPUSH AX\
+						\n\tPUSH BX\
+						\n\tPUSH CX\
+						\n\tPUSH DX\
+						\n\n\tOR AX, AX\
+						\n\tJGE END_IF1\
+						\n\tPUSH AX\
+						\n\tMOV DL,'-'\
+						\n\tMOV AH, 2\
+						\n\tINT 21H\
+						\n\tPOP AX\
+						\n\tNEG AX\
+						\n\nEND_IF1:\
+						\n\tXOR CX, CX\
+						\n\tMOV BX, 10D\
+						\n\nREPEAT1:\
+						\n\tXOR DX, DX\
+						\n\tDIV BX\
+						\n\tPUSH DX\
+						\n\tINC CX\
+						\n\n\tOR AX, AX\
+						\n\tJNE REPEAT1\
+						\n\n\tMOV AH, 2\
+						\n\nPRINT_LOOP:\
+						\n\tPOP DX\
+						\n\tOR DL, 30H\
+						\n\tINT 21H\
+						\n\tLOOP PRINT_LOOP\
+						\n\tMOV AH, 2\
+						\n\tMOV DL, 10\
+						\n\tINT 21H\
+						\n\n\tMOV DL, 13\
+						\n\tINT 21H\
+						\n\n\tPOP DX\
+						\n\tPOP CX\
+						\n\tPOP BX\
+						\n\tPOP AX\
+						\n\tRET\
+						\nPRINT_INT ENDP\n\n";
 
 // error detection
 void yyerror(const char *s){
 	numberOfErrors++;
     fprintf(errors, "Line no %d: %s\n", numberOfLines, s);
-	//yyerrok;
 }
 
-string stringAdder(int count, ...){
-	va_list varStringList;
-	int counter;
-	const char* t;
-	string s;
-	va_start(varStringList, count);
-	for(int counter=0;counter<count;counter++){
-		t = va_arg(varStringList, const char*);
-		string temp(t);
-		s += temp;
-	}
-	va_end(varStringList);
-	return s;
-}
-
-void symbolSet()
-{
+void symbolSet(){
     SymbolSet["comma"] = ",";
 	SymbolSet["semicolon"] = ";";
 	SymbolSet["left_third"] = "[";
@@ -68,9 +95,9 @@ void symbolSet()
 	SymbolSet["incop"] = "++";
 	SymbolSet["decop"] = "--";
 }
+
 // get it
-string getFromSymbolSet(string name)
-{
+string getFromSymbolSet(string name){
 	return SymbolSet.at(name);
 }
 %}
@@ -100,29 +127,61 @@ string getFromSymbolSet(string name)
 // This is the starting point of implementation of bison grammar 
 %nonassoc LOWER_PREC_THAN_ELSE
 %nonassoc ELSE
-
 %left RELOP LOGICOP
 %left ADDOP
 %left MULOP
-// this version of error-verbose is deprecated
-// %error-verbose
-// instead of using 'error-verbose' use the following one
-// %define parse.error verbose
 
 %type <symbolInfoPointer>start
 %%
 
 start : program {
-	fprintf(logs, "Symbol Table : \n\n");
+	fprintf(logs, "Line %d: start : program\n\n\n",numberOfLines-1);
 	symbolTable.printAllTable(logs);
+
+	/* ******************* */
+	/*      ICG Code       */
+	/* ******************* */
+	if(numberOfErrors == 0){
+
+		string first, second, temp = "";
+		temp = ".MODEL SMALL\
+			\n\n.STACK 100H\
+			\n\n.DATA\n";
+
+		for(int i = 0;i<decld_var_carrier.size(); i++){
+			first  = decld_var_carrier[i].first;
+			second = decld_var_carrier[i].second;
+
+			if(second == ""){
+				temp = temp + first + " DW ?\n";
+			}else{
+				temp = temp + first + " DW "+ 
+					second + " dup(?)\n";
+			}
+		}
+
+		$1->extraSymbolInfo.assm_code = temp + "\n.CODE" + output_procedure + $1->extraSymbolInfo.assm_code;
+
+		ofstream out, optOut;
+		out.open("code.asm");
+		out << $1->extraSymbolInfo.assm_code;
+		optOut.open("optimized_code.asm");
+		optOut << optimizer($1->extraSymbolInfo.assm_code);
+	}else{
+		cout << "Error occurred. Check error.txt file" << endl;
+	}
 };
 
 program : program unit {
 	fprintf(logs, "Line %d: program : program unit\n\n", numberOfLines);
 	$$ -> extraSymbolInfo.stringAdder(getFromSymbolSet("newline") + $2 -> extraSymbolInfo.stringConcatenator);
 	fprintf(logs,"%s\n\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
-	} 
-	| unit {
+
+	/* ******************* */
+	/*      ICG Code       */
+	/* ******************* */
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code + $2->extraSymbolInfo.assm_code;
+	} | unit {
 	fprintf(logs, "Line %d: program : unit\n\n", numberOfLines);
 	$$ -> extraSymbolInfo.stringConcatenator = $1 -> extraSymbolInfo.stringConcatenator;
 	fprintf(logs,"%s\n\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
@@ -132,6 +191,11 @@ unit : var_declaration{
 	fprintf(logs, "Line %d: unit : var_declaration\n\n", numberOfLines);
 	$$ -> extraSymbolInfo.stringConcatenator = $1 -> extraSymbolInfo.stringConcatenator;
 	fprintf(logs,"%s\n\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*      ICG Code       */
+	/* ******************* */
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code;
 } | func_declaration{
 	fprintf(logs, "Line %d: unit : func_declaration\n\n", numberOfLines);
 	$$ -> extraSymbolInfo.stringConcatenator = $1-> extraSymbolInfo.stringConcatenator;
@@ -140,15 +204,23 @@ unit : var_declaration{
 	fprintf(logs, "Line %d: unit : func_definition\n\n", numberOfLines);
 	$$ -> extraSymbolInfo.stringConcatenator = $1-> extraSymbolInfo.stringConcatenator;
 	fprintf(logs,"%s\n\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*      ICG Code       */
+	/* ******************* */
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code;
 };
 
 func_declaration : type_specifier ID LPAREN parameter_list RPAREN SEMICOLON{
-	/* We need to check some properties of function declaration in this step:
-			1. Check return type is same
-			2. Check number of parameter is same
-			3. Check parameter sequence is same
-			4. No void Parameters are declared
-			*/
+
+	/* ************************************************************************ */
+	/*	We need to check some properties of function declaration in this step:  */
+	/*           		1. Check return type is same                            */
+	/*      		 2. Check number of parameter is same                       */
+	/*         	      3. Check parameter sequence is same                       */
+	/*       	      4. No void Parameters are declared                        */
+	/* ************************************************************************ */
+
 	fprintf(logs, "Line %d: func_declaration : type_specifier ID LPAREN parameter_list RPAREN SEMICOLON\n\n", numberOfLines);
 	SymbolInfo* temp = symbolTable.LookUp($2->getName());
 
@@ -241,8 +313,8 @@ func_declaration : type_specifier ID LPAREN parameter_list RPAREN SEMICOLON{
 	fprintf(logs, "%s\n\n\n", $$->extraSymbolInfo.stringConcatenator.c_str());
 };
 
-func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement {
-		// scope_counter = scope_counter + 1
+func_definition : type_specifier ID LPAREN parameter_list RPAREN{
+		scope_counter = scope_counter + 1;
 		fprintf(logs, "Line %d: func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement\n\n", numberOfLines);
 		SymbolInfo *s = symbolTable.LookUp($2->getName());
 		SymbolInfo *temp = new SymbolInfo();
@@ -272,8 +344,7 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statem
 
 			for(int i=0;i<temp_param_list.size();i++){
 				temp->extraSymbolInfo.functionParamList.push_back(make_pair(temp_param_list[i].first, temp_param_list[i].second));
-				// string t = temp_param_list[i].first+to_string(scope_counter);
-				// temp->extraSymbolInfo.modfd_param_list.push_back(t);               
+				temp->extraSymbolInfo.modfd_param_list.push_back(temp_param_list[i].first+to_string(scope_counter));              
 				// pushing to the modified paramater list of the pointer
 			}
 
@@ -285,7 +356,7 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statem
 				temp->extraSymbolInfo.isFunction=false;
 			}*/
 			symbolTable.InsertModified(temp);
-			// temp_param_list.clear();
+			//temp_param_list.clear();
 		}
 		// if it already exists in global scope
 		else{
@@ -328,12 +399,11 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statem
 							break;
 						}
 					}
-					temp_param_list.clear();
-					/* for(int i =0;i<temp_param_list.size();i++)
+					// temp_param_list.clear();
+					for(int i =0;i<temp_param_list.size();i++)
 					{
-						string t = temp_param_list[i].first+to_string(scope_counter);
-						s->extraSymbolInfo.modfd_param_list.push_back(t);               //pushing to the modified paramater list of the pointer
-					} */
+						s->extraSymbolInfo.modfd_param_list.push_back(temp_param_list[i].first+to_string(scope_counter));               //pushing to the modified paramater list of the pointer
+					}
 				}
 				if(return_type_solver!=$1->getType())
 				{
@@ -345,12 +415,95 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statem
 				}
 			}
 		}
-		$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator+$2->getName()+getFromSymbolSet("left_first")+$4->extraSymbolInfo.stringConcatenator+getFromSymbolSet("right_first")+$6->extraSymbolInfo.stringConcatenator;
-		fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
-} | type_specifier ID LPAREN RPAREN compound_statement{
+		// $$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator+$2->getName()+getFromSymbolSet("left_first")+$4->extraSymbolInfo.stringConcatenator+getFromSymbolSet("right_first")+$6->extraSymbolInfo.stringConcatenator;
+		//fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+		/* ******************* */
+		/*      ICG Code       */
+		/* ******************* */
+		running_f_name = $2->getName(); //saving the name to be used during returning
+		decld_var_carrier.push_back(make_pair(running_f_name+"_return_val", ""));  //saving the variable in the .DATA segment of asm file
+}compound_statement{
+	fprintf(logs, "Line %d: func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement\n\n", numberOfLines);
+	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator+$2->getName()+getFromSymbolSet("left_first")+$4->extraSymbolInfo.stringConcatenator+getFromSymbolSet("right_first")+$7->extraSymbolInfo.stringConcatenator;
+	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*      ICG Code       */
+	/* ******************* */
+	if($2->getName() == "main"){
+		$$->extraSymbolInfo.assm_code += "MAIN PROC\
+								\n\tMOV AX, @DATA\
+								\n\tMOV DS, AX\n";
+		$$->extraSymbolInfo.assm_code += $7->extraSymbolInfo.assm_code;
+		$$->extraSymbolInfo.assm_code += "\nLABEL_RETURN_";
+		$$->extraSymbolInfo.assm_code += running_f_name;
+		$$->extraSymbolInfo.assm_code += ":\n+\n\tMOV AH, 4CH\
+								\n\tINT 21H\
+								\nEND MAIN";
+	}else{
+		string temp_code = $2->getName()+" PROC\
+						\n\tPUSH AX\
+						\n\tPUSH BX\
+						\n\tPUSH CX\
+						\n\tPUSH DX\n\n";
+
+		/*---we lookup the func_id to access the parameter list---*/
+		SymbolInfo* s = symbolTable.LookUp($2->getName());
+		string hold = "";
+		stack<string>s1;
+		stack<string>s2;
+
+		/*---we push the parameters of the function to the stack of assm_code---*/
+		for(int i=0;i<s->extraSymbolInfo.functionParamList.size();i++){
+			hold = s->extraSymbolInfo.functionParamList[i].first+to_string(scope_counter);
+			temp_code += "\tPUSH "+hold+"\n";
+			s1.push(hold);
+		}
+		temp_code += "\n";
+		scope_holder = "";
+
+		/*---we push the declared variables of the function scope inside the stack of assm_code---*/
+		for(int i=0;i<decld_f_var.size();i++){
+			hold = decld_f_var[i].first;
+			temp_code += "\tPUSH "+hold+"\n";
+			s2.push(hold);
+		}
+		decld_f_var.clear(); //clearing the list so that we would not get any weird variables
+
+		temp_code += "\n"+$7->extraSymbolInfo.assm_code+"LABEL_RETURN_"+running_f_name+":\n";
+
+		/*---we pop the parameters of the function from the stack of assm_code---*/
+		while (!s2.empty()){
+		temp_code += "\tPOP "+s2.top()+"\n";
+		s2.pop();
+		}
+		temp_code += "\n";
+
+		/*---we pop the declared variables of the function from the stack of assm_code---*/
+		while (!s1.empty()){
+		temp_code += "\tPOP "+s1.top()+"\n";
+		s1.pop();
+		}
+
+		/*finally we pop the registers from the stack---*/
+		temp_code += "\n\tPOP DX\
+					\n\tPOP CX\
+					\n\tPOP BX\
+					\n\tPOP AX\
+					\n\tret\n\n";
+		temp_code += $2->getName();
+		temp_code += " ENDP\n\n";
+
+		/** we set the scope counter to the adjusted value so that next time another f is defined, we get the correct result */
+		scope_counter = scope_counter_2;
+
+		$$->extraSymbolInfo.assm_code += temp_code;
+	}
+} | type_specifier ID LPAREN RPAREN{
 	fprintf(logs, "Line %d: func_definition : type_specifier ID LPAREN RPAREN compound_statement\n\n", numberOfLines);
 
-	// scope_counter++;
+	scope_counter++;
 	SymbolInfo *s = symbolTable.LookUp($2->getName());
 
 	if(s==0){
@@ -379,8 +532,80 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statem
 			temp_param_list.clear();
 		}
 	}
-	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator+$2->getName()+getFromSymbolSet("left_first")+getFromSymbolSet("right_first")+$5->extraSymbolInfo.stringConcatenator;
+	//$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator+$2->getName()+getFromSymbolSet("left_first")+getFromSymbolSet("right_first")+$5->extraSymbolInfo.stringConcatenator;
+	//fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*      ICG Code       */
+	/* ******************* */
+	running_f_name = $2->getName(); //saving the name to be used during returning
+	decld_var_carrier.push_back(make_pair(running_f_name+"_return_val", ""));
+}compound_statement{
+	fprintf(logs,"Line %d: func_definition : type_specifier ID LPAREN RPAREN compound_statement\n\n",numberOfLines);
+	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator+$2->getName()+getFromSymbolSet("left_first")+getFromSymbolSet("right_first")+$6->extraSymbolInfo.stringConcatenator;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*      ICG Code       */
+	/*for the main function*/
+	/* ******************* */
+	
+	if($2->getName() == "main"){
+		$$->extraSymbolInfo.assm_code += "MAIN PROC\
+									\n\tMOV AX, @DATA\
+									\n\tMOV DS ,AX\n";
+		$$->extraSymbolInfo.assm_code += $6->extraSymbolInfo.assm_code;
+		$$->extraSymbolInfo.assm_code += "\nLABEL_RETURN_";
+		$$->extraSymbolInfo.assm_code += running_f_name;
+		$$->extraSymbolInfo.assm_code += ":\n\n\tMOV AH, 4CH\
+									\n\tINT 21H\
+									\nEND MAIN";
+	}else{
+		string temp_code = $2->getName()+" PROC\n";
+
+		/*---pushing the register to the STACK---*/
+		temp_code += "\tPUSH AX\
+					\n\tPUSH BX\
+					\n\tPUSH CX\
+					\n\tPUSH DX\n\n";
+		string hold = "";
+		stack<string>s2;
+
+		/*---we push the declared variables of the function scope inside the stack of assm_code---*/
+		for(int i=0;i<decld_f_var.size();i++){
+			hold = decld_f_var[i].first;
+			temp_code += "\tPUSH "+hold+"\n";
+			s2.push(hold);
+		}
+
+		decld_f_var.clear(); //clearing the list so that we would not get any weird variables
+
+		temp_code += "\n"+$6->extraSymbolInfo.assm_code;
+		temp_code += "LABEL_RETURN_";
+		temp_code += running_f_name;
+		temp_code += ":\n";
+
+		/*---we pop the parameters of the function from the stack of assm_code---*/
+		while (!s2.empty()){
+			temp_code += "\tPOP "+s2.top()+"\n";
+			s2.pop();
+		}
+
+		temp_code += "\n";
+
+		/*finally we pop the registers from the stack---*/
+		temp_code += "\n\tPOP DX\
+					\n\tPOP CX\
+					\n\tPOP BX\
+					\n\tPOP AX\
+					\n\tret\n\n";
+
+		temp_code += $2->getName()+" ENDP\n\n";
+		$$->extraSymbolInfo.assm_code += temp_code;
+
+		/** we set the scope counter to the adjusted value so that next time another f is defined, we get the correct result */
+		scope_counter = scope_counter_2;
+	}
 };
 
 parameter_list  : parameter_list COMMA type_specifier ID
@@ -415,11 +640,10 @@ parameter_list  : parameter_list COMMA type_specifier ID
 
 compound_statement : LCURL {
 	symbolTable.EnterScope(logs);
-	fprintf(logs,"Line %d: Entering Scope compound_statement LCURL\n\n",numberOfLines);
-	//cout << "Entering scope 1" << endl;
+	// fprintf(logs,"Line %d: Entering Scope compound_statement LCURL\n\n",numberOfLines);
 
-	// scope_counter_2 = symbolTable.getTableIdTracker();
-	// scope_holder = symbolTable.getStringifyID();
+	scope_counter_2 = symbolTable.getCurrentScopeID();
+	scope_holder = to_string(scope_counter_2);
 
 	if(temp_param_list.size()!=0){
 		for(int i=0;i<temp_param_list.size();i++){
@@ -431,25 +655,25 @@ compound_statement : LCURL {
 			s->setType("ID");
 			s->extraSymbolInfo.typeOfVar = type;
 			bool check = symbolTable.InsertModified(s);
-
+			decld_var_carrier.push_back(make_pair(name+to_string(scope_counter),""));
 			if(check == 0){
 				numberOfErrors++;
 				fprintf(errors, "Error at line %d: Duplicate Parameter Name of function\n\n", numberOfLines);
 			}
 		}
 	}
-	// temp_param_list.clear();
+	temp_param_list.clear();
 } statements RCURL {
 	fprintf(logs,"Line %d: compound_statement : LCURL statements RCURL\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = getFromSymbolSet("left_curl")+"\n"+$3->extraSymbolInfo.stringConcatenator+getFromSymbolSet("right_curl");
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 	symbolTable.printAllTable(logs);
 	symbolTable.ExitScope(logs);
+	$$->extraSymbolInfo.assm_code = $3->extraSymbolInfo.assm_code;
 } | LCURL {
 	symbolTable.EnterScope(logs);
-	fprintf(logs,"Line %d: LCURL Entering Scope LCURL\n\n",numberOfLines);
-	// cout << "At line " << numberOfLines << " " << endl;
-	// scope_counter_2 = symbolTable.getTableIDTracker();
+	// fprintf(logs,"Line %d: LCURL Entering Scope LCURL\n\n",numberOfLines);
+	scope_counter_2 = symbolTable.getCurrentScopeID();
 
 	for(int i=0;i<temp_param_list.size();i++){
 		string name = temp_param_list[i].first;
@@ -460,15 +684,16 @@ compound_statement : LCURL {
 		s->setType("ID");
 		s->extraSymbolInfo.typeOfVar = type;
 		bool check = symbolTable.InsertModified(s);
+		decld_var_carrier.push_back(make_pair(name+to_string(scope_counter), ""));
 		symbolTable.printAllTable(logs);
-		//decld_var_carrier.push_back(make_pair(name+to_string(scope_counter),""));
+		decld_var_carrier.push_back(make_pair(name+to_string(scope_counter),""));
 
 		if(check == 0){
 			numberOfErrors++;
 			fprintf(errors, "Error at line %d : Duplicate Parameter Name of function\n\n", numberOfLines);
 		}
 	}
-	// temp_param_list.clear();
+	temp_param_list.clear();
 } RCURL {
 	fprintf(logs,"Line %d: compound_statement : LCURL  RCURL\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = getFromSymbolSet("left_curl")+"\n"+getFromSymbolSet("right_curl");
@@ -482,7 +707,18 @@ var_declaration : type_specifier declaration_list SEMICOLON {
 
 	$$->extraSymbolInfo.stringConcatenator = stringAdder(3,$1->extraSymbolInfo.stringConcatenator.c_str(),$2->extraSymbolInfo.stringConcatenator.c_str(),getFromSymbolSet("semicolon").c_str());
 
-	fprintf(logs,"%s\n\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+	string first, second;
+	for(int i = 0; i<var_carrier.size() ; i++){
+		first  = var_carrier[i].first;
+		second = var_carrier[i].second;
+
+		decld_var_carrier.push_back(make_pair(first+to_string(symbolTable.getCurrentScopeID()),second)); //pushing bacl to vector for assm_code declaration
+		if(symbolTable.getCurrentScopeID()!=1){
+			decld_f_var.push_back(make_pair(first+to_string(symbolTable.getCurrentScopeID()),second));  //pushing to the vector to be used during function defination procedure
+		}
+	}
+	var_carrier.clear();
+	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 };
 
 type_specifier : INT {
@@ -492,7 +728,6 @@ type_specifier : INT {
 	type_of_var = "INT";
 	$$ = s;
 	$$->extraSymbolInfo.stringConcatenator = "int ";
-	// named = $$->extraSymbolInfo.stringConcatenator + " ";
 	fprintf(logs, "%s\n\n", $$->extraSymbolInfo.stringConcatenator.c_str());
 } | FLOAT {
 	fprintf(logs,"Line %d: type_specifier : FLOAT\n\n",numberOfLines);
@@ -500,7 +735,6 @@ type_specifier : INT {
 	type_of_var = "FLOAT";
 	$$ = s;
 	$$->extraSymbolInfo.stringConcatenator = "float ";
-	//named = $$->extraSymbolInfo.stringConcatenator + " ";
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 } | VOID {
 	fprintf(logs,"Line %d: type_specifier : VOID\n\n",numberOfLines);
@@ -508,7 +742,6 @@ type_specifier : INT {
 	type_of_var = "VOID";
 	$$ = s;
 	$$->extraSymbolInfo.stringConcatenator = "void ";
-	// named = $$->extraSymbolInfo.stringConcatenator + " ";
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 };
 
@@ -529,6 +762,7 @@ declaration_list : declaration_list COMMA ID {
 
 		$1->extraSymbolInfo.stringConcatenator.append(getFromSymbolSet("comma"));
 		$$->extraSymbolInfo.stringConcatenator.append($3->getName());
+		var_carrier.push_back(make_pair($3->getName(),""));
 		fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 	}
 } | declaration_list COMMA ID LTHIRD CONST_INT RTHIRD {
@@ -550,6 +784,7 @@ declaration_list : declaration_list COMMA ID {
 		string temp = $3->getName()+getFromSymbolSet("left_third")+$5->getName()+getFromSymbolSet("right_third");
 		$1->extraSymbolInfo.stringConcatenator.append(getFromSymbolSet("comma"));
 		$$->extraSymbolInfo.stringConcatenator.append(temp);
+		var_carrier.push_back(make_pair($3->getName(), $5->getName()));
 		fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 	}
 } | ID {
@@ -571,6 +806,7 @@ declaration_list : declaration_list COMMA ID {
 		fprintf(errors,"Error at Line %d  : Variable declared void\n\n",numberOfLines);
 	}
 	$$->extraSymbolInfo.stringConcatenator = $1->getName();
+	var_carrier.push_back(make_pair($1->getName(), ""));
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 } | ID LTHIRD CONST_INT RTHIRD {
 	fprintf(logs,"Line %d: declaration_list : ID LTHIRD CONST_INT RTHIRD\n\n",numberOfLines);
@@ -596,6 +832,7 @@ declaration_list : declaration_list COMMA ID {
     string temp = getFromSymbolSet("left_third")+$3->getName()+getFromSymbolSet("right_third");
 	$$->extraSymbolInfo.stringConcatenator = $1->getName();
 	$$->extraSymbolInfo.stringConcatenator.append(temp);
+	var_carrier.push_back(make_pair($1->getName(), $3->getName()));
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 };
 
@@ -603,11 +840,25 @@ statements : statement{
 	fprintf(logs,"Line %d: statements : statement\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator+"\n";
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code;
 } | statements statement {
 	fprintf(logs,"Line %d: statements : statements statement\n\n", numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator+($2->extraSymbolInfo.stringConcatenator+"\n");
 	statement_solver = $$->extraSymbolInfo.stringConcatenator;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code + $2->extraSymbolInfo.assm_code;
 };
 
 statement : var_declaration {
@@ -617,11 +868,25 @@ statement : var_declaration {
 } | expression_statement {
 	fprintf(logs,"Line %d: statement : expression_statement\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator;
-	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+	fprintf(logs,"%s\n\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code;
 } | compound_statement {
 	fprintf(logs,"Line %d: statement : compound_statement\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code;
 } | FOR LPAREN expression_statement expression_statement expression RPAREN statement {
 	fprintf(logs,"Line %d: statement : FOR LPAREN expression_statement expression_statement expression RPAREN statement\n\n",numberOfLines);
 	string temp = $3->extraSymbolInfo.stringAdder($4->extraSymbolInfo.stringAdder($5->extraSymbolInfo.stringConcatenator));
@@ -636,6 +901,16 @@ statement : var_declaration {
 	if((a=="VOID")||(b=="VOID")||(c=="VOID")){
 		numberOfErrors++;
 		fprintf(errors,"Error at Line %d : Expression can not be void\n\n",numberOfLines);
+	}else{
+		/* ******************* */
+		/*                     */
+		/* 		ICG Code       */
+		/*                     */
+		/* ******************* */
+		char *label1 = newLabel(), *label2 = newLabel();
+
+		string temp_code = $3->extraSymbolInfo.assm_code+string(label1)+":\n"+$4->extraSymbolInfo.assm_code+"\tMOV AX, "+$4->extraSymbolInfo.carr1+"\n"+"\tCMP AX, 0\n"+"\tJE "+string(label2)+"\n"+$7->extraSymbolInfo.assm_code+$5->extraSymbolInfo.assm_code+"\tJMP "+string(label1)+"\n"+string(label2)+":\n\n";
+		$$->extraSymbolInfo.assm_code = temp_code;
 	}
 } | IF LPAREN expression RPAREN statement %prec LOWER_PREC_THAN_ELSE{
 	fprintf(logs,"Line %d: IF LPAREN expression RPAREN statement\n\n",numberOfLines);
@@ -648,6 +923,15 @@ statement : var_declaration {
 		numberOfErrors++;
 		fprintf(errors,"Error at Line %d : Expression can not be void\n\n",numberOfLines);
 	}
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	char *label1 = newLabel();
+	string temp_code = $3->extraSymbolInfo.assm_code+"\tMOV AX, "+$3->extraSymbolInfo.carr1+"\n"+"\tCMP AX, 0\n"+"\tJE "+string(label1)+"\n"+$5->extraSymbolInfo.assm_code+string(label1)+":\n\n";
+	$$->extraSymbolInfo.assm_code = temp_code;
+
 } | IF LPAREN expression RPAREN statement ELSE statement {
 		fprintf(logs,"Line %d: IF LPAREN expression RPAREN statement ELSE statement\n\n",numberOfLines);
 		string temp = $3->extraSymbolInfo.stringAdder(getFromSymbolSet("right_first"));
@@ -659,6 +943,16 @@ statement : var_declaration {
 		if(a=="VOID"){
 			numberOfErrors++;
 			fprintf(errors,"Error at Line %d : Expression can not be void\n\n",numberOfLines);
+		}else{
+			/* ******************* */
+			/*                     */
+			/* 		ICG Code       */
+			/*                     */
+			/* ******************* */
+			char *label1 = newLabel(), *label2 = newLabel();
+			string temp_code = $3->extraSymbolInfo.assm_code+"\tMOV AX, "+$3->extraSymbolInfo.carr1+"\n"+"\tCMP AX, 0\n"+"\tJE "+string(label1)+"\n"+$5->extraSymbolInfo.assm_code+"\tJMP "+string(label2)+"\n"+"\tJMP "+string(label2)+"\n"+string(label1)+":\n"+$7->extraSymbolInfo.assm_code+string(label2)+":\n\n";
+
+			$$->extraSymbolInfo.assm_code = temp_code;
 		}
 } | WHILE LPAREN expression RPAREN statement {
 	fprintf(logs,"Line %d: WHILE LPAREN expression RPAREN statement\n\n",numberOfLines);
@@ -670,15 +964,34 @@ statement : var_declaration {
 	if(a=="VOID"){
 		numberOfErrors++;
 		fprintf(errors,"Error at Line %d : Expression can not be void\n\n",numberOfLines);
+	}else{
+		/* ******************* */
+		/*                     */
+		/* 		ICG Code       */
+		/*                     */
+		/* ******************* */
+		char *label1 = newLabel(), *label2 = newLabel();
+
+		string temp_code = string(label1)+":\n"+$3->extraSymbolInfo.assm_code+"\tMOV AX, "+$3->extraSymbolInfo.carr1+"\n"+"\tCMP AX, 0\n"+"\tJE "+string(label2)+"\n"+$5->extraSymbolInfo.assm_code+"\tJMP "+string(label1)+"\n"+string(label2)+":\n\n";
+		$$->extraSymbolInfo.assm_code = temp_code;
 	}
 } | PRINTLN LPAREN ID RPAREN SEMICOLON {
 	fprintf(logs,"Line %d: statement : PRINTLN LPAREN ID RPAREN SEMICOLON\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = "println"+getFromSymbolSet("left_first")+$3->getName()+getFromSymbolSet("right_first")+getFromSymbolSet("semicolon");
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	string temp_code = "\n\n\tMOV AX, "+$3->getName()+to_string(symbolTable.IDlookUpWithParam($3->getName()))+"\n\tCALL PRINT_INT\n\n";
+	$$->extraSymbolInfo.assm_code = temp_code;
+
 } | RETURN expression SEMICOLON {
 	fprintf(logs,"Line %d: statement : RETURN expression SEMICOLON\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = "return "+$2->extraSymbolInfo.stringAdder(getFromSymbolSet("semicolon"));
-	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+	fprintf(logs,"%s\n\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 
 	string a = $2->extraSymbolInfo.typeOfVar;
 
@@ -687,6 +1000,14 @@ statement : var_declaration {
 		fprintf(errors,"Error at Line %d : Expression can not be void\n\n",numberOfLines);
 	}
 	return_type_solver = a;
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	string temp_code = $2->extraSymbolInfo.assm_code+"\tMOV AX, "+$2->extraSymbolInfo.carr1+"\n"+"\tMOV "+running_f_name+"_return_val"+", AX\n\n"+"\tJMP LABEL_RETURN_"+running_f_name+"\n";
+	$$->extraSymbolInfo.assm_code = temp_code;
 };
 
 expression_statement : SEMICOLON {
@@ -698,6 +1019,13 @@ expression_statement : SEMICOLON {
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringAdder(getFromSymbolSet("semicolon"));
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.typeOfVar;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code;
 };
 
 variable : ID {
@@ -728,6 +1056,15 @@ variable : ID {
 	}
 	$$->extraSymbolInfo.stringConcatenator = $1->getName();
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$->extraSymbolInfo.carr1 = $1->getName()+
+	to_string(symbolTable.IDlookUpWithParam($1->getName()));
+	$$->extraSymbolInfo.assm_code = "";
 } | ID LTHIRD expression RTHIRD {
 	fprintf(logs,"Line %d: variable : ID LTHIRD expression RTHIRD\n\n",numberOfLines);
 
@@ -764,10 +1101,20 @@ variable : ID {
 	string t = getFromSymbolSet("left_third")+$3->extraSymbolInfo.stringAdder(getFromSymbolSet("right_third"));
 	$$->extraSymbolInfo.stringConcatenator = $1->getName()+t;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	string temp_code = $3->extraSymbolInfo.assm_code+"\tMOV BX, "+$3->extraSymbolInfo.carr1+"\n\tADD BX, BX\n";
+	$$->extraSymbolInfo.assm_code = temp_code;
+	$$->extraSymbolInfo.carr1 = $1->getName()+
+	to_string(symbolTable.IDlookUpWithParam($1->getName()));
 };
 
 expression : logic_expression {
-	fprintf(logs,"Line %d: expression : logic_expression\n\n",numberOfLines);
+	fprintf(logs,"Line %d: expression : logic expression\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator;
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.typeOfVar;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
@@ -807,16 +1154,42 @@ expression : logic_expression {
 
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator+getFromSymbolSet("equal")+$3->extraSymbolInfo.stringConcatenator;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+
+	string temp_code;
+	char* idx_saver = newTemp();
+	if($1->extraSymbolInfo.typeOfID == "ARRAY"){
+		decld_var_carrier.push_back(make_pair(string(idx_saver), ""));
+		temp_code = $1->extraSymbolInfo.assm_code+"\n\tMOV "+string(idx_saver)+", BX\n"+$3->extraSymbolInfo.assm_code+"\tMOV AX, "+$3->extraSymbolInfo.carr1+"\n"+"\tMOV BX, "+string(idx_saver)+"\n"+"\tMOV "+$1->extraSymbolInfo.carr1+"[BX], AX\n\n";
+		$$->extraSymbolInfo.assm_code = temp_code;
+	}else{
+		temp_code = $1->extraSymbolInfo.assm_code+$3->extraSymbolInfo.assm_code+"\tMOV AX, "+$3->extraSymbolInfo.carr1+"\n"+"\tMOV "+$1->extraSymbolInfo.carr1+", AX\n\n";
+
+		$$->extraSymbolInfo.assm_code = temp_code;
+	}
 };
 
 logic_expression : rel_expression {
-	fprintf(logs,"Line %d: logic_expression : rel_expression \n\n",numberOfLines);
+	fprintf(logs,"Line %d: logic_expression : rel_expression\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator;
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.typeOfVar;
 
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$->extraSymbolInfo.carr1 = $1->extraSymbolInfo.carr1;
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code;
 } | rel_expression LOGICOP rel_expression {
-	fprintf(logs,"Line %d: logic_expression : rel_expression LOGICOP rel_expression \n\n",numberOfLines);
+	fprintf(logs,"Line %d: logic_expression : rel_expression LOGICOP rel_expression\n\n",numberOfLines);
 	string a_type  = $1->extraSymbolInfo.typeOfVar;
 	string b_type  =  $2->extraSymbolInfo.typeOfVar;
 	if((a_type=="VOID") || (b_type =="VOID")){
@@ -828,16 +1201,43 @@ logic_expression : rel_expression {
 	string temp = $1->extraSymbolInfo.stringAdder($2->getName()+$3->extraSymbolInfo.stringConcatenator);
 	$$->extraSymbolInfo.stringConcatenator = temp;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	string temp_code = $1->extraSymbolInfo.assm_code+
+					$3->extraSymbolInfo.assm_code;
+	char *label1 = newLabel(), *label2 = newLabel(), *label3 = newLabel();
+	char *temp_var = newTemp();
+
+	if($2->getName() == "&&"){
+		temp_code += "\n\tMOV AX, "+$1->extraSymbolInfo.carr1+"\n"+"\tCMP AX, 1"+"\n\tJNE "+string(label2)+"\n"+"\tMOV AX, "+$3->extraSymbolInfo.carr1+"\n"+"\tCMP AX, 1"+"\n\tJNE "+string(label2)+"\n"+string(label1)+":\n\tMOV "+string(temp_var)+", 1\n"+"\tJMP "+string(label3)+"\n"+string(label2)+":\n\tMOV "+string(temp_var)+", 0\n"+string(label3)+":\n\n";
+	}else if($2->getName()=="||"){
+		temp_code += "\n\tMOV AX, "+$1->extraSymbolInfo.carr1+"\n"+"\tCMP AX, 1"+"\n\tJE "+string(label2)+"\n"+"\tMOV AX, "+$3->extraSymbolInfo.carr1+"\n"+"\tCMP AX, 1"+"\n\tJE "+string(label2)+"\n"+string(label1)+":\n\tMOV "+string(temp_var)+", 0\n"+"\tJMP "+string(label3)+"\n"+string(label2)+":\n\tMOV "+string(temp_var)+", 1\n"+string(label3)+":\n\n";
+	}
+	$$->extraSymbolInfo.assm_code = temp_code;
+	$$->extraSymbolInfo.carr1 = string(temp_var);
+	decld_var_carrier.push_back(make_pair(string(temp_var), ""));
 };
 
 rel_expression	: simple_expression {
-	fprintf(logs,"Line %d: rel_expression : simple_expression \n\n",numberOfLines);
+	fprintf(logs,"Line %d: rel_expression : simple_expression\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator;
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.typeOfVar;
 
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$->extraSymbolInfo.carr1 = $1->extraSymbolInfo.carr1;
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code;
 } | simple_expression RELOP simple_expression {
-	fprintf(logs,"Line %d: rel_expression : simple_expression RELOP simple_expression \n\n",numberOfLines);
+	fprintf(logs,"Line %d: rel_expression : simple_expression RELOP simple_expression\n\n",numberOfLines);
 
 	string a_type  = $1->extraSymbolInfo.typeOfVar;
 	string b_type  =  $2->extraSymbolInfo.typeOfVar;
@@ -851,15 +1251,51 @@ rel_expression	: simple_expression {
 	string temp = $1->extraSymbolInfo.stringAdder($2->getName()+$3->extraSymbolInfo.stringConcatenator);
 	$$->extraSymbolInfo.stringConcatenator = temp;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	string temp_code = $1->extraSymbolInfo.assm_code+$3->extraSymbolInfo.assm_code+"\tMOV AX, "+$1->extraSymbolInfo.carr1+"\n"+"\tCMP AX, "+$3->extraSymbolInfo.carr1+"\n";
+	char* temp_var = newTemp();
+	char *label1=newLabel(), *label2=newLabel();
+
+	if($2->getName() == "<"){
+		temp_code += "\tJL "+string(label1)+"\n";
+	}else if($2->getName() == "<="){
+		temp_code += "\tJLE "+string(label1)+"\n";
+	}else if($2->getName() == ">"){
+		temp_code += "\tJG "+string(label1)+"\n";
+	}else if($2->getName() == ">="){
+		temp_code += "\tJGE "+string(label1)+"\n";
+	}else if($2->getName()== "=="){
+		temp_code += "\tJE "+string(label1)+"\n";
+	}else{
+		temp_code += "\tJNE "+string(label1)+"\n";
+	}
+	temp_code += "\tMOV "+string(temp_var)+", 0\n"+"\tJMP "+string(label2)+"\n"+string(label1)+":\n\tMOV "+string(temp_var)+", 1\n"+string(label2)+":\n\n";
+	$$->extraSymbolInfo.assm_code = temp_code;
+	$$->extraSymbolInfo.carr1 = string(temp_var);
+	decld_var_carrier.push_back(make_pair(string(temp_var), ""));
+
 };
 
 simple_expression : term {
-	fprintf(logs,"Line %d: simple_expression : term \n\n",numberOfLines);
+	fprintf(logs,"Line %d: simple_expression : term\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator;
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.typeOfVar;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$->extraSymbolInfo.carr1 = $1->extraSymbolInfo.carr1;
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code;
 } | simple_expression ADDOP term {
-	fprintf(logs,"Line %d: simple_expression : simple_expression ADDOP term \n\n",numberOfLines);
+	fprintf(logs,"Line %d: simple_expression : simple_expression ADDOP term\n\n",numberOfLines);
 
 	string a_type = $1->extraSymbolInfo.typeOfVar;
 	string b_type = $3->extraSymbolInfo.typeOfVar;
@@ -884,15 +1320,40 @@ simple_expression : term {
 	$$->extraSymbolInfo.typeOfVar = ret_type;
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringAdder($2->getName().append($3->extraSymbolInfo.stringConcatenator));
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	string temp_code = "\n"+$1->extraSymbolInfo.assm_code+$3->extraSymbolInfo.assm_code+"\n\tMOV AX, "+$1->extraSymbolInfo.carr1+"\n";
+	char* temp_var = newTemp();
+
+	if($2->getName() == "+"){
+		temp_code += "\tADD AX, "+$3->extraSymbolInfo.carr1+"\n"+"\tMOV "+string(temp_var)+", AX\n\n";
+	}else if($2->getName() == "-"){
+		temp_code += "\tSUB AX, "+$3->extraSymbolInfo.carr1+"\n"+"\tMOV "+string(temp_var)+", AX\n\n";
+	}
+	$$->extraSymbolInfo.assm_code = temp_code;
+	$$->extraSymbolInfo.carr1 = string(temp_var);
+	decld_var_carrier.push_back(make_pair(string(temp_var), ""));
 };
 
 term :	unary_expression {
-	fprintf(logs,"Line %d: term : unary_expression \n\n",numberOfLines);
+	fprintf(logs,"Line %d: term : unary_expression\n\n",numberOfLines);
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator;
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.typeOfVar;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$->extraSymbolInfo.carr1 = $1->extraSymbolInfo.carr1;
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code;
 } | term MULOP unary_expression {
-	fprintf(logs,"Line %d: term : term MULOP unary_expression \n\n",numberOfLines);
+	fprintf(logs,"Line %d: term : term MULOP unary_expression\n\n",numberOfLines);
 
 	string term_type = $1->extraSymbolInfo.typeOfVar;
 	string unary_type = $3->extraSymbolInfo.typeOfVar;
@@ -903,6 +1364,15 @@ term :	unary_expression {
 	command_map["*"] = 1;
 	command_map["/"] = 2;
 	command_map["%"] = 3;
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	char* temp_var = newTemp();
+	string res = string(temp_var);
+	string temp_code = $1->extraSymbolInfo.assm_code+$3->extraSymbolInfo.assm_code;
 
 	switch(command_map[mult_operator])
 	{
@@ -924,6 +1394,16 @@ term :	unary_expression {
 				$$->extraSymbolInfo.typeOfVar = ret_type;
 				$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringAdder($2->getName().append($3->extraSymbolInfo.stringConcatenator));
 				fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+				/* ******************* */
+				/*                     */
+				/* 		ICG Code       */
+				/*                     */
+				/* ******************* */
+				temp_code += "\n\tMOV AX, " + $1->extraSymbolInfo.carr1 + "\n" + "\tMOV BX, " + $3->extraSymbolInfo.carr1 + "\n" + "\tMUL BX\n" + "\tMOV " + res + ", AX\n\n";
+				$$->extraSymbolInfo.assm_code = temp_code;
+				$$->extraSymbolInfo.carr1 = res;
+				decld_var_carrier.push_back(make_pair(res, ""));
 			}
 			break;
 		case 2:{
@@ -944,6 +1424,17 @@ term :	unary_expression {
 				$$->extraSymbolInfo.typeOfVar = ret_type;
 				$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringAdder($2->getName().append($3->extraSymbolInfo.stringConcatenator));
 				fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+				/* ******************* */
+				/*                     */
+				/* 		ICG Code       */
+				/*                     */
+				/* ******************* */
+				temp_code += "\n\tXOR DX, DX";
+				temp_code += "\n\tMOV AX, " +$1->extraSymbolInfo.carr1+"\n"+"\tMOV BX, "+$3->extraSymbolInfo.carr1 +"\n"+"\tDIV BX\n"+"\tMOV "+res+", AX\n\n";
+				$$->extraSymbolInfo.assm_code = temp_code;
+				$$->extraSymbolInfo.carr1 = res;
+				decld_var_carrier.push_back(make_pair(res, ""));
 			}
 			break;
 		case 3:{
@@ -964,6 +1455,17 @@ term :	unary_expression {
 				$$->extraSymbolInfo.typeOfVar = ret_type;
 				$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringAdder($2->getName().append($3->extraSymbolInfo.stringConcatenator));
 				fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+				/* ******************* */
+				/*                     */
+				/* 		ICG Code       */
+				/*                     */
+				/* ******************* */
+				temp_code += "\tXOR DX, DX\n";
+				temp_code += "\tMOV AX, " + $1->extraSymbolInfo.carr1 + "\n" + "\tMOV BX, " + $3->extraSymbolInfo.carr1 + "\n" + "\tDIV BX\n" + "\tMOV " + res + ", DX\n\n";
+				$$->extraSymbolInfo.assm_code = temp_code;
+				$$->extraSymbolInfo.carr1 = res;
+				decld_var_carrier.push_back(make_pair(res, ""));
 			}
 			break;
 	}
@@ -978,6 +1480,15 @@ unary_expression : ADDOP unary_expression {
 	if($2->extraSymbolInfo.stringConcatenator=="VOID"){
 		fprintf(errors,"Error at Line %d : Unary expression cannot be void\n\n",numberOfLines);
 		numberOfErrors++;
+	}else{
+		string temp_code = $2->extraSymbolInfo.assm_code;
+
+		if($1->getName() == "-"){
+			temp_code += "\tMOV AX, "+$2->extraSymbolInfo.carr1+"\n"+"\tNEG AX\n"+"\tMOV "+$2->extraSymbolInfo.carr1+", AX\n\n";
+			$$->extraSymbolInfo.assm_code = temp_code;
+			$$->extraSymbolInfo.carr1 = $2->extraSymbolInfo.carr1;	
+
+		}
 	}
 } | NOT unary_expression {
 	fprintf(logs,"Line %d: unary_expression : NOT unary_expression\n\n",numberOfLines);
@@ -989,6 +1500,13 @@ unary_expression : ADDOP unary_expression {
 	{
 		fprintf(errors,"Error at Line %d : Unary expression cannot be void\n\n",numberOfLines);
 		numberOfErrors++;
+	}else{
+		char* temp_var = newTemp();
+		string temp_code = $2->extraSymbolInfo.assm_code;
+		temp_code += "\tMOV AX, "+$2->extraSymbolInfo.carr1+"\n"+"\tNOT AX\n"+"\tMOV "+string(temp_var)+", AX\n\n";
+		$$->extraSymbolInfo.assm_code = temp_code;
+		$$->extraSymbolInfo.carr1 = string(temp_var);
+		decld_var_carrier.push_back(make_pair(string(temp_var), ""));
 	}
 } | factor {
 	fprintf(logs,"Line %d: unary_expression : factor\n\n",numberOfLines);
@@ -997,6 +1515,14 @@ unary_expression : ADDOP unary_expression {
 	// at this point don't need t print variable type
 	// fprintf(logs,"%s\n\n",$$->extraSymbolInfo.typeOfVar.c_str());
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$->extraSymbolInfo.carr1 = $1->extraSymbolInfo.carr1;
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code;
 };
 
 factor	: variable {
@@ -1004,6 +1530,23 @@ factor	: variable {
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator;
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.typeOfVar;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	string temp_code = $1->extraSymbolInfo.assm_code;
+
+	if($1->extraSymbolInfo.typeOfID == "ARRAY"){
+		char* temp_var = newTemp();
+		temp_code += "\tMOV AX, "+$1->extraSymbolInfo.carr1+"[BX]\n"+"\tMOV "+string(temp_var)+", AX\n";
+		decld_var_carrier.push_back(make_pair(string(temp_var), ""));
+		$$->extraSymbolInfo.carr1 = string(temp_var);	
+	}else{
+		$$->extraSymbolInfo.carr1 = $1->extraSymbolInfo.carr1;
+	}
+	$$->extraSymbolInfo.assm_code = temp_code;
 } | ID LPAREN argument_list RPAREN {
 	fprintf(logs,"Line %d: factor : ID LPAREN argument_list RPAREN\n\n",numberOfLines);
 
@@ -1023,15 +1566,6 @@ factor	: variable {
 				//check the num of arguments matches or not
 				int given_arg_list = $3->extraSymbolInfo.functionParamList.size();
 				int defined_arg_list = s->extraSymbolInfo.functionParamList.size();
-
-				// for(int co=0;co<$3->extraSymbolInfo.functionParamList.size();co++){
-				// 	cout << $3->extraSymbolInfo.functionParamList[co].first <<  " " << $3->extraSymbolInfo.functionParamList[co].second;
-				// }
-				// cout << endl << "If not so" << endl;
-				// for(int co=0;co<s->extraSymbolInfo.functionParamList.size();co++){
-				// 	cout << s->extraSymbolInfo.functionParamList[co].first <<  " " << s->extraSymbolInfo.functionParamList[co].second;
-				// }
-				// cout << endl << "If not so 1" << endl;;
 
 				if(given_arg_list!=defined_arg_list){
 					numberOfErrors++;
@@ -1068,6 +1602,27 @@ factor	: variable {
 			$$->extraSymbolInfo.typeOfVar = "INT";
 			arg_param_list.clear();
 		}
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	string temp_code = $3->extraSymbolInfo.assm_code;
+
+	for(int i=0;i<s->extraSymbolInfo.modfd_param_list.size();i++){
+		temp_code += "\tMOV AX, "+$3->extraSymbolInfo.var_declared_list[i].first+"\n"+"\tMOV "+s->extraSymbolInfo.modfd_param_list[i]+", AX\n";
+	}
+
+	temp_code += "\tCALL "+$1->getName()+"\n"+"\tMOV AX, "+$1->getName()+"_return_val"+"\n";
+
+	char* temp_var = newTemp();
+	string result = string(temp_var);
+	temp_code += "\tMOV "+result+", AX\n";
+	
+	$$->extraSymbolInfo.assm_code = temp_code;
+	$$->extraSymbolInfo.carr1 = result;
+	decld_var_carrier.push_back(make_pair(result, ""));
 	}
 } | LPAREN expression RPAREN {
 	fprintf(logs,"Line %d: factor : LPAREN expression RPAREN\n\n",numberOfLines);
@@ -1078,6 +1633,14 @@ factor	: variable {
 	s->extraSymbolInfo.typeOfVar = $2->extraSymbolInfo.typeOfVar;
 	$$=s;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$->extraSymbolInfo.assm_code = $2->extraSymbolInfo.assm_code;
+	$$->extraSymbolInfo.carr1 = $2->extraSymbolInfo.carr1;
 } | CONST_INT {
 	fprintf(logs,"Line %d: factor : CONST_INT\n\n",numberOfLines);
 	$1->extraSymbolInfo.typeOfVar = "INT";
@@ -1088,8 +1651,14 @@ factor	: variable {
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.typeOfVar;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$->extraSymbolInfo.carr1 = $1->getName();
+
 } | CONST_FLOAT {
-	fprintf(logs,"Line %d: factor : CONST_FLOAT\n\n",numberOfLines);
 	$1->extraSymbolInfo.typeOfVar = "FLOAT";
 	$1->extraSymbolInfo.typeOfID = "CONST_FLOAT";
 	fprintf(logs,"Line %d: factor : CONST_FLOAT\n\n",numberOfLines);
@@ -1098,16 +1667,56 @@ factor	: variable {
 	$$->extraSymbolInfo.typeOfID = $1->extraSymbolInfo.typeOfID;
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.typeOfVar;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$->extraSymbolInfo.carr1 = $1->getName();
+
 } | variable INCOP {
 	fprintf(logs,"Line %d: factor : variable INCOP\n\n",numberOfLines);
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.typeOfVar;
 	$$->extraSymbolInfo.stringConcatenator = $1->getName()+$2->getName();
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		IGC Code       */
+	/*                     */
+	/* ******************* */
+	char* temp_var = newTemp();
+	string temp_code = $1->extraSymbolInfo.assm_code;
+	if($1->extraSymbolInfo.typeOfID=="ARRAY"){
+		temp_code += "\tMOV AX,"+$1->extraSymbolInfo.carr1+"[BX]\n"+"\tMOV "+string(temp_var)+",AX\n"+"\tINC AX\n"+"\tMOV "+$1->extraSymbolInfo.carr1+"[BX],AX\n\n";
+	}else{
+		temp_code += "\tMOV AX,"+$1->extraSymbolInfo.carr1+"\n"+"\tMOV "+string(temp_var)+",AX\n"+"\tINC AX\n"+"\tMOV "+$1->extraSymbolInfo.carr1+",AX\n\n";
+	}
+	$$->extraSymbolInfo.assm_code = temp_code;
+	$$->extraSymbolInfo.carr1 = string(temp_var);
+	decld_var_carrier.push_back(make_pair(string(temp_var), ""));
 } | variable DECOP {
 	fprintf(logs,"Line %d: factor : variable DECOP\n\n",numberOfLines);
 	$$->extraSymbolInfo.typeOfVar = $1->extraSymbolInfo.typeOfVar;
 	$$->extraSymbolInfo.stringConcatenator = $1->getName()+$2->getName();
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	char* temp_var = newTemp();
+	string temp_code = $1->extraSymbolInfo.assm_code;
+	if($1->extraSymbolInfo.typeOfID=="ARRAY"){
+		temp_code += "\tMOV AX,"+$1->extraSymbolInfo.carr1+"[BX]\n"+"\tMOV "+string(temp_var)+",AX\n"+"\tDEC AX\n"+"\tMOV "+$1->extraSymbolInfo.carr1+"[BX],AX\n\n";
+	}else{
+		temp_code += "\tMOV AX,"+$1->extraSymbolInfo.carr1+"\n"+"\tMOV "+string(temp_var)+",AX\n"+"\tDEC AX\n"+"\tMOV "+$1->extraSymbolInfo.carr1+",AX\n\n";
+	}
+	$$->extraSymbolInfo.assm_code = temp_code;
+	$$->extraSymbolInfo.carr1 = string(temp_var);
+	decld_var_carrier.push_back(make_pair(string(temp_var), ""));
 };
 
 argument_list : arguments{
@@ -1119,7 +1728,16 @@ argument_list : arguments{
 	for(int i=0;i<$1->extraSymbolInfo.functionParamList.size();i++)
 	{
 		s->extraSymbolInfo.functionParamList.push_back(make_pair($1->extraSymbolInfo.functionParamList[i].first,$1->extraSymbolInfo.functionParamList[i].second));
+		s->extraSymbolInfo.var_declared_list.push_back(make_pair($1->extraSymbolInfo.var_declared_list[i].first, ""));
 	}
+
+	/* ******************* */
+	/*                     */
+	/* 		IGC Code       */
+	/*                     */
+	/* ******************* */
+
+	s->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code;
 	$$ = s;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 } | {
@@ -1143,6 +1761,14 @@ arguments : arguments COMMA logic_expression {
 	}
 
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+	$$ -> extraSymbolInfo.var_declared_list.push_back(make_pair($3->extraSymbolInfo.carr1, ""));
+	$$ -> extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code + $3->extraSymbolInfo.assm_code;
 } | logic_expression{
 	fprintf(logs,"Line %d: arguments : logic_expression\n\n",numberOfLines);
 
@@ -1159,6 +1785,15 @@ arguments : arguments COMMA logic_expression {
 
 	$$->extraSymbolInfo.stringConcatenator = $1->extraSymbolInfo.stringConcatenator;
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
+
+	/* ******************* */
+	/*                     */
+	/* 		ICG Code       */
+	/*                     */
+	/* ******************* */
+
+	$$ -> extraSymbolInfo.var_declared_list.push_back(make_pair($1->extraSymbolInfo.carr1, ""));
+	$$->extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code;
 };
 %%
 
@@ -1173,16 +1808,16 @@ int main(int argc,char *argv[])
 		exit(1);
 	}
 
-	logs = fopen("1705070_log.txt","w");
-	errors = fopen("1705070_error.txt","w");
+	logs = fopen("log.txt","w");
+	errors = fopen("error.txt","w");
 
 	symbolSet();
 	yyin=fp;
 	yyparse();
 
-    fprintf(logs,"Total Line: %d\n\n",numberOfLines-1);
-	fprintf(logs,"Total Error: %d\n\n",numberOfErrors);
-    fprintf(errors,"Total Error: %d\n\n",numberOfErrors);
+    fprintf(logs,"Total lines: %d\n",numberOfLines-1);
+	fprintf(logs,"Total errors: %d\n\n",numberOfErrors);
+    fprintf(errors,"Total errors: %d\n\n",numberOfErrors);
 
 	fclose(yyin);
     fclose(errors);

@@ -1,0 +1,1518 @@
+Line 5: type_specifier : INT
+
+int 
+
+Line 5: type_specifier : INT
+
+int 
+
+Line 5: parameter_list : type_specifier ID
+
+int a
+
+Line 5: type_specifier : INT
+
+int 
+
+Line 5: parameter_list : parameter_list COMMA type_specifier ID
+
+int a,int b
+
+Line 5: func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement
+
+Line 6: variable : ID
+
+a
+
+Line 6: factor : variable
+
+a
+
+Line 6: unary_expression : factor
+
+a
+
+Line 6: term : unary_expression
+
+a
+
+Line 6: simple_expression : term
+
+a
+
+Line 6: variable : ID
+
+b
+
+Line 6: factor : variable
+
+b
+
+Line 6: unary_expression : factor
+
+b
+
+Line 6: term : unary_expression
+
+b
+
+Line 6: simple_expression : term
+
+b
+
+Line 6: rel_expression : simple_expression RELOP simple_expression
+
+a>=b
+
+Line 6: logic_expression : rel_expression
+
+a>=b
+
+Line 6: expression : logic expression
+
+a>=b
+
+Line 7: variable : ID
+
+a
+
+Line 7: factor : variable
+
+a
+
+Line 7: unary_expression : factor
+
+a
+
+Line 7: term : unary_expression
+
+a
+
+Line 7: simple_expression : term
+
+a
+
+Line 7: rel_expression : simple_expression
+
+a
+
+Line 7: logic_expression : rel_expression
+
+a
+
+Line 7: expression : logic expression
+
+a
+
+Line 7: statement : RETURN expression SEMICOLON
+
+return a;
+
+
+Line 7: statements : statement
+
+return a;
+
+
+Line 8: compound_statement : LCURL statements RCURL
+
+{
+return a;
+}
+
+ScopeTable # 1.2.1
+
+ScopeTable # 1.1
+ 7 --> < a : ID> 
+ 8 --> < b : ID> 
+
+ScopeTable # 1
+ 16 --> < max2 : ID> 
+
+Line 8: statement : compound_statement
+
+{
+return a;
+}
+
+Line 9: variable : ID
+
+b
+
+Line 9: factor : variable
+
+b
+
+Line 9: unary_expression : factor
+
+b
+
+Line 9: term : unary_expression
+
+b
+
+Line 9: simple_expression : term
+
+b
+
+Line 9: rel_expression : simple_expression
+
+b
+
+Line 9: logic_expression : rel_expression
+
+b
+
+Line 9: expression : logic expression
+
+b
+
+Line 9: statement : RETURN expression SEMICOLON
+
+return b;
+
+
+Line 9: statements : statement
+
+return b;
+
+
+Line 10: compound_statement : LCURL statements RCURL
+
+{
+return b;
+}
+
+ScopeTable # 1.2.2
+
+ScopeTable # 1.1
+ 7 --> < a : ID> 
+ 8 --> < b : ID> 
+
+ScopeTable # 1
+ 16 --> < max2 : ID> 
+
+Line 10: statement : compound_statement
+
+{
+return b;
+}
+
+Line 10: IF LPAREN expression RPAREN statement ELSE statement
+
+if(a>=b){
+return a;
+}else{
+return b;
+}
+
+Line 10: statements : statement
+
+if(a>=b){
+return a;
+}else{
+return b;
+}
+
+
+Line 11: compound_statement : LCURL statements RCURL
+
+{
+if(a>=b){
+return a;
+}else{
+return b;
+}
+}
+
+ScopeTable # 1.1
+ 7 --> < a : ID> 
+ 8 --> < b : ID> 
+
+ScopeTable # 1
+ 16 --> < max2 : ID> 
+
+Line 11: func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement
+
+int max2(int a,int b){
+if(a>=b){
+return a;
+}else{
+return b;
+}
+}
+
+Line 11: unit : func_definition
+
+int max2(int a,int b){
+if(a>=b){
+return a;
+}else{
+return b;
+}
+}
+
+
+Line 11: program : unit
+
+int max2(int a,int b){
+if(a>=b){
+return a;
+}else{
+return b;
+}
+}
+
+
+Line 13: type_specifier : INT
+
+int 
+
+Line 13: type_specifier : INT
+
+int 
+
+Line 13: parameter_list : type_specifier ID
+
+int a
+
+Line 13: type_specifier : INT
+
+int 
+
+Line 13: parameter_list : parameter_list COMMA type_specifier ID
+
+int a,int b
+
+Line 13: type_specifier : INT
+
+int 
+
+Line 13: parameter_list : parameter_list COMMA type_specifier ID
+
+int a,int b,int c
+
+Line 13: func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement
+
+Line 14: type_specifier : INT
+
+int 
+
+Line 14: declaration_list : ID
+
+maxab
+
+Line 14: var_declaration : type_specifier declaration_list SEMICOLON
+
+int maxab;
+
+Line 14: statement : var_declaration
+
+int maxab;
+
+Line 14: statements : statement
+
+int maxab;
+
+
+Line 15: variable : ID
+
+maxab
+
+Line 15: variable : ID
+
+a
+
+Line 15: factor : variable
+
+a
+
+Line 15: unary_expression : factor
+
+a
+
+Line 15: term : unary_expression
+
+a
+
+Line 15: simple_expression : term
+
+a
+
+Line 15: rel_expression : simple_expression
+
+a
+
+Line 15: logic_expression : rel_expression
+
+a
+
+Line 15: arguments : logic_expression
+
+a
+
+Line 15: variable : ID
+
+b
+
+Line 15: factor : variable
+
+b
+
+Line 15: unary_expression : factor
+
+b
+
+Line 15: term : unary_expression
+
+b
+
+Line 15: simple_expression : term
+
+b
+
+Line 15: rel_expression : simple_expression
+
+b
+
+Line 15: logic_expression : rel_expression
+
+b
+
+Line 15: arguments : arguments COMMA logic_expression
+
+a,b
+
+Line 15: argument_list : arguments
+
+a,b
+
+Line 15: factor : ID LPAREN argument_list RPAREN
+
+max2(a,b)
+
+Line 15: unary_expression : factor
+
+max2(a,b)
+
+Line 15: term : unary_expression
+
+max2(a,b)
+
+Line 15: simple_expression : term
+
+max2(a,b)
+
+Line 15: rel_expression : simple_expression
+
+max2(a,b)
+
+Line 15: logic_expression : rel_expression
+
+max2(a,b)
+
+Line 15: expression : variable ASSIGNOP logic_expression
+
+maxab=max2(a,b)
+
+Line 15: expression_statement : expression SEMICOLON
+
+maxab=max2(a,b);
+
+Line 15: statement : expression_statement
+
+maxab=max2(a,b);
+
+
+Line 15: statements : statements statement
+
+int maxab;
+maxab=max2(a,b);
+
+
+Line 16: variable : ID
+
+c
+
+Line 16: factor : variable
+
+c
+
+Line 16: unary_expression : factor
+
+c
+
+Line 16: term : unary_expression
+
+c
+
+Line 16: simple_expression : term
+
+c
+
+Line 16: rel_expression : simple_expression
+
+c
+
+Line 16: logic_expression : rel_expression
+
+c
+
+Line 16: arguments : logic_expression
+
+c
+
+Line 16: variable : ID
+
+maxab
+
+Line 16: factor : variable
+
+maxab
+
+Line 16: unary_expression : factor
+
+maxab
+
+Line 16: term : unary_expression
+
+maxab
+
+Line 16: simple_expression : term
+
+maxab
+
+Line 16: rel_expression : simple_expression
+
+maxab
+
+Line 16: logic_expression : rel_expression
+
+maxab
+
+Line 16: arguments : arguments COMMA logic_expression
+
+c,maxab
+
+Line 16: argument_list : arguments
+
+c,maxab
+
+Line 16: factor : ID LPAREN argument_list RPAREN
+
+max2(c,maxab)
+
+Line 16: unary_expression : factor
+
+max2(c,maxab)
+
+Line 16: term : unary_expression
+
+max2(c,maxab)
+
+Line 16: simple_expression : term
+
+max2(c,maxab)
+
+Line 16: rel_expression : simple_expression
+
+max2(c,maxab)
+
+Line 16: logic_expression : rel_expression
+
+max2(c,maxab)
+
+Line 16: expression : logic expression
+
+max2(c,maxab)
+
+Line 16: statement : RETURN expression SEMICOLON
+
+return max2(c,maxab);
+
+
+Line 16: statements : statements statement
+
+int maxab;
+maxab=max2(a,b);
+return max2(c,maxab);
+
+
+Line 17: compound_statement : LCURL statements RCURL
+
+{
+int maxab;
+maxab=max2(a,b);
+return max2(c,maxab);
+}
+
+ScopeTable # 1.2
+ 7 --> < a : ID> 
+ 8 --> < b : ID> 
+ 9 --> < c : ID> 
+ 11 --> < maxab : ID> 
+
+ScopeTable # 1
+ 16 --> < max2 : ID> 
+ 17 --> < max3 : ID> 
+
+Line 17: func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement
+
+int max3(int a,int b,int c){
+int maxab;
+maxab=max2(a,b);
+return max2(c,maxab);
+}
+
+Line 17: unit : func_definition
+
+int max3(int a,int b,int c){
+int maxab;
+maxab=max2(a,b);
+return max2(c,maxab);
+}
+
+
+Line 17: program : program unit
+
+int max2(int a,int b){
+if(a>=b){
+return a;
+}else{
+return b;
+}
+}
+int max3(int a,int b,int c){
+int maxab;
+maxab=max2(a,b);
+return max2(c,maxab);
+}
+
+
+Line 19: type_specifier : INT
+
+int 
+
+Line 19: type_specifier : INT
+
+int 
+
+Line 19: parameter_list : type_specifier ID
+
+int a
+
+Line 19: type_specifier : INT
+
+int 
+
+Line 19: parameter_list : parameter_list COMMA type_specifier ID
+
+int a,int b
+
+Line 19: type_specifier : INT
+
+int 
+
+Line 19: parameter_list : parameter_list COMMA type_specifier ID
+
+int a,int b,int c
+
+Line 19: type_specifier : INT
+
+int 
+
+Line 19: parameter_list : parameter_list COMMA type_specifier ID
+
+int a,int b,int c,int d
+
+Line 19: func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement
+
+Line 20: type_specifier : INT
+
+int 
+
+Line 20: declaration_list : ID
+
+maxabc
+
+Line 20: var_declaration : type_specifier declaration_list SEMICOLON
+
+int maxabc;
+
+Line 20: statement : var_declaration
+
+int maxabc;
+
+Line 20: statements : statement
+
+int maxabc;
+
+
+Line 21: variable : ID
+
+maxabc
+
+Line 21: variable : ID
+
+a
+
+Line 21: factor : variable
+
+a
+
+Line 21: unary_expression : factor
+
+a
+
+Line 21: term : unary_expression
+
+a
+
+Line 21: simple_expression : term
+
+a
+
+Line 21: rel_expression : simple_expression
+
+a
+
+Line 21: logic_expression : rel_expression
+
+a
+
+Line 21: arguments : logic_expression
+
+a
+
+Line 21: variable : ID
+
+b
+
+Line 21: factor : variable
+
+b
+
+Line 21: unary_expression : factor
+
+b
+
+Line 21: term : unary_expression
+
+b
+
+Line 21: simple_expression : term
+
+b
+
+Line 21: rel_expression : simple_expression
+
+b
+
+Line 21: logic_expression : rel_expression
+
+b
+
+Line 21: arguments : arguments COMMA logic_expression
+
+a,b
+
+Line 21: variable : ID
+
+c
+
+Line 21: factor : variable
+
+c
+
+Line 21: unary_expression : factor
+
+c
+
+Line 21: term : unary_expression
+
+c
+
+Line 21: simple_expression : term
+
+c
+
+Line 21: rel_expression : simple_expression
+
+c
+
+Line 21: logic_expression : rel_expression
+
+c
+
+Line 21: arguments : arguments COMMA logic_expression
+
+a,b,c
+
+Line 21: argument_list : arguments
+
+a,b,c
+
+Line 21: factor : ID LPAREN argument_list RPAREN
+
+max3(a,b,c)
+
+Line 21: unary_expression : factor
+
+max3(a,b,c)
+
+Line 21: term : unary_expression
+
+max3(a,b,c)
+
+Line 21: simple_expression : term
+
+max3(a,b,c)
+
+Line 21: rel_expression : simple_expression
+
+max3(a,b,c)
+
+Line 21: logic_expression : rel_expression
+
+max3(a,b,c)
+
+Line 21: expression : variable ASSIGNOP logic_expression
+
+maxabc=max3(a,b,c)
+
+Line 21: expression_statement : expression SEMICOLON
+
+maxabc=max3(a,b,c);
+
+Line 21: statement : expression_statement
+
+maxabc=max3(a,b,c);
+
+
+Line 21: statements : statements statement
+
+int maxabc;
+maxabc=max3(a,b,c);
+
+
+Line 22: variable : ID
+
+maxabc
+
+Line 22: factor : variable
+
+maxabc
+
+Line 22: unary_expression : factor
+
+maxabc
+
+Line 22: term : unary_expression
+
+maxabc
+
+Line 22: simple_expression : term
+
+maxabc
+
+Line 22: rel_expression : simple_expression
+
+maxabc
+
+Line 22: logic_expression : rel_expression
+
+maxabc
+
+Line 22: arguments : logic_expression
+
+maxabc
+
+Line 22: variable : ID
+
+d
+
+Line 22: factor : variable
+
+d
+
+Line 22: unary_expression : factor
+
+d
+
+Line 22: term : unary_expression
+
+d
+
+Line 22: simple_expression : term
+
+d
+
+Line 22: rel_expression : simple_expression
+
+d
+
+Line 22: logic_expression : rel_expression
+
+d
+
+Line 22: arguments : arguments COMMA logic_expression
+
+maxabc,d
+
+Line 22: argument_list : arguments
+
+maxabc,d
+
+Line 22: factor : ID LPAREN argument_list RPAREN
+
+max2(maxabc,d)
+
+Line 22: unary_expression : factor
+
+max2(maxabc,d)
+
+Line 22: term : unary_expression
+
+max2(maxabc,d)
+
+Line 22: simple_expression : term
+
+max2(maxabc,d)
+
+Line 22: rel_expression : simple_expression
+
+max2(maxabc,d)
+
+Line 22: logic_expression : rel_expression
+
+max2(maxabc,d)
+
+Line 22: expression : logic expression
+
+max2(maxabc,d)
+
+Line 22: statement : RETURN expression SEMICOLON
+
+return max2(maxabc,d);
+
+
+Line 22: statements : statements statement
+
+int maxabc;
+maxabc=max3(a,b,c);
+return max2(maxabc,d);
+
+
+Line 23: compound_statement : LCURL statements RCURL
+
+{
+int maxabc;
+maxabc=max3(a,b,c);
+return max2(maxabc,d);
+}
+
+ScopeTable # 1.3
+ 7 --> < a : ID> 
+ 8 --> < b : ID> 
+ 9 --> < c : ID> 
+ 10 --> < d : ID> 
+ 20 --> < maxabc : ID> 
+
+ScopeTable # 1
+ 16 --> < max2 : ID> 
+ 17 --> < max3 : ID> 
+ 18 --> < max4 : ID> 
+
+Line 23: func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement
+
+int max4(int a,int b,int c,int d){
+int maxabc;
+maxabc=max3(a,b,c);
+return max2(maxabc,d);
+}
+
+Line 23: unit : func_definition
+
+int max4(int a,int b,int c,int d){
+int maxabc;
+maxabc=max3(a,b,c);
+return max2(maxabc,d);
+}
+
+
+Line 23: program : program unit
+
+int max2(int a,int b){
+if(a>=b){
+return a;
+}else{
+return b;
+}
+}
+int max3(int a,int b,int c){
+int maxab;
+maxab=max2(a,b);
+return max2(c,maxab);
+}
+int max4(int a,int b,int c,int d){
+int maxabc;
+maxabc=max3(a,b,c);
+return max2(maxabc,d);
+}
+
+
+Line 25: type_specifier : INT
+
+int 
+
+Line 25: func_definition : type_specifier ID LPAREN RPAREN compound_statement
+
+Line 26: type_specifier : INT
+
+int 
+
+Line 26: declaration_list : ID
+
+a
+
+Line 26: declaration_list : declaration_list COMMA ID
+
+a,b
+
+Line 26: declaration_list : declaration_list COMMA ID
+
+a,b,c
+
+Line 26: declaration_list : declaration_list COMMA ID
+
+a,b,c,d
+
+Line 26: declaration_list : declaration_list COMMA ID
+
+a,b,c,d,max
+
+Line 26: var_declaration : type_specifier declaration_list SEMICOLON
+
+int a,b,c,d,max;
+
+Line 26: statement : var_declaration
+
+int a,b,c,d,max;
+
+Line 26: statements : statement
+
+int a,b,c,d,max;
+
+
+Line 27: variable : ID
+
+a
+
+Line 27: factor : CONST_INT
+
+20
+
+Line 27: unary_expression : factor
+
+20
+
+Line 27: term : unary_expression
+
+20
+
+Line 27: factor : CONST_INT
+
+1
+
+Line 27: unary_expression : factor
+
+1
+
+Line 27: term : term MULOP unary_expression
+
+20*1
+
+Line 27: simple_expression : term
+
+20*1
+
+Line 27: rel_expression : simple_expression
+
+20*1
+
+Line 27: logic_expression : rel_expression
+
+20*1
+
+Line 27: expression : variable ASSIGNOP logic_expression
+
+a=20*1
+
+Line 27: expression_statement : expression SEMICOLON
+
+a=20*1;
+
+Line 27: statement : expression_statement
+
+a=20*1;
+
+
+Line 27: statements : statements statement
+
+int a,b,c,d,max;
+a=20*1;
+
+
+Line 28: variable : ID
+
+b
+
+Line 28: factor : CONST_INT
+
+70
+
+Line 28: unary_expression : factor
+
+70
+
+Line 28: term : unary_expression
+
+70
+
+Line 28: simple_expression : term
+
+70
+
+Line 28: factor : CONST_INT
+
+0
+
+Line 28: unary_expression : factor
+
+0
+
+Line 28: term : unary_expression
+
+0
+
+Line 28: simple_expression : simple_expression ADDOP term
+
+70+0
+
+Line 28: rel_expression : simple_expression
+
+70+0
+
+Line 28: logic_expression : rel_expression
+
+70+0
+
+Line 28: expression : variable ASSIGNOP logic_expression
+
+b=70+0
+
+Line 28: expression_statement : expression SEMICOLON
+
+b=70+0;
+
+Line 28: statement : expression_statement
+
+b=70+0;
+
+
+Line 28: statements : statements statement
+
+int a,b,c,d,max;
+a=20*1;
+b=70+0;
+
+
+Line 29: variable : ID
+
+c
+
+Line 29: factor : CONST_INT
+
+1
+
+Line 29: unary_expression : factor
+
+1
+
+Line 29: term : unary_expression
+
+1
+
+Line 29: simple_expression : term
+
+1
+
+Line 29: rel_expression : simple_expression
+
+1
+
+Line 29: logic_expression : rel_expression
+
+1
+
+Line 29: expression : variable ASSIGNOP logic_expression
+
+c=1
+
+Line 29: expression_statement : expression SEMICOLON
+
+c=1;
+
+Line 29: statement : expression_statement
+
+c=1;
+
+
+Line 29: statements : statements statement
+
+int a,b,c,d,max;
+a=20*1;
+b=70+0;
+c=1;
+
+
+Line 30: variable : ID
+
+d
+
+Line 30: factor : CONST_INT
+
+35
+
+Line 30: unary_expression : factor
+
+35
+
+Line 30: term : unary_expression
+
+35
+
+Line 30: simple_expression : term
+
+35
+
+Line 30: rel_expression : simple_expression
+
+35
+
+Line 30: logic_expression : rel_expression
+
+35
+
+Line 30: expression : variable ASSIGNOP logic_expression
+
+d=35
+
+Line 30: expression_statement : expression SEMICOLON
+
+d=35;
+
+Line 30: statement : expression_statement
+
+d=35;
+
+
+Line 30: statements : statements statement
+
+int a,b,c,d,max;
+a=20*1;
+b=70+0;
+c=1;
+d=35;
+
+
+Line 31: variable : ID
+
+max
+
+Line 31: variable : ID
+
+a
+
+Line 31: factor : variable
+
+a
+
+Line 31: unary_expression : factor
+
+a
+
+Line 31: term : unary_expression
+
+a
+
+Line 31: simple_expression : term
+
+a
+
+Line 31: rel_expression : simple_expression
+
+a
+
+Line 31: logic_expression : rel_expression
+
+a
+
+Line 31: arguments : logic_expression
+
+a
+
+Line 31: variable : ID
+
+b
+
+Line 31: factor : variable
+
+b
+
+Line 31: unary_expression : factor
+
+b
+
+Line 31: term : unary_expression
+
+b
+
+Line 31: simple_expression : term
+
+b
+
+Line 31: rel_expression : simple_expression
+
+b
+
+Line 31: logic_expression : rel_expression
+
+b
+
+Line 31: arguments : arguments COMMA logic_expression
+
+a,b
+
+Line 31: variable : ID
+
+c
+
+Line 31: factor : variable
+
+c
+
+Line 31: unary_expression : factor
+
+c
+
+Line 31: term : unary_expression
+
+c
+
+Line 31: simple_expression : term
+
+c
+
+Line 31: rel_expression : simple_expression
+
+c
+
+Line 31: logic_expression : rel_expression
+
+c
+
+Line 31: arguments : arguments COMMA logic_expression
+
+a,b,c
+
+Line 31: variable : ID
+
+d
+
+Line 31: factor : variable
+
+d
+
+Line 31: unary_expression : factor
+
+d
+
+Line 31: term : unary_expression
+
+d
+
+Line 31: simple_expression : term
+
+d
+
+Line 31: rel_expression : simple_expression
+
+d
+
+Line 31: logic_expression : rel_expression
+
+d
+
+Line 31: arguments : arguments COMMA logic_expression
+
+a,b,c,d
+
+Line 31: argument_list : arguments
+
+a,b,c,d
+
+Line 31: factor : ID LPAREN argument_list RPAREN
+
+max4(a,b,c,d)
+
+Line 31: unary_expression : factor
+
+max4(a,b,c,d)
+
+Line 31: term : unary_expression
+
+max4(a,b,c,d)
+
+Line 31: simple_expression : term
+
+max4(a,b,c,d)
+
+Line 31: rel_expression : simple_expression
+
+max4(a,b,c,d)
+
+Line 31: logic_expression : rel_expression
+
+max4(a,b,c,d)
+
+Line 31: expression : variable ASSIGNOP logic_expression
+
+max=max4(a,b,c,d)
+
+Line 31: expression_statement : expression SEMICOLON
+
+max=max4(a,b,c,d);
+
+Line 31: statement : expression_statement
+
+max=max4(a,b,c,d);
+
+
+Line 31: statements : statements statement
+
+int a,b,c,d,max;
+a=20*1;
+b=70+0;
+c=1;
+d=35;
+max=max4(a,b,c,d);
+
+
+Line 32: statement : PRINTLN LPAREN ID RPAREN SEMICOLON
+
+println(max);
+
+Line 32: statements : statements statement
+
+int a,b,c,d,max;
+a=20*1;
+b=70+0;
+c=1;
+d=35;
+max=max4(a,b,c,d);
+println(max);
+
+
+Line 33: compound_statement : LCURL statements RCURL
+
+{
+int a,b,c,d,max;
+a=20*1;
+b=70+0;
+c=1;
+d=35;
+max=max4(a,b,c,d);
+println(max);
+}
+
+ScopeTable # 1.4
+ 7 --> < a : ID> 
+ 8 --> < b : ID> 
+ 9 --> < c : ID> 
+ 10 --> < d : ID> 
+ 26 --> < max : ID> 
+
+ScopeTable # 1
+ 1 --> < main : ID> 
+ 16 --> < max2 : ID> 
+ 17 --> < max3 : ID> 
+ 18 --> < max4 : ID> 
+
+Line 33: func_definition : type_specifier ID LPAREN RPAREN compound_statement
+
+int main(){
+int a,b,c,d,max;
+a=20*1;
+b=70+0;
+c=1;
+d=35;
+max=max4(a,b,c,d);
+println(max);
+}
+
+Line 33: unit : func_definition
+
+int main(){
+int a,b,c,d,max;
+a=20*1;
+b=70+0;
+c=1;
+d=35;
+max=max4(a,b,c,d);
+println(max);
+}
+
+
+Line 33: program : program unit
+
+int max2(int a,int b){
+if(a>=b){
+return a;
+}else{
+return b;
+}
+}
+int max3(int a,int b,int c){
+int maxab;
+maxab=max2(a,b);
+return max2(c,maxab);
+}
+int max4(int a,int b,int c,int d){
+int maxabc;
+maxabc=max3(a,b,c);
+return max2(maxabc,d);
+}
+int main(){
+int a,b,c,d,max;
+a=20*1;
+b=70+0;
+c=1;
+d=35;
+max=max4(a,b,c,d);
+println(max);
+}
+
+
+Line 34: start : program
+
+
+ScopeTable # 1
+ 1 --> < main : ID> 
+ 16 --> < max2 : ID> 
+ 17 --> < max3 : ID> 
+ 18 --> < max4 : ID> 
+
+Total lines: 34
+Total errors: 0
+
