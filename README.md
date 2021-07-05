@@ -18,9 +18,9 @@ int main(){
     a = 5;
     b = a + 10;
     
-    /* ***************************************** */
+    /* ****************************************************** */
     /*    Both println() and printf() is for showing output   */
-    /* ***************************************** */
+    /* ****************************************************** */
     printf(a);
     println(b);
 }
@@ -195,4 +195,31 @@ LABEL_RETURN_main:
 	INT 21H									
 END MAIN
 ```
+
+## Environment
+
+* This project was done in ***Linux*** operating system but it can be done in any operating system
+
+## Tools
+
+---
+
+Tools used for the project,
+
+* ***FLEX*** 
+  * Flex is a free and open-source software alternative to lex. It is a computer program that generates lexical analyzers.
+* ***BISON***:
+  * Bison, is a parser generator that is part of the GNU Project. Bison reads a specification of a context-free language, warns about any parsing ambiguities, and generates a parser that reads sequences of tokens and decides whether the sequence conforms to the syntax specified by the grammar. 
+  * The grammar that was implemented can be found [here](./Backup%20Files/Offline%20-%203/BisonAssignmentGrammar.PDF)
+
+## Languages
+
+---
+
+* C++
+* Assembly
+
+## Files
+
+---
 
