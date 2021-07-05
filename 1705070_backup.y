@@ -648,11 +648,7 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN{
 		}
 		decld_f_var.clear(); //clearing the list so that we would not get any weird variables
 
-		temp_code += "\n"+
-					$7->extraSymbolInfo.assm_code+
-					"LABEL_RETURN_"+
-					running_f_name+
-					":\n";
+		temp_code += "\n"+$7->extraSymbolInfo.assm_code+"LABEL_RETURN_"+running_f_name+":\n";
 
 		/*---we pop the parameters of the function from the stack of assm_code---*/
 		while (!s2.empty()){
@@ -825,7 +821,7 @@ compound_statement : LCURL {
 	// cout << "Entering scope 1" << endl;
 
 	scope_counter_2 = symbolTable.getCurrentScopeID();
-	scope_holder = scope_counter_2;
+	scope_holder = to_string(scope_counter_2);
 
 	if(temp_param_list.size()!=0){
 		for(int i=0;i<temp_param_list.size();i++){
@@ -869,7 +865,7 @@ compound_statement : LCURL {
 		bool check = symbolTable.InsertModified(s);
 		decld_var_carrier.push_back(make_pair(name+to_string(scope_counter), ""));
 		symbolTable.printAllTable(logs);
-		//decld_var_carrier.push_back(make_pair(name+to_string(scope_counter),""));
+		decld_var_carrier.push_back(make_pair(name+to_string(scope_counter),""));
 
 		if(check == 0){
 			numberOfErrors++;
@@ -1095,17 +1091,7 @@ statement : var_declaration {
 		/* ******************* */
 		char *label1 = generateNewLabel(), *label2 = generateNewLabel();
 
-		string temp_code = $3->extraSymbolInfo.assm_code+
-						string(label1)+":\n"+
-						$4->extraSymbolInfo.assm_code+
-						"\tMOV AX, "+
-						$4->extraSymbolInfo.carr1+"\n"+
-						"\tCMP AX, 0\n"+
-						"\tJE "+string(label2)+"\n"+
-						$7->extraSymbolInfo.assm_code+
-						$5->extraSymbolInfo.assm_code+
-						"\tJMP "+string(label1)+"\n"+
-						string(label2)+":\n\n";
+		string temp_code = $3->extraSymbolInfo.assm_code+string(label1)+":\n"+$4->extraSymbolInfo.assm_code+"\tMOV AX, "+$4->extraSymbolInfo.carr1+"\n"+"\tCMP AX, 0\n"+"\tJE "+string(label2)+"\n"+$7->extraSymbolInfo.assm_code+$5->extraSymbolInfo.assm_code+"\tJMP "+string(label1)+"\n"+string(label2)+":\n\n";
 		$$->extraSymbolInfo.assm_code = temp_code;
 	}
 } | IF LPAREN expression RPAREN statement %prec LOWER_PREC_THAN_ELSE{
@@ -1125,15 +1111,7 @@ statement : var_declaration {
 	/*                     */
 	/* ******************* */
 	char *label1 = generateNewLabel();
-	string temp_code = $3->extraSymbolInfo.assm_code+
-					"\tMOV AX, "+
-					$3->extraSymbolInfo.carr1+
-					"\n"+
-					"\tCMP AX, 0\n"+
-					"\tJE "+
-					string(label1)+"\n"+
-					$5->extraSymbolInfo.assm_code+
-					string(label1)+":\n\n";
+	string temp_code = $3->extraSymbolInfo.assm_code+"\tMOV AX, "+$3->extraSymbolInfo.carr1+"\n"+"\tCMP AX, 0\n"+"\tJE "+string(label1)+"\n"+$5->extraSymbolInfo.assm_code+string(label1)+":\n\n";
 	$$->extraSymbolInfo.assm_code = temp_code;
 
 } | IF LPAREN expression RPAREN statement ELSE statement {
@@ -1154,22 +1132,7 @@ statement : var_declaration {
 			/*                     */
 			/* ******************* */
 			char *label1 = generateNewLabel(), *label2 = generateNewLabel();
-			string temp_code = $3->extraSymbolInfo.assm_code+
-							"\tMOV AX, "+
-							$3->extraSymbolInfo.carr1+
-							"\n"+
-							"\tCMP AX, 0\n"+
-							"\tJE "+
-							string(label1)+
-							"\n"+
-							$5->extraSymbolInfo.assm_code+
-							"\tJMP "+
-							string(label2)+
-							"\n"+
-							"\tJMP "+string(label2)+"\n"+
-							string(label1)+":\n"+
-							$7->extraSymbolInfo.assm_code+
-							string(label2)+":\n\n";
+			string temp_code = $3->extraSymbolInfo.assm_code+"\tMOV AX, "+$3->extraSymbolInfo.carr1+"\n"+"\tCMP AX, 0\n"+"\tJE "+string(label1)+"\n"+$5->extraSymbolInfo.assm_code+"\tJMP "+string(label2)+"\n"+"\tJMP "+string(label2)+"\n"+string(label1)+":\n"+$7->extraSymbolInfo.assm_code+string(label2)+":\n\n";
 
 			$$->extraSymbolInfo.assm_code = temp_code;
 		}
@@ -1191,21 +1154,7 @@ statement : var_declaration {
 		/* ******************* */
 		char *label1 = generateNewLabel(), *label2 = generateNewLabel();
 
-		string temp_code = string(label1)+":\n"+
-						$3->extraSymbolInfo.assm_code+
-						"\tMOV AX, "+
-						$3->extraSymbolInfo.carr1+
-						"\n"+
-						"\tCMP AX, 0\n"+
-						"\tJE "+
-						string(label2)+
-						"\n"+
-						$5->extraSymbolInfo.assm_code+
-						"\tJMP "+
-						string(label1)+
-						"\n"+
-						string(label2)+
-						":\n\n";
+		string temp_code = string(label1)+":\n"+$3->extraSymbolInfo.assm_code+"\tMOV AX, "+$3->extraSymbolInfo.carr1+"\n"+"\tCMP AX, 0\n"+"\tJE "+string(label2)+"\n"+$5->extraSymbolInfo.assm_code+"\tJMP "+string(label1)+"\n"+string(label2)+":\n\n";
 		$$->extraSymbolInfo.assm_code = temp_code;
 	}
 } | PRINTLN LPAREN ID RPAREN SEMICOLON {
@@ -1218,10 +1167,7 @@ statement : var_declaration {
 	/* 		ICG Code       */
 	/*                     */
 	/* ******************* */
-	string temp_code = "\n\n\tMOV AX, "+
-					$3->getName()+
-					to_string(symbolTable.IDlookUpWithParam($3->getName()))+
-					"\n\tCALL PRINT_INT\n\n";
+	string temp_code = "\n\n\tMOV AX, "+$3->getName()+to_string(symbolTable.IDlookUpWithParam($3->getName()))+"\n\tCALL PRINT_INT\n\n";
 	$$->extraSymbolInfo.assm_code = temp_code;
 
 } | RETURN expression SEMICOLON {
@@ -1242,16 +1188,7 @@ statement : var_declaration {
 	/* 		ICG Code       */
 	/*                     */
 	/* ******************* */
-	string temp_code = $2->extraSymbolInfo.assm_code+
-					"\tMOV AX, "+$2->extraSymbolInfo.carr1+
-					"\n"+
-					"\tMOV "+
-					running_f_name+
-					"_return_val"+
-					", AX\n\n"+
-					"\tJMP LABEL_RETURN_"+
-					running_f_name+
-					"\n";
+	string temp_code = $2->extraSymbolInfo.assm_code+"\tMOV AX, "+$2->extraSymbolInfo.carr1+"\n"+"\tMOV "+running_f_name+"_return_val"+", AX\n\n"+"\tJMP LABEL_RETURN_"+running_f_name+"\n";
 	$$->extraSymbolInfo.assm_code = temp_code;
 };
 
@@ -1352,10 +1289,7 @@ variable : ID {
 	/* 		ICG Code       */
 	/*                     */
 	/* ******************* */
-	string temp_code = $3->extraSymbolInfo.assm_code+
-					"\tMOV BX, "+
-					$3->extraSymbolInfo.carr1+
-					"\n\tADD BX, BX\n";
+	string temp_code = $3->extraSymbolInfo.assm_code+"\tMOV BX, "+$3->extraSymbolInfo.carr1+"\n\tADD BX, BX\n";
 	$$->extraSymbolInfo.assm_code = temp_code;
 	$$->extraSymbolInfo.carr1 = $1->getName()+
 	to_string(symbolTable.IDlookUpWithParam($1->getName()));
@@ -1413,29 +1347,10 @@ expression : logic_expression {
 	char* idx_saver = generateTempVar();
 	if($1->extraSymbolInfo.typeOfID == "ARRAY"){
 		decld_var_carrier.push_back(make_pair(string(idx_saver), ""));
-		temp_code = $1->extraSymbolInfo.assm_code+
-			"\n\tMOV "+
-			string(idx_saver)+", BX\n"+
-			$3->extraSymbolInfo.assm_code+
-			"\tMOV AX, "+
-			$3->extraSymbolInfo.carr1+
-			"\n"+
-			"\tMOV BX, "+
-			string(idx_saver)+
-			"\n"+
-			"\tMOV "+
-			$1->extraSymbolInfo.carr1+
-			"[BX], AX\n\n";
+		temp_code = $1->extraSymbolInfo.assm_code+"\n\tMOV "+string(idx_saver)+", BX\n"+$3->extraSymbolInfo.assm_code+"\tMOV AX, "+$3->extraSymbolInfo.carr1+"\n"+"\tMOV BX, "+string(idx_saver)+"\n"+"\tMOV "+$1->extraSymbolInfo.carr1+"[BX], AX\n\n";
 		$$->extraSymbolInfo.assm_code = temp_code;
 	}else{
-		temp_code = $1->extraSymbolInfo.assm_code+
-			$3->extraSymbolInfo.assm_code+
-			"\tMOV AX, "+
-			$3->extraSymbolInfo.carr1+
-			"\n"+
-			"\tMOV "+
-			$1->extraSymbolInfo.carr1+
-			", AX\n\n";
+		temp_code = $1->extraSymbolInfo.assm_code+$3->extraSymbolInfo.assm_code+"\tMOV AX, "+$3->extraSymbolInfo.carr1+"\n"+"\tMOV "+$1->extraSymbolInfo.carr1+", AX\n\n";
 
 		$$->extraSymbolInfo.assm_code = temp_code;
 	}
@@ -1480,37 +1395,9 @@ logic_expression : rel_expression {
 	char *temp_var = generateTempVar();
 
 	if($2->getName() == "&&"){
-		temp_code += "\n\tMOV AX, "+
-					$1->extraSymbolInfo.carr1+"\n"+
-					"\tCMP AX, 1"+
-					"\n\tJNE "+
-					string(label2)+"\n"+
-					"\tMOV AX, "+
-					$3->extraSymbolInfo.carr1+"\n"+
-					"\tCMP AX, 1"+
-					"\n\tJNE "+string(label2)+"\n"+
-					string(label1)+":\n\tMOV "+
-					string(temp_var)+", 1\n"+
-					"\tJMP "+string(label3)+"\n"+
-					string(label2)+":\n\tMOV "+
-					string(temp_var)+", 0\n"+
-					string(label3)+":\n\n";
+		temp_code += "\n\tMOV AX, "+$1->extraSymbolInfo.carr1+"\n"+"\tCMP AX, 1"+"\n\tJNE "+string(label2)+"\n"+"\tMOV AX, "+$3->extraSymbolInfo.carr1+"\n"+"\tCMP AX, 1"+"\n\tJNE "+string(label2)+"\n"+string(label1)+":\n\tMOV "+string(temp_var)+", 1\n"+"\tJMP "+string(label3)+"\n"+string(label2)+":\n\tMOV "+string(temp_var)+", 0\n"+string(label3)+":\n\n";
 	}else if($2->getName()=="||"){
-		temp_code += "\n\tMOV AX, "+
-					$1->extraSymbolInfo.carr1+"\n"+
-					"\tCMP AX, 1"+
-					"\n\tJE "+
-					string(label2)+"\n"+
-					"\tMOV AX, "+
-					$3->extraSymbolInfo.carr1+"\n"+
-					"\tCMP AX, 1"+
-					"\n\tJE "+string(label2)+"\n"+
-					string(label1)+":\n\tMOV "+
-					string(temp_var)+", 0\n"+
-					"\tJMP "+string(label3)+"\n"+
-					string(label2)+":\n\tMOV "+
-					string(temp_var)+", 1\n"+
-					string(label3)+":\n\n";
+		temp_code += "\n\tMOV AX, "+$1->extraSymbolInfo.carr1+"\n"+"\tCMP AX, 1"+"\n\tJE "+string(label2)+"\n"+"\tMOV AX, "+$3->extraSymbolInfo.carr1+"\n"+"\tCMP AX, 1"+"\n\tJE "+string(label2)+"\n"+string(label1)+":\n\tMOV "+string(temp_var)+", 0\n"+"\tJMP "+string(label3)+"\n"+string(label2)+":\n\tMOV "+string(temp_var)+", 1\n"+string(label3)+":\n\n";
 	}
 	$$->extraSymbolInfo.assm_code = temp_code;
 	$$->extraSymbolInfo.carr1 = string(temp_var);
@@ -1621,21 +1508,13 @@ simple_expression : term {
 	/* 		ICG Code       */
 	/*                     */
 	/* ******************* */
-	string temp_code = "\n"+$1->extraSymbolInfo.assm_code+
-						$3->extraSymbolInfo.assm_code+"\n\tMOV AX, "+
-						$1->extraSymbolInfo.carr1+"\n";
+	string temp_code = "\n"+$1->extraSymbolInfo.assm_code+$3->extraSymbolInfo.assm_code+"\n\tMOV AX, "+$1->extraSymbolInfo.carr1+"\n";
 	char* temp_var = generateTempVar();
 
 	if($2->getName() == "+"){
-		temp_code += "\tADD AX, "+$3->extraSymbolInfo.carr1+
-					"\n"+
-					"\tMOV "+string(temp_var)+
-					", AX\n\n";
+		temp_code += "\tADD AX, "+$3->extraSymbolInfo.carr1+"\n"+"\tMOV "+string(temp_var)+", AX\n\n";
 	}else if($2->getName() == "-"){
-		temp_code += "\tSUB AX, "+$3->extraSymbolInfo.carr1+
-					"\n"+
-					"\tMOV "+string(temp_var)+
-					", AX\n\n";
+		temp_code += "\tSUB AX, "+$3->extraSymbolInfo.carr1+"\n"+"\tMOV "+string(temp_var)+", AX\n\n";
 	}
 	$$->extraSymbolInfo.assm_code = temp_code;
 	$$->extraSymbolInfo.carr1 = string(temp_var);
@@ -1787,12 +1666,7 @@ unary_expression : ADDOP unary_expression {
 		string temp_code = $2->extraSymbolInfo.assm_code;
 
 		if($1->getName() == "-"){
-			temp_code += "\tMOV AX, "+
-						$2->extraSymbolInfo.carr1+"\n"+
-						"\tNEG AX\n"+
-						"\tMOV "+
-						$2->extraSymbolInfo.carr1+
-						", AX\n\n";
+			temp_code += "\tMOV AX, "+$2->extraSymbolInfo.carr1+"\n"+"\tNEG AX\n"+"\tMOV "+$2->extraSymbolInfo.carr1+", AX\n\n";
 			$$->extraSymbolInfo.assm_code = temp_code;
 			$$->extraSymbolInfo.carr1 = $2->extraSymbolInfo.carr1;	
 
@@ -1811,11 +1685,7 @@ unary_expression : ADDOP unary_expression {
 	}else{
 		char* temp_var = generateTempVar();
 		string temp_code = $2->extraSymbolInfo.assm_code;
-		temp_code += "\tMOV AX, "+
-					$2->extraSymbolInfo.carr1+"\n"+
-					"\tNOT AX\n"+
-					"\tMOV "+string(temp_var)+
-					", AX\n\n";
+		temp_code += "\tMOV AX, "+$2->extraSymbolInfo.carr1+"\n"+"\tNOT AX\n"+"\tMOV "+string(temp_var)+", AX\n\n";
 		$$->extraSymbolInfo.assm_code = temp_code;
 		$$->extraSymbolInfo.carr1 = string(temp_var);
 		decld_var_carrier.push_back(make_pair(string(temp_var), ""));
@@ -1852,11 +1722,7 @@ factor	: variable {
 
 	if($1->extraSymbolInfo.typeOfID == "ARRAY"){
 		char* temp_var = generateTempVar();
-		temp_code += "\tMOV AX, "+
-					$1->extraSymbolInfo.carr1+
-					"[BX]\n"+
-					"\tMOV "+
-					string(temp_var)+", AX\n";
+		temp_code += "\tMOV AX, "+$1->extraSymbolInfo.carr1+"[BX]\n"+"\tMOV "+string(temp_var)+", AX\n";
 		decld_var_carrier.push_back(make_pair(string(temp_var), ""));
 		$$->extraSymbolInfo.carr1 = string(temp_var);	
 	}else{
@@ -1936,21 +1802,14 @@ factor	: variable {
 	string temp_code = $3->extraSymbolInfo.assm_code;
 
 	for(int i=0;i<s->extraSymbolInfo.modfd_param_list.size();i++){
-		temp_code += "\tMOV AX, "+
-					$3->extraSymbolInfo.var_declared_list[i].first+"\n"+
-					"\tMOV "+s->extraSymbolInfo.modfd_param_list[i]+
-					", AX\n";
+		temp_code += "\tMOV AX, "+$3->extraSymbolInfo.var_declared_list[i].first+"\n"+"\tMOV "+s->extraSymbolInfo.modfd_param_list[i]+", AX\n";
 	}
 
-	temp_code += "\tCALL "+$1->getName()+"\n"+
-				"\tMOV AX, "+
-				$1->getName()+
-				"_return_val"+"\n";
+	temp_code += "\tCALL "+$1->getName()+"\n"+"\tMOV AX, "+$1->getName()+"_return_val"+"\n";
 
 	char* temp_var = generateTempVar();
 	string result = string(temp_var);
-	temp_code += "\tMOV "+result+
-				", AX\n";
+	temp_code += "\tMOV "+result+", AX\n";
 	
 	$$->extraSymbolInfo.assm_code = temp_code;
 	$$->extraSymbolInfo.carr1 = result;
@@ -2021,26 +1880,9 @@ factor	: variable {
 	char* temp_var = generateTempVar();
 	string temp_code = $1->extraSymbolInfo.assm_code;
 	if($1->extraSymbolInfo.typeOfID=="ARRAY"){
-		temp_code += "\tMOV AX, "+
-					$1->extraSymbolInfo.carr1+
-					"[BX]"+"\n"+
-					"\tMOV "+
-					string(temp_var)+
-					", AX\n"+
-					"\tINC AX\n"+
-					"\tMOV "+
-					$1->extraSymbolInfo.carr1+
-					"[BX], AX"+"\n\n";
+		temp_code += "\tMOV AX,"+$1->extraSymbolInfo.carr1+"[BX]\n"+"\tMOV "+string(temp_var)+",AX\n"+"\tINC AX\n"+"\tMOV "+$1->extraSymbolInfo.carr1+"[BX],AX\n\n";
 	}else{
-		temp_code += "\tMOV AX, "+
-					$1->extraSymbolInfo.carr1+"\n"+
-					"\tMOV "+
-					string(temp_var)+
-					", AX\n"+
-					"\tINC AX\n"+
-					"\tMOV "+
-					$1->extraSymbolInfo.carr1+
-					", AX"+"\n\n";
+		temp_code += "\tMOV AX,"+$1->extraSymbolInfo.carr1+"\n"+"\tMOV "+string(temp_var)+",AX\n"+"\tINC AX\n"+"\tMOV "+$1->extraSymbolInfo.carr1+",AX\n\n";
 	}
 	$$->extraSymbolInfo.assm_code = temp_code;
 	$$->extraSymbolInfo.carr1 = string(temp_var);
@@ -2053,32 +1895,15 @@ factor	: variable {
 
 	/* ******************* */
 	/*                     */
-	/* 		IGC Code       */
+	/* 		ICG Code       */
 	/*                     */
 	/* ******************* */
 	char* temp_var = generateTempVar();
 	string temp_code = $1->extraSymbolInfo.assm_code;
 	if($1->extraSymbolInfo.typeOfID=="ARRAY"){
-		temp_code += "\tMOV AX, "+
-					$1->extraSymbolInfo.carr1+
-					"[BX]"+"\n"+
-					"\tMOV "+
-					string(temp_var)+
-					", AX\n"+
-					"\tDEC AX\n"+
-					"\tMOV "+
-					$1->extraSymbolInfo.carr1+
-					"[BX], AX"+"\n\n";
+		temp_code += "\tMOV AX,"+$1->extraSymbolInfo.carr1+"[BX]\n"+"\tMOV "+string(temp_var)+",AX\n"+"\tDEC AX\n"+"\tMOV "+$1->extraSymbolInfo.carr1+"[BX],AX\n\n";
 	}else{
-		temp_code += "\tMOV AX, "+
-					$1->extraSymbolInfo.carr1+"\n"+
-					"\tMOV "+
-					string(temp_var)+
-					", AX\n"+
-					"\tDEC AX\n"+
-					"\tMOV "+
-					$1->extraSymbolInfo.carr1+
-					", AX"+"\n\n";
+		temp_code += "\tMOV AX,"+$1->extraSymbolInfo.carr1+"\n"+"\tMOV "+string(temp_var)+",AX\n"+"\tDEC AX\n"+"\tMOV "+$1->extraSymbolInfo.carr1+",AX\n\n";
 	}
 	$$->extraSymbolInfo.assm_code = temp_code;
 	$$->extraSymbolInfo.carr1 = string(temp_var);
@@ -2130,10 +1955,9 @@ arguments : arguments COMMA logic_expression {
 
 	/* ******************* */
 	/*                     */
-	/* 		IGC Code       */
+	/* 		ICG Code       */
 	/*                     */
 	/* ******************* */
-
 	$$ -> extraSymbolInfo.var_declared_list.push_back(make_pair($3->extraSymbolInfo.carr1, ""));
 	$$ -> extraSymbolInfo.assm_code = $1->extraSymbolInfo.assm_code + $3->extraSymbolInfo.assm_code;
 } | logic_expression{
@@ -2155,7 +1979,7 @@ arguments : arguments COMMA logic_expression {
 
 	/* ******************* */
 	/*                     */
-	/* 		IGC Code       */
+	/* 		ICG Code       */
 	/*                     */
 	/* ******************* */
 
