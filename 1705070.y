@@ -16,25 +16,17 @@ FILE* logs;
 FILE* errors;
 
 SymbolTable symbolTable(30);
-// Symbol Set(s)
 map<string, string> SymbolSet;
 vector< pair<string,string> >temp_param_list;
 vector< pair<string,string> >arg_param_list;
 vector<SymbolInfo*>v;
-
-// ------------------------------------------------------------------------------
 vector< pair<string,string> >decld_var_carrier;   //vector for adding the variables to the assembly CODES
 vector< pair<string,string> >var_carrier;
 vector< pair<string,string> >decld_f_var;         //vector for the declared variables inside the function to push the variables to the STACK
-// ------------------------------------------------------------------------------
 
-string type_of_var, statement_solver, return_type_solver, named;
+string type_of_var, statement_solver, return_type_solver, running_f_name = "", scope_holder = "";
 bool is_func = false;
-int control_arg;//, labelCount = 0, tempCount = 0;
-int scope_counter = 1;
-int scope_counter_2 = 0;
-string running_f_name = "";
-string scope_holder = "";
+int control_arg, scope_counter = 1, scope_counter_2 = 0;
 
 /* ******************* */
 /*       Output        */
@@ -87,8 +79,7 @@ void yyerror(const char *s){
     fprintf(errors, "Line no %d: %s\n", numberOfLines, s);
 }
 
-void symbolSet()
-{
+void symbolSet(){
     SymbolSet["comma"] = ",";
 	SymbolSet["semicolon"] = ";";
 	SymbolSet["left_third"] = "[";
@@ -106,8 +97,7 @@ void symbolSet()
 }
 
 // get it
-string getFromSymbolSet(string name)
-{
+string getFromSymbolSet(string name){
 	return SymbolSet.at(name);
 }
 %}
@@ -137,14 +127,9 @@ string getFromSymbolSet(string name)
 // This is the starting point of implementation of bison grammar 
 %nonassoc LOWER_PREC_THAN_ELSE
 %nonassoc ELSE
-
 %left RELOP LOGICOP
 %left ADDOP
 %left MULOP
-// this version of error-verbose is deprecated
-// %error-verbose
-// instead of using 'error-verbose' use the following one
-// %define parse.error verbose
 
 %type <symbolInfoPointer>start
 %%
@@ -156,15 +141,16 @@ start : program {
 	/* ******************* */
 	/*      ICG Code       */
 	/* ******************* */
-	if(numberOfErrors == 0){
+	if(numberOfErrors != 0){
+		cout << "Error occurred. Check error.txt file" << endl;
+	}else if(numberOfErrors == 0){
 
 		string first, second, temp = "";
 		temp = ".MODEL SMALL\
 			\n\n.STACK 100H\
 			\n\n.DATA\n";
 
-		for(int i = 0;i<decld_var_carrier.size(); i++)
-		{
+		for(int i = 0;i<decld_var_carrier.size(); i++){
 			first  = decld_var_carrier[i].first;
 			second = decld_var_carrier[i].second;
 
@@ -749,7 +735,6 @@ type_specifier : INT {
 	type_of_var = "INT";
 	$$ = s;
 	$$->extraSymbolInfo.stringConcatenator = "int ";
-	// named = $$->extraSymbolInfo.stringConcatenator + " ";
 	fprintf(logs, "%s\n\n", $$->extraSymbolInfo.stringConcatenator.c_str());
 } | FLOAT {
 	fprintf(logs,"Line %d: type_specifier : FLOAT\n\n",numberOfLines);
@@ -757,7 +742,6 @@ type_specifier : INT {
 	type_of_var = "FLOAT";
 	$$ = s;
 	$$->extraSymbolInfo.stringConcatenator = "float ";
-	//named = $$->extraSymbolInfo.stringConcatenator + " ";
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 } | VOID {
 	fprintf(logs,"Line %d: type_specifier : VOID\n\n",numberOfLines);
@@ -765,7 +749,6 @@ type_specifier : INT {
 	type_of_var = "VOID";
 	$$ = s;
 	$$->extraSymbolInfo.stringConcatenator = "void ";
-	// named = $$->extraSymbolInfo.stringConcatenator + " ";
 	fprintf(logs,"%s\n\n",$$->extraSymbolInfo.stringConcatenator.c_str());
 };
 

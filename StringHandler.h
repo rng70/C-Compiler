@@ -76,7 +76,7 @@ bool is_valid_string(std::string a, std::string b){
     return false;
 }
 
-/*returns an optimized version of the assembly code*/
+/* Returns an optimized version of the assembly code */
 std::string optimizer(std::string code)
 {
 
@@ -88,32 +88,27 @@ std::string optimizer(std::string code)
     std::vector<std::string>vect1;
     std::vector<std::string>vect2;
 
-    /*we get the splitted code*/
     std::vector<std::string>splitted_code =split_string(code,"\n");
 
-     //removing all the extra newlines from the splitted string
-    for(int i=0;i<splitted_code.size();i++)
-    {
-        if(splitted_code[i]!="")
-        {
+     // All the extra newlines from the splitted string are removed heree
+    for(int i=0;i<splitted_code.size();i++){
+        if(splitted_code[i]!=""){
             vect1.push_back(splitted_code[i]);
 		}
 	}
 
 	splitted_code.clear();
-
-	for(int i=0;i<vect1.size();i++)
-	{
+	for(int i=0;i<vect1.size();i++){
 		splitted_code.push_back(vect1[i]);
 	}
 
-	vect1.clear();
-
-		/*this portion checks if a pair of string is valid for comparison and then if we can find our required condition, we skip
-		over one concatenation of the result string, thus giving us an optimized string*/
-
-    for( i=0;i<splitted_code.size();i++)
-    {
+    /* ********************************************* */
+    /*   Here, checking pair of string is valid for  */
+    /*  comparison and then if necessary skip over   */
+    /* concatenation which gives us optimized string */
+    /* ********************************************* */
+    vect1.clear();
+    for( i=0;i<splitted_code.size();i++){
         temp = i;
 
         if(i!=splitted_code.size()-1){

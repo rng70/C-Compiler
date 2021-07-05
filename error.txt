@@ -1,2 +1,3 @@
-Total errors: 0
+Line no 22: syntax error
+Total errors: 1
 
