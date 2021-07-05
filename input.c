@@ -1,24 +1,34 @@
 /* ************************** */
-/*       Output = 2, 2        */
+/*        Output = 70         */
 /* ************************** */
 
-int a;
-int function(int a){
-  return a%2;
-}
-
-int main(){
-  a = 1;
-  int b;
-  b = 6;
-  int c;
-  c = 2;
-
-  if(function(b)==1){
-    printf(a);
-  }else{
-    println(c);
+int max2(int a, int b) {
+  if (a >= b) {
+    return a;
+  } else {
+    return b;
   }
-  b = 1<5 + a;
-  printf(b);
 }
+
+int max3(int a, int b, int c) {
+  int maxab;
+  maxab = max2(a, b);
+  return max2(c, maxab);
+}
+
+int max4(int a, int b, int c, int d) {
+  int maxabc;
+  maxabc = max3(a, b, c);
+  return max2(maxabc, d);
+}
+
+int main() {
+  int a, b, c, d, max;
+  a = 20 * 1;
+  b = 70 + 0;
+  c = 1;
+  d = 35;
+  max = max4(a, b, c, d);
+  printf(max);
+}
+

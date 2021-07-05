@@ -13,7 +13,7 @@ int function(int a){
 int main(){
   a = 1;
   int b;
-  b = 6;
+  b = 5;
 
   a = a+function(b);
   printf(a);
