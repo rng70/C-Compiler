@@ -124,7 +124,7 @@ void symbolSet()
 /* 		  Label        */
 /*     Generator       */
 /* ******************* */
-char* newLabel(){
+char* generateNewLabel(){
 	char* newLabel = new char[4];
 	strcpy(newLabel, "L");
 	char newLabelCounter[3];
@@ -139,7 +139,7 @@ char* newLabel(){
 /* 		Variable       */
 /*     Generator       */
 /* ******************* */
-char* newTemp(){
+char* generateTempVar(){
 	char* tempVar = new char[4];
 	strcpy(tempVar, "t");
 	char tempVarCounter[3];
@@ -1094,7 +1094,7 @@ statement : var_declaration {
 		/* 		ICG Code       */
 		/*                     */
 		/* ******************* */
-		char *label1 = newLabel(), *label2 = newLabel();
+		char *label1 = generateNewLabel(), *label2 = generateNewLabel();
 
 		string temp_code = $3->extraSymbolInfo.assm_code+string(label1)+":\n"+$4->extraSymbolInfo.assm_code+"\tMOV AX, "+$4->extraSymbolInfo.carr1+"\n"+"\tCMP AX, 0\n"+"\tJE "+string(label2)+"\n"+$7->extraSymbolInfo.assm_code+$5->extraSymbolInfo.assm_code+"\tJMP "+string(label1)+"\n"+string(label2)+":\n\n";
 		$$->extraSymbolInfo.assm_code = temp_code;
@@ -1115,7 +1115,7 @@ statement : var_declaration {
 	/* 		ICG Code       */
 	/*                     */
 	/* ******************* */
-	char *label1 = newLabel();
+	char *label1 = generateNewLabel();
 	string temp_code = $3->extraSymbolInfo.assm_code+"\tMOV AX, "+$3->extraSymbolInfo.carr1+"\n"+"\tCMP AX, 0\n"+"\tJE "+string(label1)+"\n"+$5->extraSymbolInfo.assm_code+string(label1)+":\n\n";
 	$$->extraSymbolInfo.assm_code = temp_code;
 
@@ -1136,7 +1136,7 @@ statement : var_declaration {
 			/* 		ICG Code       */
 			/*                     */
 			/* ******************* */
-			char *label1 = newLabel(), *label2 = newLabel();
+			char *label1 = generateNewLabel(), *label2 = generateNewLabel();
 			string temp_code = $3->extraSymbolInfo.assm_code+"\tMOV AX, "+$3->extraSymbolInfo.carr1+"\n"+"\tCMP AX, 0\n"+"\tJE "+string(label1)+"\n"+$5->extraSymbolInfo.assm_code+"\tJMP "+string(label2)+"\n"+"\tJMP "+string(label2)+"\n"+string(label1)+":\n"+$7->extraSymbolInfo.assm_code+string(label2)+":\n\n";
 
 			$$->extraSymbolInfo.assm_code = temp_code;
@@ -1157,7 +1157,7 @@ statement : var_declaration {
 		/* 		ICG Code       */
 		/*                     */
 		/* ******************* */
-		char *label1 = newLabel(), *label2 = newLabel();
+		char *label1 = generateNewLabel(), *label2 = generateNewLabel();
 
 		string temp_code = string(label1)+":\n"+$3->extraSymbolInfo.assm_code+"\tMOV AX, "+$3->extraSymbolInfo.carr1+"\n"+"\tCMP AX, 0\n"+"\tJE "+string(label2)+"\n"+$5->extraSymbolInfo.assm_code+"\tJMP "+string(label1)+"\n"+string(label2)+":\n\n";
 		$$->extraSymbolInfo.assm_code = temp_code;
@@ -1349,7 +1349,7 @@ expression : logic_expression {
 	/* ******************* */
 
 	string temp_code;
-	char* idx_saver = newTemp();
+	char* idx_saver = generateTempVar();
 	if($1->extraSymbolInfo.typeOfID == "ARRAY"){
 		decld_var_carrier.push_back(make_pair(string(idx_saver), ""));
 		temp_code = $1->extraSymbolInfo.assm_code+"\n\tMOV "+string(idx_saver)+", BX\n"+$3->extraSymbolInfo.assm_code+"\tMOV AX, "+$3->extraSymbolInfo.carr1+"\n"+"\tMOV BX, "+string(idx_saver)+"\n"+"\tMOV "+$1->extraSymbolInfo.carr1+"[BX], AX\n\n";
@@ -1396,8 +1396,8 @@ logic_expression : rel_expression {
 	/* ******************* */
 	string temp_code = $1->extraSymbolInfo.assm_code+
 					$3->extraSymbolInfo.assm_code;
-	char *label1 = newLabel(), *label2 = newLabel(), *label3 = newLabel();
-	char *temp_var = newTemp();
+	char *label1 = generateNewLabel(), *label2 = generateNewLabel(), *label3 = generateNewLabel();
+	char *temp_var = generateTempVar();
 
 	if($2->getName() == "&&"){
 		temp_code += "\n\tMOV AX, "+$1->extraSymbolInfo.carr1+"\n"+"\tCMP AX, 1"+"\n\tJNE "+string(label2)+"\n"+"\tMOV AX, "+$3->extraSymbolInfo.carr1+"\n"+"\tCMP AX, 1"+"\n\tJNE "+string(label2)+"\n"+string(label1)+":\n\tMOV "+string(temp_var)+", 1\n"+"\tJMP "+string(label3)+"\n"+string(label2)+":\n\tMOV "+string(temp_var)+", 0\n"+string(label3)+":\n\n";
@@ -1445,8 +1445,8 @@ rel_expression	: simple_expression {
 	/*                     */
 	/* ******************* */
 	string temp_code = $1->extraSymbolInfo.assm_code+$3->extraSymbolInfo.assm_code+"\tMOV AX, "+$1->extraSymbolInfo.carr1+"\n"+"\tCMP AX, "+$3->extraSymbolInfo.carr1+"\n";
-	char* temp_var = newTemp();
-	char *label1=newLabel(), *label2=newLabel();
+	char* temp_var = generateTempVar();
+	char *label1=generateNewLabel(), *label2=generateNewLabel();
 
 	if($2->getName() == "<"){
 		temp_code += "\tJL "+string(label1)+"\n";
@@ -1514,7 +1514,7 @@ simple_expression : term {
 	/*                     */
 	/* ******************* */
 	string temp_code = "\n"+$1->extraSymbolInfo.assm_code+$3->extraSymbolInfo.assm_code+"\n\tMOV AX, "+$1->extraSymbolInfo.carr1+"\n";
-	char* temp_var = newTemp();
+	char* temp_var = generateTempVar();
 
 	if($2->getName() == "+"){
 		temp_code += "\tADD AX, "+$3->extraSymbolInfo.carr1+"\n"+"\tMOV "+string(temp_var)+", AX\n\n";
@@ -1557,7 +1557,7 @@ term :	unary_expression {
 	/* 		ICG Code       */
 	/*                     */
 	/* ******************* */
-	char* temp_var = newTemp();
+	char* temp_var = generateTempVar();
 	string res = string(temp_var);
 	string temp_code = $1->extraSymbolInfo.assm_code+$3->extraSymbolInfo.assm_code;
 
@@ -1688,7 +1688,7 @@ unary_expression : ADDOP unary_expression {
 		fprintf(errors,"Error at Line %d : Unary expression cannot be void\n\n",numberOfLines);
 		numberOfErrors++;
 	}else{
-		char* temp_var = newTemp();
+		char* temp_var = generateTempVar();
 		string temp_code = $2->extraSymbolInfo.assm_code;
 		temp_code += "\tMOV AX, "+$2->extraSymbolInfo.carr1+"\n"+"\tNOT AX\n"+"\tMOV "+string(temp_var)+", AX\n\n";
 		$$->extraSymbolInfo.assm_code = temp_code;
@@ -1726,7 +1726,7 @@ factor	: variable {
 	string temp_code = $1->extraSymbolInfo.assm_code;
 
 	if($1->extraSymbolInfo.typeOfID == "ARRAY"){
-		char* temp_var = newTemp();
+		char* temp_var = generateTempVar();
 		temp_code += "\tMOV AX, "+$1->extraSymbolInfo.carr1+"[BX]\n"+"\tMOV "+string(temp_var)+", AX\n";
 		decld_var_carrier.push_back(make_pair(string(temp_var), ""));
 		$$->extraSymbolInfo.carr1 = string(temp_var);	
@@ -1812,7 +1812,7 @@ factor	: variable {
 
 	temp_code += "\tCALL "+$1->getName()+"\n"+"\tMOV AX, "+$1->getName()+"_return_val"+"\n";
 
-	char* temp_var = newTemp();
+	char* temp_var = generateTempVar();
 	string result = string(temp_var);
 	temp_code += "\tMOV "+result+", AX\n";
 	
@@ -1882,7 +1882,7 @@ factor	: variable {
 	/* 		IGC Code       */
 	/*                     */
 	/* ******************* */
-	char* temp_var = newTemp();
+	char* temp_var = generateTempVar();
 	string temp_code = $1->extraSymbolInfo.assm_code;
 	if($1->extraSymbolInfo.typeOfID=="ARRAY"){
 		temp_code += "\tMOV AX,"+$1->extraSymbolInfo.carr1+"[BX]\n"+"\tMOV "+string(temp_var)+",AX\n"+"\tINC AX\n"+"\tMOV "+$1->extraSymbolInfo.carr1+"[BX],AX\n\n";
@@ -1903,7 +1903,7 @@ factor	: variable {
 	/* 		ICG Code       */
 	/*                     */
 	/* ******************* */
-	char* temp_var = newTemp();
+	char* temp_var = generateTempVar();
 	string temp_code = $1->extraSymbolInfo.assm_code;
 	if($1->extraSymbolInfo.typeOfID=="ARRAY"){
 		temp_code += "\tMOV AX,"+$1->extraSymbolInfo.carr1+"[BX]\n"+"\tMOV "+string(temp_var)+",AX\n"+"\tDEC AX\n"+"\tMOV "+$1->extraSymbolInfo.carr1+"[BX],AX\n\n";
