@@ -6,10 +6,12 @@
 class SymbolTable {
     int sizeOfTable;
     ScopeTable *currentScope;
+    int counter;
 public:
     explicit SymbolTable(int size) {
+        this->counter = 1;
         this->sizeOfTable = size;
-        currentScope = new ScopeTable(sizeOfTable);
+        currentScope = new ScopeTable(sizeOfTable, counter);
     }
 
     void setCurrentScope(ScopeTable *p) {
@@ -26,7 +28,8 @@ public:
 
     // required methods for offline
     void EnterScope(FILE *f) {
-        ScopeTable *newScopeTable = new ScopeTable(this->sizeOfTable, currentScope->getTableIdTracker());
+        counter++;
+        ScopeTable *newScopeTable = new ScopeTable(this->sizeOfTable, counter, currentScope->getTableIdTracker());
         // Increment the table tracker value
         currentScope->setTableIdTracker();
         ScopeTable *parentScope = currentScope;

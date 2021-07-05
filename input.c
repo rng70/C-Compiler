@@ -26,4 +26,4 @@ int main() {
   d = 35;
   max = max4(a, b, c, d);
   printf(max);
-}     
+}

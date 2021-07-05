@@ -521,9 +521,11 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN{
 
 			for(int i=0;i<temp_param_list.size();i++){
 				temp->extraSymbolInfo.functionParamList.push_back(make_pair(temp_param_list[i].first, temp_param_list[i].second));
-				temp->extraSymbolInfo.modfd_param_list.push_back(temp_param_list[i].first+to_string(scope_counter));               
+				temp->extraSymbolInfo.modfd_param_list.push_back(temp_param_list[i].first+to_string(scope_counter));              
+				// cout << "IN function definition " << temp_param_list[i].first+to_string(scope_counter) << endl;
 				// pushing to the modified paramater list of the pointer
 			}
+			// cout << " Endl complete " << endl;
 
 			/*if(return_type_solver!=$1->getType())
 			{
@@ -580,6 +582,7 @@ func_definition : type_specifier ID LPAREN parameter_list RPAREN{
 					for(int i =0;i<temp_param_list.size();i++)
 					{
 						s->extraSymbolInfo.modfd_param_list.push_back(temp_param_list[i].first+to_string(scope_counter));               //pushing to the modified paramater list of the pointer
+						// cout << "IN function definition2 " << temp_param_list[i].first+to_string(symbolTable.getCurrentScopeID()) << endl;
 					}
 				}
 				if(return_type_solver!=$1->getType())
@@ -891,7 +894,7 @@ var_declaration : type_specifier declaration_list SEMICOLON {
 		first  = var_carrier[i].first;
 		second = var_carrier[i].second;
 
-		cout << first << " " << second << " " << in var_declaration << first + to_string(symbolTable.getCurrentScopeID()) << endl;
+		// cout << first << " " << second << " " << "in var_declaration " << first + to_string(symbolTable.getCurrentScopeID()) << endl;
 
 		decld_var_carrier.push_back(make_pair(first+to_string(symbolTable.getCurrentScopeID()),second)); //pushing bacl to vector for assm_code declaration
 		if(symbolTable.getCurrentScopeID()!=1){

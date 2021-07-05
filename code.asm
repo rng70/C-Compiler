@@ -8,26 +8,26 @@ a2 DW ?
 b2 DW ?
 t0 DW ?
 max3_return_val DW ?
-a3 DW ?
-b3 DW ?
-c3 DW ?
-maxab2 DW ?
+a5 DW ?
+b5 DW ?
+c5 DW ?
+maxab5 DW ?
 t1 DW ?
 t3 DW ?
 max4_return_val DW ?
-a3 DW ?
-b3 DW ?
-c3 DW ?
-d3 DW ?
-maxabc3 DW ?
+a6 DW ?
+b6 DW ?
+c6 DW ?
+d6 DW ?
+maxabc6 DW ?
 t4 DW ?
 t6 DW ?
 main_return_val DW ?
-a4 DW ?
-b4 DW ?
-c4 DW ?
-d4 DW ?
-max4 DW ?
+a7 DW ?
+b7 DW ?
+c7 DW ?
+d7 DW ?
+max7 DW ?
 t7 DW ?
 t9 DW ?
 t13 DW ?
@@ -83,7 +83,7 @@ PRINT_LOOP:
 	RET						
 PRINT_INT ENDP
 
-max2PROC						
+max2 PROC						
 	PUSH AX						
 	PUSH BX						
 	PUSH CX						
@@ -93,8 +93,8 @@ max2PROC
 	PUSH b2
 
 
-	MOV AX, a1
-	CMP AX, b1
+	MOV AX, a2
+	CMP AX, b2
 	JGE L0
 	MOV t0, 0
 	JMP L1
@@ -105,14 +105,14 @@ L1:
 	MOV AX, t0
 	CMP AX, 0
 	JE L2
-	MOV AX, a1
+	MOV AX, a2
 	MOV max2_return_val, AX
 
 	JMP LABEL_RETURN_max2
 	JMP L3
 	JMP L3
 L2:
-	MOV AX, b1
+	MOV AX, b2
 	MOV max2_return_val, AX
 
 	JMP LABEL_RETURN_max2
@@ -131,31 +131,31 @@ LABEL_RETURN_max2:
 
 max2 ENDP
 
-max3PROC						
+max3 PROC						
 	PUSH AX						
 	PUSH BX						
 	PUSH CX						
 	PUSH DX
 
-	PUSH a3
-	PUSH b3
-	PUSH c3
+	PUSH a5
+	PUSH b5
+	PUSH c5
 
-	PUSH maxab2
+	PUSH maxab5
 
-	MOV AX, a2
+	MOV AX, a5
 	MOV a2, AX
-	MOV AX, b2
+	MOV AX, b5
 	MOV b2, AX
 	CALL max2
 	MOV AX, max2_return_val
 	MOV t1, AX
 	MOV AX, t1
-	MOV maxab2, AX
+	MOV maxab5, AX
 
-	MOV AX, c2
+	MOV AX, c5
 	MOV a2, AX
-	MOV AX, maxab2
+	MOV AX, maxab5
 	MOV b2, AX
 	CALL max2
 	MOV AX, max2_return_val
@@ -165,11 +165,11 @@ max3PROC
 
 	JMP LABEL_RETURN_max3
 LABEL_RETURN_max3:
-	POP maxab2
+	POP maxab5
 
-	POP c3
-	POP b3
-	POP a3
+	POP c5
+	POP b5
+	POP a5
 
 	POP DX					
 	POP CX					
@@ -179,34 +179,34 @@ LABEL_RETURN_max3:
 
 max3 ENDP
 
-max4PROC						
+max4 PROC						
 	PUSH AX						
 	PUSH BX						
 	PUSH CX						
 	PUSH DX
 
-	PUSH a3
-	PUSH b3
-	PUSH c3
-	PUSH d3
+	PUSH a6
+	PUSH b6
+	PUSH c6
+	PUSH d6
 
-	PUSH maxabc3
+	PUSH maxabc6
 
-	MOV AX, a3
-	MOV a3, AX
-	MOV AX, b3
-	MOV b3, AX
-	MOV AX, c3
-	MOV c3, AX
+	MOV AX, a6
+	MOV a5, AX
+	MOV AX, b6
+	MOV b5, AX
+	MOV AX, c6
+	MOV c5, AX
 	CALL max3
 	MOV AX, max3_return_val
 	MOV t4, AX
 	MOV AX, t4
-	MOV maxabc3, AX
+	MOV maxabc6, AX
 
-	MOV AX, maxabc3
+	MOV AX, maxabc6
 	MOV a2, AX
-	MOV AX, d3
+	MOV AX, d6
 	MOV b2, AX
 	CALL max2
 	MOV AX, max2_return_val
@@ -216,12 +216,12 @@ max4PROC
 
 	JMP LABEL_RETURN_max4
 LABEL_RETURN_max4:
-	POP maxabc3
+	POP maxabc6
 
-	POP d3
-	POP c3
-	POP b3
-	POP a3
+	POP d6
+	POP c6
+	POP b6
+	POP a6
 
 	POP DX					
 	POP CX					
@@ -241,7 +241,7 @@ MAIN PROC
 	MOV t7, AX
 
 	MOV AX, t7
-	MOV a4, AX
+	MOV a7, AX
 
 
 
@@ -250,31 +250,31 @@ MAIN PROC
 	MOV t9, AX
 
 	MOV AX, t9
-	MOV b4, AX
+	MOV b7, AX
 
 	MOV AX, 1
-	MOV c4, AX
+	MOV c7, AX
 
 	MOV AX, 35
-	MOV d4, AX
+	MOV d7, AX
 
-	MOV AX, a4
-	MOV a3, AX
-	MOV AX, b4
-	MOV b3, AX
-	MOV AX, c4
-	MOV c3, AX
-	MOV AX, d4
-	MOV d3, AX
+	MOV AX, a7
+	MOV a6, AX
+	MOV AX, b7
+	MOV b6, AX
+	MOV AX, c7
+	MOV c6, AX
+	MOV AX, d7
+	MOV d6, AX
 	CALL max4
 	MOV AX, max4_return_val
 	MOV t13, AX
 	MOV AX, t13
-	MOV max4, AX
+	MOV max7, AX
 
 
 
-	MOV AX, max4
+	MOV AX, max7
 	CALL PRINT_INT
 
 

@@ -5,6 +5,7 @@
 
 class ScopeTable {
     int size, Id, tableIdTracker;
+    int TableID;
 
     /// Declare parent Scope to Store parent Scope of current Scope
     ScopeTable *parentScope;
@@ -18,10 +19,11 @@ public:
         this->Id = this->tableIdTracker;
     }
 
-    explicit ScopeTable(int tableSize, int p = 0) {
+    explicit ScopeTable(int tableSize,int counter = 0, int p = 0) {
         this->size = tableSize;
         this->tableIdTracker = 0;
         this->Id = p + 1;
+        this->TableID = counter;
 
         // Set initial parent scope to 0 not null or nullptr
         this->parentScope = 0;
@@ -155,7 +157,7 @@ public:
     }
 
     int getID() {
-        return this->Id;
+        return this->TableID;
     }
 
     ScopeTable *getParentScope() {

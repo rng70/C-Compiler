@@ -120,7 +120,7 @@ Line 4: compound_statement : LCURL statements RCURL
 return a;
 }
 
-ScopeTable # 1.1.1
+ScopeTable # 1.2.1
 
 ScopeTable # 1.1
  7 --> < a : ID> 
@@ -183,7 +183,7 @@ Line 6: compound_statement : LCURL statements RCURL
 return b;
 }
 
-ScopeTable # 1.1.2
+ScopeTable # 1.2.2
 
 ScopeTable # 1.1
  7 --> < a : ID> 
