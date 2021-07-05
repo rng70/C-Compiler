@@ -5,13 +5,11 @@ a1 DW ?
 function_return_val DW ?
 a2 DW ?
 t0 DW ?
-t1 DW ?
-t2 DW ?
-t3 DW ?
 main_return_val DW ?
-b4 DW ?
-t6 DW ?
-t7 DW ?
+b3 DW ?
+c3 DW ?
+t4 DW ?
+t5 DW ?
 .CODE
 PRINT_INT PROC						
 	PUSH AX						
@@ -59,34 +57,12 @@ function PROC
 	PUSH CX						
 	PUSH DX
 	PUSH a2
+	XOR DX, DX
 	MOV AX, a2
-	CMP AX, 1
-	JE L0
-	MOV t0, 0
-	JMP L1
-L0:
-	MOV t0, 1
-L1:
+	MOV BX, 2
+	DIV BX
+	MOV t0, DX
 	MOV AX, t0
-	CMP AX, 0
-	JE L2
-	MOV AX, 1
-	MOV function_return_val, AX
-	JMP LABEL_RETURN_function
-L2:
-	MOV AX, a2
-	SUB AX, 1
-	MOV t1, AX
-	MOV AX, t1
-	MOV a2, AX
-	CALL function
-	MOV AX, function_return_val
-	MOV t2, AX
-	MOV AX, a2
-	MOV BX, t2
-	MUL BX
-	MOV t3, AX
-	MOV AX, t3
 	MOV function_return_val, AX
 	JMP LABEL_RETURN_function
 LABEL_RETURN_function:
@@ -103,18 +79,34 @@ MAIN PROC
 	MOV AX, 1
 	MOV a1, AX
 	MOV AX, 6
-	MOV b4, AX
-	MOV AX, b4
+	MOV b3, AX
+	MOV AX, 2
+	MOV c3, AX
+	MOV AX, b3
 	MOV a2, AX
 	CALL function
 	MOV AX, function_return_val
-	MOV t6, AX
+	MOV t4, AX
+	MOV AX, t4
+	CMP AX, 1
+	JE L0
+	MOV t5, 0
+	JMP L1
+L0:
+	MOV t5, 1
+L1:
+	MOV AX, t5
+	CMP AX, 0
+	JE L2
 	MOV AX, a1
-	ADD AX, t6
-	MOV t7, AX
-	MOV AX, t7
-	MOV a1, AX
-	MOV AX, a1
+	CALL PRINT_INT
+	JMP L3
+	JMP L3
+L2:
+	MOV AX, c3
+	CALL PRINT_INT
+L3:
+	MOV AX, b3
 	CALL PRINT_INT
 LABEL_RETURN_main:
 	MOV AH, 4CH									
