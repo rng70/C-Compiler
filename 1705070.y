@@ -1,6 +1,7 @@
 %{
 #include<bits/stdc++.h>
 #include "SymbolTable.cpp"
+#include "StringHandler.h"
 
 using namespace std;
 
@@ -29,7 +30,7 @@ vector< pair<string,string> >decld_f_var;         //vector for the declared vari
 
 string type_of_var, statement_solver, return_type_solver, named;
 bool is_func = false;
-int control_arg, labelCount = 0, tempCount = 0;
+int control_arg;//, labelCount = 0, tempCount = 0;
 int scope_counter = 1;
 int scope_counter_2 = 0;
 string running_f_name = "";
@@ -86,21 +87,6 @@ void yyerror(const char *s){
     fprintf(errors, "Line no %d: %s\n", numberOfLines, s);
 }
 
-string stringAdder(int count, ...){
-	va_list varStringList;
-	int counter;
-	const char* t;
-	string s;
-	va_start(varStringList, count);
-	for(int counter=0;counter<count;counter++){
-		t = va_arg(varStringList, const char*);
-		string temp(t);
-		s += temp;
-	}
-	va_end(varStringList);
-	return s;
-}
-
 void symbolSet()
 {
     SymbolSet["comma"] = ",";
@@ -119,160 +105,11 @@ void symbolSet()
 	SymbolSet["decop"] = "--";
 }
 
-/* ******************* */
-/*    New Temporary    */
-/* 		  Label        */
-/*     Generator       */
-/* ******************* */
-char* newLabel(){
-	char* newLabel = new char[4];
-	strcpy(newLabel, "L");
-	char newLabelCounter[3];
-	sprintf(newLabelCounter, "%d", labelCount);
-	labelCount++;
-	strcat(newLabel, newLabelCounter);
-	return newLabel;
-}
-
-/* ******************* */
-/*    New Temporary    */
-/* 		Variable       */
-/*     Generator       */
-/* ******************* */
-char* newTemp(){
-	char* tempVar = new char[4];
-	strcpy(tempVar, "t");
-	char tempVarCounter[3];
-	sprintf(tempVarCounter, "%d", tempCount);
-	tempCount++;
-	strcat(tempVar, tempVarCounter);
-	return tempVar; 
-}
 // get it
 string getFromSymbolSet(string name)
 {
 	return SymbolSet.at(name);
 }
-
-// ----------------------------------------------------------------------------------------
-vector<string> split_string(const string& str,const string& delimiter)
-{
-    vector<string> splitted;
-
-    string::size_type pos = 0;
-    string::size_type prev = 0;
-    while ((pos = str.find(delimiter, prev)) != string::npos)
-    {
-        splitted.push_back(str.substr(prev, pos - prev));
-        prev = pos + 1;
-    }
-
-    splitted.push_back(str.substr(prev));
-
-    return splitted;
-}
-
-bool is_valid_string(string a, string b)
-{
-    int a_indx = a.find("MOV");
-    int b_indx = b.find("MOV");
-
-    if((a_indx!=string::npos)&&(b_indx!=string::npos))
-    {
-        if((a.find(",")!=string::npos)&&(b.find(",")!=string::npos))
-        {
-            return true;
-        }
-    }
-
-    return false;
-
-}
-
-
-/*returns an optimized version of the assembly code*/
-string optimizer(string code)
-{
-
-    string result;
-    int i;
-    bool is_it_last = false;
-    int temp;
-
-    vector<string>vect1;
-    vector<string>vect2;
-
-    /*we get the splitted code*/
-    vector<string>splitted_code =split_string(code,"\n");
-
-     //removing all the extra newlines from the splitted string
-    for(int i=0;i<splitted_code.size();i++)
-    {
-        if(splitted_code[i]!="")
-        {
-            vect1.push_back(splitted_code[i]);
-		}
-	}
-
-	splitted_code.clear();
-
-	for(int i=0;i<vect1.size();i++)
-	{
-		splitted_code.push_back(vect1[i]);
-	}
-
-	vect1.clear();
-
-		/*this portion checks if a pair of string is valid for comparison and then if we can find our required condition, we skip
-		over one concatenation of the result string, thus giving us an optimized string*/
-
-    for( i=0;i<splitted_code.size();i++)
-    {
-        temp = i;
-
-        if(i!=splitted_code.size()-1)
-        {
-            if(is_valid_string(splitted_code[i],splitted_code[i+1]))
-            {
-                ////cour<<splitted_code[i]<<" "<<splitted_code[i+1]<<endl;
-                string temp1 = splitted_code[i].substr(splitted_code[i].find(" ")+1,splitted_code[i].length()-1);
-                string temp2 = splitted_code[i+1].substr(splitted_code[i+1].find(" ")+1,splitted_code[i].length()-1); ///
-                ////cour<<temp1<<" "<<temp2<<endl;
-
-                vect1 = split_string(temp1,",");
-                vect2 = split_string(temp2,",");
-
-                if((vect1[0]==vect2[1])&&(vect1[1]==vect2[0]))
-                {
-                    i++;
-                    ////cour<<i<<endl;
-                }
-
-                if((temp+1)==splitted_code.size())
-                {
-                    is_it_last = true;
-                    ////cour<<i<<" "<<temp<<splitted_code.size()<<endl;
-
-                }
-
-            }
-        }
-        ////cour<<"{"<<splitted_code[temp]<<endl;
-
-        if(!is_it_last)
-        {
-            result += splitted_code[temp]+"\n";
-            ////cour<<"popopopo"<<endl;
-        }
-        else
-            is_it_last = false;
-
-
-    }
-
-    return result;
-}
-// ----------------------------------------------------------------------------------------------------------------
 %}
 
 %union{
@@ -339,7 +176,7 @@ start : program {
 			}
 		}
 
-		$1->extraSymbolInfo.assm_code = temp + ".CODE\n\n" + output_procedure + $1->extraSymbolInfo.assm_code;
+		$1->extraSymbolInfo.assm_code = temp + "\n.CODE\n" + output_procedure + $1->extraSymbolInfo.assm_code;
 
 		ofstream out, optOut;
 		out.open("code.asm");
