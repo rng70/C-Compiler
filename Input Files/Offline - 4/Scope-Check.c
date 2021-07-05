@@ -1,19 +1,16 @@
 /* ************************** */
-/*        Output = 121        */
+/*         Output = 71        */
 /* ************************** */
 
 int a;
 int function(int a){
-  if(a==1){
-    return 1;
-  }
-  return a*function(a-1);
+  return 70*a;
 }
 
 int main(){
   a = 1;
   int b;
-  b = 6;
+  b = 1;
 
   a = a+function(b);
   printf(a);
