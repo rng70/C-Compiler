@@ -3,17 +3,17 @@
 .STACK 100H			
 
 .DATA
-main_return_val DW ?
+a1 DW ?
+function_return_val DW ?
 a2 DW ?
-b2 DW ?
-c2 DW ?
-i2 DW ?
-t3 DW ?
+t0 DW ?
+main_return_val DW ?
+b3 DW ?
+c3 DW ?
 t4 DW ?
+t5 DW ?
 t6 DW ?
 t7 DW ?
-t8 DW ?
-t10 DW ?
 
 .CODE
 
@@ -66,90 +66,102 @@ PRINT_LOOP:
 	RET						
 PRINT_INT ENDP
 
+function PROC						
+	PUSH AX						
+	PUSH BX						
+	PUSH CX						
+	PUSH DX
+
+	PUSH a2
+
+
+	XOR DX, DX
+	MOV AX, a2
+	MOV BX, 2
+	DIV BX
+	MOV t0, DX
+
+	MOV AX, t0
+	MOV function_return_val, AX
+
+	JMP LABEL_RETURN_function
+LABEL_RETURN_function:
+
+	POP a2
+
+	POP DX					
+	POP CX					
+	POP BX					
+	POP AX					
+	ret
+
+function ENDP
+
 MAIN PROC									
 	MOV AX, @DATA									
 	MOV DS ,AX
-	MOV AX, 0
-	MOV b2, AX
-
 	MOV AX, 1
-	MOV c2, AX
+	MOV a1, AX
 
-	MOV AX, 0
-	MOV i2, AX
+	MOV AX, 6
+	MOV b3, AX
 
-L4:
-	MOV AX, i2
-	CMP AX, 4
-	JL L0
-	MOV t3, 0
+	MOV AX, 2
+	MOV c3, AX
+
+	MOV AX, b3
+	MOV a2, AX
+	CALL function
+	MOV AX, function_return_val
+	MOV t4, AX
+	MOV AX, t4
+	CMP AX, 1
+	JE L0
+	MOV t5, 0
 	JMP L1
 L0:
-	MOV t3, 1
+	MOV t5, 1
 L1:
 
-	MOV AX, t3
+	MOV AX, t5
 	CMP AX, 0
-	JE L5
-	MOV AX, 3
-	MOV a2, AX
+	JE L2
 
+
+	MOV AX, a1
+	CALL PRINT_INT
+
+	JMP L3
+	JMP L3
 L2:
-	MOV AX,a2
-	MOV t6,AX
-	DEC AX
-	MOV a2,AX
 
-	MOV AX, t6
-	CMP AX, 0
-	JE L3
-	MOV AX,b2
-	MOV t7,AX
-	INC AX
-	MOV b2,AX
 
-	JMP L2
+	MOV AX, c3
+	CALL PRINT_INT
+
 L3:
 
-	MOV AX,i2
-	MOV t4,AX
-	INC AX
-	MOV i2,AX
 
-	JMP L4
+
+	MOV AX, 5
+	ADD AX, a1
+	MOV t6, AX
+
+	MOV AX, 1
+	CMP AX, t6
+	JL L4
+	MOV t7, 0
+	JMP L5
+L4:
+	MOV t7, 1
 L5:
 
-
-
-	MOV AX, b2
-	SUB AX, a2
-	MOV t8, AX
-
-	MOV AX, t8
-	MOV a2, AX
+	MOV AX, t7
+	MOV b3, AX
 
 
 
-	MOV AX, a2
-	CALL PRINT_INT
-
-
-
-	MOV AX, b2
-	CALL PRINT_INT
-
-
-
-	MOV AX, c2
-	ADD AX, 10
-	MOV t10, AX
-
-	MOV AX, t10
-	MOV c2, AX
-
-
-
-	MOV AX, c2
+	MOV AX, b3
 	CALL PRINT_INT
 
 

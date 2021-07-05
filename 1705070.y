@@ -141,9 +141,7 @@ start : program {
 	/* ******************* */
 	/*      ICG Code       */
 	/* ******************* */
-	if(numberOfErrors != 0){
-		cout << "Error occurred. Check error.txt file" << endl;
-	}else if(numberOfErrors == 0){
+	if(numberOfErrors == 0){
 
 		string first, second, temp = "";
 		temp = ".MODEL SMALL\
@@ -169,6 +167,8 @@ start : program {
 		out << $1->extraSymbolInfo.assm_code;
 		optOut.open("optimized_code.asm");
 		optOut << optimizer($1->extraSymbolInfo.assm_code);
+	}else{
+		cout << "Error occurred. Check error.txt file" << endl;
 	}
 };
 

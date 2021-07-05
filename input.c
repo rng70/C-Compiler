@@ -19,6 +19,6 @@ int main(){
   }else{
     println(c);
   }
-  b = a && 0 + 0 || c + b && a ; 
+  b = 1<5 + a;
   printf(b);
 }

@@ -488,6 +488,38 @@ Line 22: variable : ID
 
 b
 
+Line 22: factor : CONST_INT
+
+1
+
+Line 22: unary_expression : factor
+
+1
+
+Line 22: term : unary_expression
+
+1
+
+Line 22: simple_expression : term
+
+1
+
+Line 22: factor : CONST_INT
+
+5
+
+Line 22: unary_expression : factor
+
+5
+
+Line 22: term : unary_expression
+
+5
+
+Line 22: simple_expression : term
+
+5
+
 Line 22: variable : ID
 
 a
@@ -504,58 +536,157 @@ Line 22: term : unary_expression
 
 a
 
-Line 22: simple_expression : term
-
-a
-
-Line 22: rel_expression : simple_expression
-
-a
-
-Line 22: factor : CONST_INT
-
-0
-
-Line 22: unary_expression : factor
-
-0
-
-Line 22: term : unary_expression
-
-0
-
-Line 22: simple_expression : term
-
-0
-
-Line 22: factor : CONST_INT
-
-0
-
-Line 22: unary_expression : factor
-
-0
-
-Line 22: term : unary_expression
-
-0
-
 Line 22: simple_expression : simple_expression ADDOP term
 
-0+0
+5+a
 
-Line 22: rel_expression : simple_expression
+Line 22: rel_expression : simple_expression RELOP simple_expression
 
-0+0
+1<5+a
 
-Line 22: logic_expression : rel_expression LOGICOP rel_expression
+Line 22: logic_expression : rel_expression
 
-a&&0+0
+1<5+a
 
 Line 22: expression : variable ASSIGNOP logic_expression
 
-b=a&&0+0
+b=1<5+a
 
-Total lines: 21
-Total errors: 1
+Line 22: expression_statement : expression SEMICOLON
+
+b=1<5+a;
+
+Line 22: statement : expression_statement
+
+b=1<5+a;
+
+
+Line 22: statements : statements statement
+
+a=1;
+int b;
+b=6;
+int c;
+c=2;
+if(function(b)==1){
+println(a);
+}else{
+println(c);
+}
+b=1<5+a;
+
+
+Line 23: statement : PRINTLN LPAREN ID RPAREN SEMICOLON
+
+println(b);
+
+Line 23: statements : statements statement
+
+a=1;
+int b;
+b=6;
+int c;
+c=2;
+if(function(b)==1){
+println(a);
+}else{
+println(c);
+}
+b=1<5+a;
+println(b);
+
+
+Line 24: compound_statement : LCURL statements RCURL
+
+{
+a=1;
+int b;
+b=6;
+int c;
+c=2;
+if(function(b)==1){
+println(a);
+}else{
+println(c);
+}
+b=1<5+a;
+println(b);
+}
+
+ScopeTable # 1.2
+ 8 --> < b : ID> 
+ 9 --> < c : ID> 
+
+ScopeTable # 1
+ 0 --> < function : ID> 
+ 1 --> < main : ID> 
+ 7 --> < a : ID> 
+
+Line 24: func_definition : type_specifier ID LPAREN RPAREN compound_statement
+
+int main(){
+a=1;
+int b;
+b=6;
+int c;
+c=2;
+if(function(b)==1){
+println(a);
+}else{
+println(c);
+}
+b=1<5+a;
+println(b);
+}
+
+Line 24: unit : func_definition
+
+int main(){
+a=1;
+int b;
+b=6;
+int c;
+c=2;
+if(function(b)==1){
+println(a);
+}else{
+println(c);
+}
+b=1<5+a;
+println(b);
+}
+
+
+Line 24: program : program unit
+
+int a;
+int function(int a){
+return a%2;
+}
+int main(){
+a=1;
+int b;
+b=6;
+int c;
+c=2;
+if(function(b)==1){
+println(a);
+}else{
+println(c);
+}
+b=1<5+a;
+println(b);
+}
+
+
+Line 24: start : program
+
+
+ScopeTable # 1
+ 0 --> < function : ID> 
+ 1 --> < main : ID> 
+ 7 --> < a : ID> 
+
+Total lines: 24
+Total errors: 0
 
