@@ -891,6 +891,8 @@ var_declaration : type_specifier declaration_list SEMICOLON {
 		first  = var_carrier[i].first;
 		second = var_carrier[i].second;
 
+		cout << first << " " << second << " " << in var_declaration << first + to_string(symbolTable.getCurrentScopeID()) << endl;
+
 		decld_var_carrier.push_back(make_pair(first+to_string(symbolTable.getCurrentScopeID()),second)); //pushing bacl to vector for assm_code declaration
 		if(symbolTable.getCurrentScopeID()!=1){
 			decld_f_var.push_back(make_pair(first+to_string(symbolTable.getCurrentScopeID()),second));  //pushing to the vector to be used during function defination procedure
